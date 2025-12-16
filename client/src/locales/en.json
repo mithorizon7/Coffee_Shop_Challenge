@@ -323,5 +323,147 @@
     "scoreTracker": "Current score",
     "timer": "Time remaining",
     "vpnToggle": "Toggle VPN protection"
+  },
+  "scenarios": {
+    "coffee_shop_beginner": {
+      "title": "Morning at The Daily Grind",
+      "description": "You've stopped at your favorite coffee shop before an important meeting. You need to check a few things online, but which network should you trust?",
+      "location": "The Daily Grind Coffee Shop",
+      "scenes": {
+        "arrival_1": {
+          "title": "Welcome to The Daily Grind",
+          "description": "You settle into a comfortable corner seat with your latte. Your laptop is open and you see several Wi-Fi networks available. You have 30 minutes before your meeting."
+        },
+        "network_select_1": {
+          "title": "Choose a Network",
+          "description": "Several networks appear on your screen. The coffee shop has a sign on the counter, but you can't quite read it from here."
+        },
+        "verified_network": {
+          "title": "Staff Confirmation",
+          "description": "The barista confirms: 'Our official network is DailyGrind_Guest. The password is on your receipt!' They also mention they've seen some fake networks pop up recently."
+        },
+        "task_email_verified": {
+          "title": "Check Your Email",
+          "description": "You're connected to the verified official network. Now you need to check your email for the meeting agenda."
+        },
+        "task_email": {
+          "title": "Check Your Email",
+          "description": "You're connected. Now you need to check your email for the meeting agenda."
+        },
+        "task_banking": {
+          "title": "Quick Banking Task",
+          "description": "While checking email, you remember you need to transfer money to cover a bill due today."
+        },
+        "task_banking_vpn": {
+          "title": "Quick Banking Task",
+          "description": "Your VPN is active. You remember you need to transfer money to cover a bill due today."
+        },
+        "consequence_trap": {
+          "title": "Network Trap Detected",
+          "description": "You connected to what appeared to be the coffee shop's network..."
+        },
+        "consequence_open": {
+          "title": "Risky Connection",
+          "description": "You connected to an open network with a generic name..."
+        },
+        "consequence_neighbor": {
+          "title": "Wrong Network",
+          "description": "You connected to a neighboring business's network..."
+        }
+      },
+      "networks": {
+        "net_official": {
+          "description": "Official coffee shop network",
+          "descriptionVerified": "Official coffee shop network - VERIFIED"
+        },
+        "net_fake": {
+          "description": "Suspicious network with similar name",
+          "descriptionVerified": "SUSPICIOUS - Not the official network!"
+        },
+        "net_open": {
+          "description": "Generic open network - could be anyone"
+        },
+        "net_neighbor": {
+          "description": "Neighboring business network"
+        }
+      },
+      "actions": {
+        "verify": {
+          "label": "Ask staff for the correct network",
+          "description": "Walk to the counter and confirm the official Wi-Fi name"
+        },
+        "proceed_email": {
+          "label": "Check email now"
+        },
+        "use_vpn_email": {
+          "label": "Enable VPN first, then check email"
+        },
+        "postpone_email": {
+          "label": "Wait until you're on a more secure network"
+        },
+        "proceed_banking": {
+          "label": "Log into bank now"
+        },
+        "use_vpn_banking": {
+          "label": "Enable VPN first"
+        },
+        "postpone_banking": {
+          "label": "Handle this later on a secure network"
+        },
+        "proceed_banking_vpn": {
+          "label": "Log into bank (VPN active)"
+        }
+      },
+      "tasks": {
+        "task_check_email": {
+          "title": "Check Work Email",
+          "description": "Open your email to review the meeting agenda that was sent this morning.",
+          "riskHint": "Email accounts often contain sensitive information and password reset links."
+        },
+        "task_banking": {
+          "title": "Transfer Funds",
+          "description": "Log into your bank to transfer $200 to cover an upcoming bill payment.",
+          "riskHint": "Banking involves your most sensitive financial credentials."
+        }
+      },
+      "consequences": {
+        "cons_trap": {
+          "title": "Fake Network Trap",
+          "whatHappened": "You connected to 'FREE_Daily_Grind_WiFi' - a fake network set up by an attacker. A convincing login page appeared asking for your email to 'access the internet.' Any credentials you entered were captured.",
+          "whyRisky": "Attackers often create networks with names similar to legitimate ones (called 'evil twin' attacks). Open networks with enticing names like 'FREE' are major red flags. The fake captive portal harvested your login credentials.",
+          "saferAlternative": "Always verify the exact network name with staff before connecting. Look for secured networks (with the lock icon) and be suspicious of networks that are open but claim to be from a business.",
+          "technicalExplanation": "Evil twin attacks work by broadcasting a stronger signal than the legitimate network, causing devices to connect automatically. The attacker then intercepts all traffic or presents fake login pages.",
+          "cascading": [
+            "Your email credentials were captured by the fake login page",
+            "Attacker uses your email to reset passwords on other accounts",
+            "Your linked bank and shopping accounts are now accessible",
+            "Personal data from these accounts enables identity theft"
+          ]
+        },
+        "cons_open": {
+          "title": "Unprotected Network",
+          "whatHappened": "You connected to 'FreePublicWiFi' - a completely open network with no encryption. Anyone nearby could potentially see your unencrypted traffic.",
+          "whyRisky": "Open networks with generic names could be set up by anyone. Without encryption, your browsing activity, search queries, and any non-HTTPS data is visible to others on the same network.",
+          "saferAlternative": "Choose networks that require a password (showing a lock icon). Verify the network name with the establishment. If you must use an open network, enable a VPN immediately.",
+          "technicalExplanation": "On unencrypted networks, attackers can use packet sniffing tools to capture network traffic. While HTTPS protects the content of secure websites, metadata like which sites you visit is still visible."
+        },
+        "cons_neighbor": {
+          "title": "Connected to Wrong Network",
+          "whatHappened": "You connected to 'Bookstore_Next_Door' - a legitimate network, but not the one for this coffee shop. While probably not malicious, this wasn't the intended network.",
+          "whyRisky": "Connecting to unknown networks, even if they appear legitimate, means trusting an unknown administrator. You have no control over their security practices or logging policies.",
+          "saferAlternative": "Always verify you're connecting to the correct network for your location. Ask staff for the official network name rather than guessing."
+        }
+      }
+    },
+    "hotel_intermediate": {
+      "title": "Business Trip at The Grand Hotel",
+      "description": "You've arrived at a hotel for a business trip and need to get online. Multiple networks are available, and the front desk is busy. How will you connect safely?",
+      "location": "The Grand Hotel Lobby"
+    },
+    "airport_advanced": {
+      "title": "Layover at Metro Airport",
+      "description": "You have a 2-hour layover and need to finish some urgent work tasks. The airport is crowded and you see many available networks. Time is of the essence.",
+      "location": "Metro International Airport"
+    }
   }
 }

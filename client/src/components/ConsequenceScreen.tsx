@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 interface ConsequenceScreenProps {
   consequence: Consequence;
   onContinue: () => void;
+  scenarioId?: string;
 }
 
 const severityConfig = {
@@ -47,10 +48,40 @@ const cascadeIcons = {
   malware: Bug,
 };
 
-export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreenProps) {
+export function ConsequenceScreen({ consequence, onContinue, scenarioId }: ConsequenceScreenProps) {
   const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
+  
+  const getTranslatedTitle = () => {
+    if (!scenarioId) return consequence.title;
+    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.title`, { defaultValue: consequence.title });
+  };
+  
+  const getTranslatedWhatHappened = () => {
+    if (!scenarioId) return consequence.whatHappened;
+    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.whatHappened`, { defaultValue: consequence.whatHappened });
+  };
+  
+  const getTranslatedWhyRisky = () => {
+    if (!scenarioId) return consequence.whyRisky;
+    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.whyRisky`, { defaultValue: consequence.whyRisky });
+  };
+  
+  const getTranslatedSaferAlternative = () => {
+    if (!scenarioId) return consequence.saferAlternative;
+    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.saferAlternative`, { defaultValue: consequence.saferAlternative });
+  };
+  
+  const getTranslatedTechnicalExplanation = () => {
+    if (!scenarioId || !consequence.technicalExplanation) return consequence.technicalExplanation;
+    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.technicalExplanation`, { defaultValue: consequence.technicalExplanation });
+  };
+  
+  const getTranslatedCascadingEffect = (effect: { order: number; effect: string; icon?: string }) => {
+    if (!scenarioId) return effect.effect;
+    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.cascading.${effect.order - 1}`, { defaultValue: effect.effect });
+  };
 
   return (
     <motion.div
@@ -66,7 +97,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
           </div>
           <div>
             <h2 className="font-display text-xl font-semibold text-foreground">
-              {consequence.title}
+              {getTranslatedTitle()}
             </h2>
             <div className="flex items-center gap-4 mt-1 text-sm">
               {consequence.safetyPointsChange > 0 && (
@@ -92,7 +123,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                   {t('consequence.whatHappened')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-what-happened">
-                  {consequence.whatHappened}
+                  {getTranslatedWhatHappened()}
                 </p>
               </div>
               
@@ -102,7 +133,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                   {consequence.severity === "success" ? t('consequence.whySafe') : t('consequence.whyRisky')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-why-risky">
-                  {consequence.whyRisky}
+                  {getTranslatedWhyRisky()}
                 </p>
               </div>
             </div>
@@ -114,7 +145,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                   {consequence.severity === "success" ? t('consequence.whyWorked') : t('consequence.saferAlternative')}
                 </h3>
                 <p className="text-sm leading-relaxed" data-testid="consequence-safer-alternative">
-                  {consequence.saferAlternative}
+                  {getTranslatedSaferAlternative()}
                 </p>
               </div>
               
@@ -125,7 +156,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                     {t('consequence.technicalDetails')}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {consequence.technicalExplanation}
+                    {getTranslatedTechnicalExplanation()}
                   </p>
                 </div>
               )}
@@ -164,7 +195,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                               <IconComponent className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                             </div>
                             <span className="text-xs text-red-800 dark:text-red-200" data-testid={`cascading-effect-text-${effect.order}`}>
-                              {effect.effect}
+                              {getTranslatedCascadingEffect(effect)}
                             </span>
                           </div>
                           {index < (consequence.cascadingEffects?.length || 0) - 1 && (

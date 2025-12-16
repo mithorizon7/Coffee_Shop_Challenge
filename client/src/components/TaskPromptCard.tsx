@@ -12,6 +12,7 @@ interface TaskPromptCardProps {
   actions: Action[];
   onAction: (actionId: string) => void;
   showHints?: boolean;
+  scenarioId?: string;
 }
 
 const taskIcons: Record<string, typeof Mail> = {
@@ -46,11 +47,36 @@ const sensitivityColors: Record<string, { bg: string; text: string; border: stri
   },
 };
 
-export function TaskPromptCard({ task, actions, onAction, showHints = false }: TaskPromptCardProps) {
+export function TaskPromptCard({ task, actions, onAction, showHints = false, scenarioId }: TaskPromptCardProps) {
   const { t } = useTranslation();
   const IconComponent = taskIcons[task.type] || Globe;
   const sensitivity = sensitivityColors[task.sensitivityLevel];
   const sensitivityLabel = task.sensitivityLevel.charAt(0).toUpperCase() + task.sensitivityLevel.slice(1);
+  
+  const getTranslatedTaskTitle = () => {
+    if (!scenarioId) return task.title;
+    return t(`scenarios.${scenarioId}.tasks.${task.id}.title`, { defaultValue: task.title });
+  };
+  
+  const getTranslatedTaskDescription = () => {
+    if (!scenarioId) return task.description;
+    return t(`scenarios.${scenarioId}.tasks.${task.id}.description`, { defaultValue: task.description });
+  };
+  
+  const getTranslatedRiskHint = () => {
+    if (!scenarioId || !task.riskHint) return task.riskHint;
+    return t(`scenarios.${scenarioId}.tasks.${task.id}.riskHint`, { defaultValue: task.riskHint });
+  };
+  
+  const getTranslatedActionLabel = (action: Action) => {
+    if (!scenarioId) return action.label;
+    return t(`scenarios.${scenarioId}.actions.${action.id}.label`, { defaultValue: action.label });
+  };
+  
+  const getTranslatedActionDescription = (action: Action) => {
+    if (!scenarioId || !action.description) return action.description;
+    return t(`scenarios.${scenarioId}.actions.${action.id}.description`, { defaultValue: action.description });
+  };
 
   return (
     <Card className="p-6">
@@ -65,7 +91,7 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-2">
             <h3 className="font-display text-lg font-semibold text-foreground">
-              {task.title}
+              {getTranslatedTaskTitle()}
             </h3>
             <Badge 
               variant="outline" 
@@ -77,14 +103,14 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
           </div>
           
           <p className="text-muted-foreground mb-4" data-testid="task-description">
-            {task.description}
+            {getTranslatedTaskDescription()}
           </p>
           
           {showHints && task.riskHint && (
             <div className="flex items-start gap-2 p-3 rounded-md bg-amber-50 dark:bg-amber-950 mb-4">
               <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-700 dark:text-amber-300">
-                {task.riskHint}
+                {getTranslatedRiskHint()}
               </p>
             </div>
           )}
@@ -98,12 +124,12 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
                     onClick={() => onAction(action.id)}
                     data-testid={`action-${action.id}`}
                   >
-                    {action.label}
+                    {getTranslatedActionLabel(action)}
                   </Button>
                 </TooltipTrigger>
                 {action.description && (
                   <TooltipContent>
-                    <p>{action.description}</p>
+                    <p>{getTranslatedActionDescription(action)}</p>
                   </TooltipContent>
                 )}
               </Tooltip>

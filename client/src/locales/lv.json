@@ -323,5 +323,147 @@
     "scoreTracker": "Pašreizējie punkti",
     "timer": "Atlikušais laiks",
     "vpnToggle": "Pārslēgt VPN aizsardzību"
+  },
+  "scenarios": {
+    "coffee_shop_beginner": {
+      "title": "Rīts kafejnīcā The Daily Grind",
+      "description": "Tu esi apstājies savā mīļākajā kafejnīcā pirms svarīgas tikšanās. Tev jāpārbauda dažas lietas tiešsaistē, bet kuram tīklam uzticēties?",
+      "location": "The Daily Grind Kafejnīca",
+      "scenes": {
+        "arrival_1": {
+          "title": "Laipni lūgti The Daily Grind",
+          "description": "Tu ērti iekārties stūra sēdvietā ar savu latte. Tavs dators ir atvērts un tu redzi vairākus pieejamus Wi-Fi tīklus. Tev ir 30 minūtes pirms tikšanās."
+        },
+        "network_select_1": {
+          "title": "Izvēlies Tīklu",
+          "description": "Tavā ekrānā parādās vairāki tīkli. Kafejnīcai ir zīme pie letes, bet tu to nevari pilnībā izlasīt no šejienes."
+        },
+        "verified_network": {
+          "title": "Personāla Apstiprinājums",
+          "description": "Barista apstiprina: 'Mūsu oficiālais tīkls ir DailyGrind_Guest. Parole ir uz tavas kvīts!' Viņi arī piemin, ka pēdējā laikā ir pamanījuši dažus viltus tīklus."
+        },
+        "task_email_verified": {
+          "title": "Pārbaudi Savu E-pastu",
+          "description": "Tu esi pieslēdzies pārbaudītajam oficiālajam tīklam. Tagad tev jāpārbauda e-pasts, lai redzētu tikšanās darba kārtību."
+        },
+        "task_email": {
+          "title": "Pārbaudi Savu E-pastu",
+          "description": "Tu esi pieslēdzies. Tagad tev jāpārbauda e-pasts, lai redzētu tikšanās darba kārtību."
+        },
+        "task_banking": {
+          "title": "Ātrs Bankas Uzdevums",
+          "description": "Pārbaudot e-pastu, tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien."
+        },
+        "task_banking_vpn": {
+          "title": "Ātrs Bankas Uzdevums",
+          "description": "Tavs VPN ir aktīvs. Tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien."
+        },
+        "consequence_trap": {
+          "title": "Tīkla Slazds Atklāts",
+          "description": "Tu pieslēdzies tam, kas izskatījās kā kafejnīcas tīkls..."
+        },
+        "consequence_open": {
+          "title": "Riskants Savienojums",
+          "description": "Tu pieslēdzies atvērtam tīklam ar vispārīgu nosaukumu..."
+        },
+        "consequence_neighbor": {
+          "title": "Nepareizs Tīkls",
+          "description": "Tu pieslēdzies blakus esošā uzņēmuma tīklam..."
+        }
+      },
+      "networks": {
+        "net_official": {
+          "description": "Oficiālais kafejnīcas tīkls",
+          "descriptionVerified": "Oficiālais kafejnīcas tīkls - PĀRBAUDĪTS"
+        },
+        "net_fake": {
+          "description": "Aizdomīgs tīkls ar līdzīgu nosaukumu",
+          "descriptionVerified": "AIZDOMĪGS - Nav oficiālais tīkls!"
+        },
+        "net_open": {
+          "description": "Vispārīgs atvērts tīkls - var būt jebkurš"
+        },
+        "net_neighbor": {
+          "description": "Blakus esošā uzņēmuma tīkls"
+        }
+      },
+      "actions": {
+        "verify": {
+          "label": "Jautāt personālam pareizo tīklu",
+          "description": "Pieiet pie letes un apstiprināt oficiālo Wi-Fi nosaukumu"
+        },
+        "proceed_email": {
+          "label": "Pārbaudīt e-pastu tagad"
+        },
+        "use_vpn_email": {
+          "label": "Vispirms ieslēgt VPN, tad pārbaudīt e-pastu"
+        },
+        "postpone_email": {
+          "label": "Gaidīt līdz drošākam tīklam"
+        },
+        "proceed_banking": {
+          "label": "Pieslēgties bankai tagad"
+        },
+        "use_vpn_banking": {
+          "label": "Vispirms ieslēgt VPN"
+        },
+        "postpone_banking": {
+          "label": "Atlikt uz vēlāku laiku drošākā tīklā"
+        },
+        "proceed_banking_vpn": {
+          "label": "Pieslēgties bankai (VPN aktīvs)"
+        }
+      },
+      "tasks": {
+        "task_check_email": {
+          "title": "Pārbaudīt Darba E-pastu",
+          "description": "Atvērt e-pastu, lai pārskatītu tikšanās darba kārtību, kas tika nosūtīta šorīt.",
+          "riskHint": "E-pasta konti bieži satur sensitīvu informāciju un paroles atiestatīšanas saites."
+        },
+        "task_banking": {
+          "title": "Pārskaitīt Līdzekļus",
+          "description": "Pieslēgties bankai, lai pārskaitītu €200 gaidāmā rēķina segšanai.",
+          "riskHint": "Banku darījumi ietver tavus visjutīgākos finanšu akreditācijas datus."
+        }
+      },
+      "consequences": {
+        "cons_trap": {
+          "title": "Viltus Tīkla Slazds",
+          "whatHappened": "Tu pieslēdzies 'FREE_Daily_Grind_WiFi' - viltus tīklam, ko uzstādīja uzbrucējs. Parādījās pārliecinoša pieslēgšanās lapa, prasot tavu e-pastu, lai 'piekļūtu internetam'. Visi ievadītie akreditācijas dati tika savākti.",
+          "whyRisky": "Uzbrucēji bieži veido tīklus ar nosaukumiem, kas līdzīgi likumīgajiem (saukti par 'ļaunā dvīņa' uzbrukumiem). Atvērti tīkli ar vilinošiem nosaukumiem kā 'FREE' ir nopietni brīdinājuma signāli. Viltus captive portāls savāca tavus pieslēgšanās akreditācijas datus.",
+          "saferAlternative": "Vienmēr pārbaudi precīzu tīkla nosaukumu ar personālu pirms pieslēgšanās. Meklē aizsargātus tīklus (ar slēdzenes ikonu) un esi piesardzīgs pret atvērtiem tīkliem, kas apgalvo, ka pieder uzņēmumam.",
+          "technicalExplanation": "Ļaunā dvīņa uzbrukumi darbojas, pārraidot spēcīgāku signālu nekā likumīgais tīkls, liekot ierīcēm automātiski pieslēgties. Uzbrucējs tad pārtver visu trafiku vai parāda viltotas pieslēgšanās lapas.",
+          "cascading": [
+            "Tavas e-pasta akreditācijas dati tika savākti ar viltus pieslēgšanās lapu",
+            "Uzbrucējs izmanto tavu e-pastu, lai atiestatītu paroles citiem kontiem",
+            "Tavi saistītie bankas un iepirkšanās konti tagad ir pieejami",
+            "Personīgie dati no šiem kontiem ļauj veikt identitātes zādzību"
+          ]
+        },
+        "cons_open": {
+          "title": "Neaizsargāts Tīkls",
+          "whatHappened": "Tu pieslēdzies 'FreePublicWiFi' - pilnībā atvērtam tīklam bez šifrēšanas. Jebkurš tuvumā varētu potenciāli redzēt tavu nešifrēto trafiku.",
+          "whyRisky": "Atvērtus tīklus ar vispārīgiem nosaukumiem var uzstādīt jebkurš. Bez šifrēšanas, tava pārlūkošanas aktivitāte, meklēšanas vaicājumi un jebkuri ne-HTTPS dati ir redzami citiem tajā pašā tīklā.",
+          "saferAlternative": "Izvēlies tīklus, kam nepieciešama parole (rāda slēdzenes ikonu). Pārbaudi tīkla nosaukumu ar iestādi. Ja jāizmanto atvērts tīkls, nekavējoties ieslēdz VPN.",
+          "technicalExplanation": "Nešifrētos tīklos uzbrucēji var izmantot pakešu uztveršanas rīkus, lai savāktu tīkla trafiku. Lai gan HTTPS aizsargā drošu vietņu saturu, metadati par to, kuras vietnes tu apmeklē, joprojām ir redzami."
+        },
+        "cons_neighbor": {
+          "title": "Pieslēgts Nepareizam Tīklam",
+          "whatHappened": "Tu pieslēdzies 'Bookstore_Next_Door' - likumīgam tīklam, bet ne šīs kafejnīcas tīklam. Lai gan, iespējams, nav ļaunprātīgs, tas nebija paredzētais tīkls.",
+          "whyRisky": "Pieslēgšanās nezināmiem tīkliem, pat ja tie izskatās likumīgi, nozīmē uzticēšanos nezināmam administratoram. Tev nav kontroles pār viņu drošības praksi vai žurnalizēšanas politikām.",
+          "saferAlternative": "Vienmēr pārbaudi, vai pieslēdzies pareizam tīklam savai atrašanās vietai. Jautā personālam oficiālo tīkla nosaukumu, nevis mini."
+        }
+      }
+    },
+    "hotel_intermediate": {
+      "title": "Komandējums The Grand Hotel",
+      "description": "Tu esi ieradies viesnīcā komandējumā un tev jāpiekļūst internetam. Pieejami vairāki tīkli, un reģistratūra ir aizņemta. Kā tu droši pieslēgsies?",
+      "location": "The Grand Hotel Vestibils"
+    },
+    "airport_advanced": {
+      "title": "Pārsēšanās Metro Lidostā",
+      "description": "Tev ir 2 stundu pārsēšanās un jāpabeidz steidzami darba uzdevumi. Lidosta ir pārpildīta un tu redzi daudzus pieejamus tīklus. Laiks ir būtisks.",
+      "location": "Metro Starptautiskā Lidosta"
+    }
   }
 }

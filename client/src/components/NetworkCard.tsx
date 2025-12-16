@@ -10,10 +10,19 @@ interface NetworkCardProps {
   onSelect: (network: Network) => void;
   showWarnings?: boolean;
   isSelected?: boolean;
+  scenarioId?: string;
 }
 
-export function NetworkCard({ network, onSelect, showWarnings = false, isSelected = false }: NetworkCardProps) {
+export function NetworkCard({ network, onSelect, showWarnings = false, isSelected = false, scenarioId }: NetworkCardProps) {
   const { t } = useTranslation();
+  
+  const getTranslatedDescription = () => {
+    if (!scenarioId) return network.description;
+    const key = network.verifiedByStaff 
+      ? `scenarios.${scenarioId}.networks.${network.id}.descriptionVerified`
+      : `scenarios.${scenarioId}.networks.${network.id}.description`;
+    return t(key, { defaultValue: network.description });
+  };
   const signalBars = Array.from({ length: 5 }, (_, i) => i < network.signalStrength);
   
   const getRiskBadge = () => {
@@ -98,7 +107,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
               </span>
               
               {network.description && showWarnings && (
-                <span className="truncate">{network.description}</span>
+                <span className="truncate">{getTranslatedDescription()}</span>
               )}
             </div>
           </div>

@@ -240,13 +240,13 @@ export function GameContainer({
             <div className="mb-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <MapPin className="w-4 h-4" />
-                <span>{currentScene.location}</span>
+                <span>{t(`scenarios.${scenario.id}.location`, { defaultValue: currentScene.location })}</span>
               </div>
               <h1 className="font-display text-2xl font-bold text-foreground mb-2">
-                {currentScene.title}
+                {t(`scenarios.${scenario.id}.scenes.${currentScene.id}.title`, { defaultValue: currentScene.title })}
               </h1>
               <p className="text-muted-foreground leading-relaxed" data-testid="scene-description">
-                {currentScene.description}
+                {t(`scenarios.${scenario.id}.scenes.${currentScene.id}.description`, { defaultValue: currentScene.description })}
               </p>
             </div>
 
@@ -276,6 +276,7 @@ export function GameContainer({
                       onSelect={handleNetworkSelect}
                       showWarnings={showWarnings}
                       isSelected={session.selectedNetworkId === network.id}
+                      scenarioId={scenario.id}
                     />
                   ))}
                 </div>
@@ -290,7 +291,7 @@ export function GameContainer({
                         data-testid={`action-${action.id}`}
                       >
                         {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
-                        {action.label}
+                        {t(`scenarios.${scenario.id}.actions.${action.id}.label`, { defaultValue: action.label })}
                       </Button>
                     ))}
                   </div>
@@ -309,7 +310,7 @@ export function GameContainer({
                       onClick={() => handleAction(action.id)}
                       data-testid={`action-${action.id}`}
                     >
-                      {action.label}
+                      {t(`scenarios.${scenario.id}.actions.${action.id}.label`, { defaultValue: action.label })}
                     </Button>
                   ))}
                 </div>
@@ -322,6 +323,7 @@ export function GameContainer({
                 actions={currentScene.actions}
                 onAction={handleAction}
                 showHints={showWarnings}
+                scenarioId={scenario.id}
               />
             )}
 
@@ -329,6 +331,7 @@ export function GameContainer({
               <ConsequenceScreen
                 consequence={currentScene.consequence}
                 onContinue={handleContinue}
+                scenarioId={scenario.id}
               />
             )}
 
