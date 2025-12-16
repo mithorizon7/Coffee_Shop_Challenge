@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { MapPin, Wifi, ArrowLeft, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { CompletionScreen } from "./CompletionScreen";
 import { ScoreTracker } from "./ScoreTracker";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { BadgeDisplay } from "./BadgeDisplay";
+import { CountdownTimer } from "./CountdownTimer";
 import { useAuth } from "@/hooks/use-auth";
 import type { GameSession, Scenario, Network } from "@shared/schema";
 import { 
@@ -70,6 +71,24 @@ export function GameContainer({
 
   const currentScene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
   const showWarnings = session.difficulty === "beginner";
+  const isAdvanced = session.difficulty === "advanced";
+  
+  const isDecisionScene = useMemo(() => {
+    return currentScene?.type === "network_selection" || 
+           currentScene?.type === "task_prompt" || 
+           currentScene?.type === "captive_portal";
+  }, [currentScene?.type]);
+
+  const handleTimeUp = useCallback(() => {
+    const updatedSession = {
+      ...session,
+      score: {
+        ...session.score,
+        riskPoints: session.score.riskPoints + 15,
+      }
+    };
+    setSession(updatedSession);
+  }, [session]);
 
   const syncSession = useCallback((updatedSession: GameSession) => {
     setSession(updatedSession);
@@ -192,6 +211,13 @@ export function GameContainer({
             </div>
             
             <div className="flex items-center gap-3">
+              {isAdvanced && isDecisionScene && (
+                <CountdownTimer
+                  totalSeconds={120}
+                  isActive={isDecisionScene && !isTransitioning}
+                  onTimeUp={handleTimeUp}
+                />
+              )}
               <BadgeDisplay badges={session.badges} compact />
               <ScoreTracker score={session.score} compact />
             </div>

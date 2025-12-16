@@ -1,5 +1,10 @@
-import { Shield, AlertTriangle, Target, CheckCircle } from "lucide-react";
+import { Shield, AlertTriangle, Target, CheckCircle, HelpCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Score } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -15,32 +20,51 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
 
   if (compact) {
     return (
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-1.5">
-          <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
-          <motion.span 
-            key={score.safetyPoints}
-            initial={{ scale: 1.2 }}
-            animate={{ scale: 1 }}
-            className="text-sm font-medium text-green-600 dark:text-green-400"
-            data-testid="score-safety-compact"
-          >
-            {score.safetyPoints}
-          </motion.span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
-          <motion.span 
-            key={score.riskPoints}
-            initial={{ scale: 1.2 }}
-            animate={{ scale: 1 }}
-            className="text-sm font-medium text-red-600 dark:text-red-400"
-            data-testid="score-risk-compact"
-          >
-            {score.riskPoints}
-          </motion.span>
-        </div>
-      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-4 cursor-help" data-testid="score-tracker-compact">
+            <div className="flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <motion.span 
+                key={score.safetyPoints}
+                initial={{ scale: 1.2 }}
+                animate={{ scale: 1 }}
+                className="text-sm font-medium text-green-600 dark:text-green-400"
+                data-testid="score-safety-compact"
+              >
+                {score.safetyPoints}
+              </motion.span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <motion.span 
+                key={score.riskPoints}
+                initial={{ scale: 1.2 }}
+                animate={{ scale: 1 }}
+                className="text-sm font-medium text-red-600 dark:text-red-400"
+                data-testid="score-risk-compact"
+              >
+                {score.riskPoints}
+              </motion.span>
+            </div>
+            <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-xs p-3">
+          <div className="space-y-2 text-sm">
+            <p className="font-medium">How scoring works:</p>
+            <div className="flex items-start gap-2">
+              <Shield className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+              <p><span className="font-medium text-green-600 dark:text-green-400">Safety Points:</span> Earned by making secure choices like using VPN, avoiding suspicious networks, or postponing sensitive tasks.</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <p><span className="font-medium text-red-600 dark:text-red-400">Risk Points:</span> Accumulated when taking risky actions like connecting to unsecured networks or entering sensitive data on public Wi-Fi.</p>
+            </div>
+            <p className="text-muted-foreground text-xs pt-1 border-t border-border">Lower risk points = better grade!</p>
+          </div>
+        </TooltipContent>
+      </Tooltip>
     );
   }
 
