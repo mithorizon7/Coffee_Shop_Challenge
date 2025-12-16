@@ -23,16 +23,16 @@ const LOCALES = ['en', 'lv', 'ru'];
 
 // Multiple patterns to catch different i18next usages
 const PATTERNS = [
-  // t('key') or t("key") or t(`key`)
-  /\bt\s*\(\s*['"`]([^'"`\n]+)['"`]/g,
-  // t('key', { ... })
-  /\bt\s*\(\s*['"`]([^'"`\n]+)['"`]\s*,/g,
+  // t('key') or t("key") or t(`key`) - any function ending with 't' or 'translate'
+  /\b(?:t|translate)\s*\(\s*['"`]([^'"`\n]+)['"`]/g,
   // <Trans i18nKey="key">
   /<Trans[^>]*\si18nKey\s*=\s*['"`]([^'"`]+)['"`]/g,
   // i18nKey={'key'} or i18nKey={"key"}
   /i18nKey\s*=\s*\{?\s*['"`]([^'"`]+)['"`]\s*\}?/g,
 ];
 
+// Pattern to detect namespace usage: useTranslation('namespace') or useTranslation(['ns1', 'ns2'])
+const NAMESPACE_PATTERN = /useTranslation\s*\(\s*['"`]([^'"`]+)['"`]/g;
 // Pattern to detect keyPrefix usage (for context)
 const KEY_PREFIX_PATTERN = /useTranslation\s*\([^)]*keyPrefix\s*:\s*['"`]([^'"`]+)['"`]/g;
 

@@ -60,17 +60,22 @@ function extractPlaceholders(str) {
   return placeholders;
 }
 
-function validateICUSyntax(str, key) {
+// Required plural categories per locale (CLDR rules)
+const REQUIRED_PLURAL_CATEGORIES = {
+  'en': ['one', 'other'],           // English: 1 vs rest
+  'lv': ['zero', 'one', 'other'],   // Latvian: 0, 1, rest (simplified)
+  'ru': ['one', 'few', 'many', 'other'], // Russian: 1, 2-4, 5-20, rest
+};
+
+function validateICUSyntax(str, key, locale = null) {
   if (typeof str !== 'string') return null;
   
   // Check for common ICU patterns
-  const icuPatterns = [
-    /\{[^}]+,\s*plural\s*,/,
-    /\{[^}]+,\s*select\s*,/,
-    /\{[^}]+,\s*selectordinal\s*,/,
-  ];
+  const isPluralMsg = /\{[^}]+,\s*plural\s*,/.test(str);
+  const isSelectMsg = /\{[^}]+,\s*select\s*,/.test(str);
+  const isSelectOrdinal = /\{[^}]+,\s*selectordinal\s*,/.test(str);
   
-  const hasICU = icuPatterns.some(p => p.test(str));
+  const hasICU = isPluralMsg || isSelectMsg || isSelectOrdinal;
   if (!hasICU) return null;
   
   // Basic validation: check balanced braces
@@ -83,9 +88,24 @@ function validateICUSyntax(str, key) {
   if (depth !== 0) return `Unbalanced braces (${depth} unclosed)`;
   
   // Check for required plural categories
-  if (/\{[^}]+,\s*plural\s*,/.test(str)) {
+  if (isPluralMsg) {
     if (!str.includes('other')) {
       return `ICU plural missing required 'other' category`;
+    }
+    
+    // Check locale-specific plural requirements
+    if (locale && REQUIRED_PLURAL_CATEGORIES[locale]) {
+      const required = REQUIRED_PLURAL_CATEGORIES[locale];
+      const missing = required.filter(cat => {
+        // Check if category exists in the message
+        const catPattern = new RegExp(`\\b${cat}\\s*\\{`);
+        return !catPattern.test(str);
+      });
+      
+      // Only warn about missing 'one' for Russian since it's critical
+      if (locale === 'ru' && !str.includes('one {')) {
+        return `Russian plural missing 'one' category`;
+      }
     }
   }
   
@@ -214,13 +234,13 @@ function main() {
     }
   }
   
-  // 6. Validate ICU syntax in ALL locales
+  // 6. Validate ICU syntax in ALL locales (with locale-specific rules)
   for (const locale of ALL_LOCALES) {
     const flat = flatLocales[locale];
     const icuErrors = [];
     
     for (const [key, { value }] of Object.entries(flat)) {
-      const error = validateICUSyntax(value, key);
+      const error = validateICUSyntax(value, key, locale);
       if (error) {
         icuErrors.push({ key, error });
       }
