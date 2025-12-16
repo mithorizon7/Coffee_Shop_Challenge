@@ -136,8 +136,9 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="pt-4 border-t border-border"
+              data-testid="cascading-effects-container"
             >
-              <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
+              <h3 className="font-medium text-foreground flex items-center gap-2 mb-4" data-testid="cascading-effects-heading">
                 <AlertTriangle className="w-4 h-4 text-red-500" />
                 How One Mistake Leads to More Problems
               </h3>
@@ -154,12 +155,13 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.4 + index * 0.15 }}
                           className="flex items-center gap-2"
+                          data-testid={`cascading-effect-${effect.order}`}
                         >
                           <div className="flex items-center gap-2 p-2 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800">
                             <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0">
                               <IconComponent className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                             </div>
-                            <span className="text-xs text-red-800 dark:text-red-200 max-w-[180px]">
+                            <span className="text-xs text-red-800 dark:text-red-200 max-w-[180px]" data-testid={`cascading-effect-text-${effect.order}`}>
                               {effect.effect}
                             </span>
                           </div>
