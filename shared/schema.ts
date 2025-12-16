@@ -183,6 +183,8 @@ export const scenarioSchema = z.object({
   estimatedTime: z.string(),
   scenes: z.array(sceneSchema),
   startSceneId: z.string(),
+  timerEnabled: z.boolean().optional(),
+  timerSeconds: z.number().optional(),
 });
 
 export type Scenario = z.infer<typeof scenarioSchema>;

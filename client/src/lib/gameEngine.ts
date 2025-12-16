@@ -259,3 +259,46 @@ export function getSecurityTips(session: GameSession): string[] {
   
   return tips;
 }
+
+export function getDecisionProcess(): { step: number; title: string; description: string }[] {
+  return [
+    {
+      step: 1,
+      title: "Verify the Network",
+      description: "Ask staff for the exact network name. Don't trust similar-looking names."
+    },
+    {
+      step: 2,
+      title: "Check the Security",
+      description: "Prefer networks with a lock icon (password-protected). Open networks are riskier."
+    },
+    {
+      step: 3,
+      title: "Enable Your VPN",
+      description: "Before doing anything sensitive, turn on your VPN to encrypt all traffic."
+    },
+    {
+      step: 4,
+      title: "Assess the Task",
+      description: "Banking or passwords? Wait for a secure network. Just browsing? Proceed with caution."
+    },
+    {
+      step: 5,
+      title: "Never Install",
+      description: "Decline any prompts to install apps, profiles, or certificates from portals."
+    }
+  ];
+}
+
+export function getRogueHotspotExplanation(): { title: string; description: string; howToSpot: string[] } {
+  return {
+    title: "What is a Rogue Hotspot?",
+    description: "A rogue hotspot (also called an 'evil twin') is a fake Wi-Fi network set up by an attacker to look like a legitimate one. When you connect, they can see your traffic, steal passwords, or redirect you to fake websites.",
+    howToSpot: [
+      "Names that look almost right but have small differences (hyphens, underscores, extra words)",
+      "Networks claiming to be 'FREE' versions of business networks",
+      "Open networks with unusually strong signals",
+      "Multiple networks with very similar names"
+    ]
+  };
+}

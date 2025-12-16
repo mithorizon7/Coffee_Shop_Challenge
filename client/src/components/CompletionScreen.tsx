@@ -1,10 +1,10 @@
-import { Trophy, ArrowRight, RotateCcw, Home, Lightbulb, TrendingUp } from "lucide-react";
+import { Trophy, ArrowRight, RotateCcw, Lightbulb, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BadgeDisplay } from "./BadgeDisplay";
 import { ScoreTracker } from "./ScoreTracker";
 import type { GameSession, Scenario } from "@shared/schema";
-import { calculateGrade, getSecurityTips } from "@/lib/gameEngine";
+import { calculateGrade, getSecurityTips, getDecisionProcess, getRogueHotspotExplanation } from "@/lib/gameEngine";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -23,6 +23,8 @@ export function CompletionScreen({
 }: CompletionScreenProps) {
   const grade = calculateGrade(session.score);
   const tips = getSecurityTips(session);
+  const decisionProcess = getDecisionProcess();
+  const rogueExplanation = getRogueHotspotExplanation();
 
   return (
     <motion.div
@@ -97,6 +99,56 @@ export function CompletionScreen({
             </motion.li>
           ))}
         </ul>
+      </Card>
+
+      <Card className="p-6">
+        <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
+          <CheckCircle className="w-5 h-5 text-green-500" />
+          Your Repeatable Decision Process
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Use this checklist every time you connect to public Wi-Fi:
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {decisionProcess.map((item, index) => (
+            <motion.div
+              key={item.step}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 + index * 0.1 }}
+              className="p-3 rounded-lg bg-muted/50"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                  {item.step}
+                </span>
+                <span className="text-sm font-medium text-foreground">{item.title}</span>
+              </div>
+              <p className="text-xs text-muted-foreground pl-7">{item.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="p-6 border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/30">
+        <h3 className="font-medium text-foreground flex items-center gap-2 mb-3">
+          <AlertTriangle className="w-5 h-5 text-amber-500" />
+          {rogueExplanation.title}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          {rogueExplanation.description}
+        </p>
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-foreground">How to spot one:</p>
+          <ul className="space-y-1">
+            {rogueExplanation.howToSpot.map((item, index) => (
+              <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground">
+                <span className="text-amber-500 mt-0.5">-</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </Card>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">

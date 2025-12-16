@@ -46,14 +46,14 @@
         },
         {
           "id": "hotel_fake",
-          "ssid": "Grand_Metropolitan_FREE",
+          "ssid": "GrandMetro-Guest",
           "signalStrength": 4,
           "isSecured": false,
           "securityType": "open",
           "isLegitimate": false,
           "isTrap": true,
           "riskLevel": "dangerous",
-          "description": "Suspicious - different naming convention"
+          "description": "CAUTION: Uses hyphen instead of underscore (GrandMetro-Guest vs GrandMetro_Guest)"
         },
         {
           "id": "hotel_conference",
