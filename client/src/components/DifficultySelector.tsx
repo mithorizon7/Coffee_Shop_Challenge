@@ -114,7 +114,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
               </div>
             </div>
 
-            <div className="space-y-2 pl-13">
+            <div className="space-y-2 ml-[3.25rem]">
               {scenariosForDifficulty.map((scenario) => (
                 <Card
                   key={scenario.id}

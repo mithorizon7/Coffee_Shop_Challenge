@@ -163,7 +163,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                             <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0">
                               <IconComponent className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                             </div>
-                            <span className="text-xs text-red-800 dark:text-red-200 max-w-[180px]" data-testid={`cascading-effect-text-${effect.order}`}>
+                            <span className="text-xs text-red-800 dark:text-red-200" data-testid={`cascading-effect-text-${effect.order}`}>
                               {effect.effect}
                             </span>
                           </div>

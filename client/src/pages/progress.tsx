@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { 
   TrendingUp, TrendingDown, Minus, Trophy, Shield, Target, 
-  Calendar, ArrowLeft, Loader2, Award, BarChart3
+  Calendar, ArrowLeft, Loader2, Award, BarChart3, Lock, Search, Clock, Star, ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +13,15 @@ import { Link } from "wouter";
 import type { UserProgress, CompletedSession } from "@shared/schema";
 import { motion } from "framer-motion";
 import { getAvailableBadges } from "@shared/scenarios";
+
+const badgeIcons: Record<string, typeof Shield> = {
+  shield: Shield,
+  lock: Lock,
+  search: Search,
+  clock: Clock,
+  star: Star,
+  "shield-check": ShieldCheck,
+};
 
 export default function ProgressPage() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -260,13 +269,16 @@ export default function ProgressPage() {
                   <div className="flex flex-wrap gap-3">
                     {progress.badgesEarned.map((badgeId) => {
                       const badge = badgeDetails(badgeId);
+                      const IconComponent = badge?.icon ? badgeIcons[badge.icon] || Shield : Shield;
                       return badge ? (
                         <div 
                           key={badgeId} 
                           className="flex items-center gap-2 bg-muted rounded-lg px-3 py-2"
                           data-testid={`badge-${badgeId}`}
                         >
-                          <span className="text-xl">{badge.icon}</span>
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <IconComponent className="w-4 h-4 text-primary" />
+                          </div>
                           <div>
                             <p className="text-sm font-medium text-foreground">{badge.name}</p>
                             <p className="text-xs text-muted-foreground">{badge.description}</p>

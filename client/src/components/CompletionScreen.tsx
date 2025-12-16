@@ -32,8 +32,9 @@ export function CompletionScreen({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6 max-w-3xl mx-auto"
+      className="min-h-screen bg-background py-8 px-4"
     >
+      <div className="space-y-6 max-w-3xl mx-auto">
       <div className="text-center">
         <motion.div
           initial={{ scale: 0 }}
@@ -169,6 +170,7 @@ export function CompletionScreen({
           {t('completion.tryAnotherScenario')}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
+      </div>
       </div>
     </motion.div>
   );
