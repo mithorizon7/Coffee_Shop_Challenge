@@ -1,0 +1,384 @@
+{
+  "id": "hotel_intermediate",
+  "title": "Business Trip Hotel",
+  "description": "You're staying at a hotel for a business conference. The Wi-Fi situation is confusing, and you have important work to do before tomorrow's presentation.",
+  "location": "Grand Metropolitan Hotel",
+  "difficulty": "intermediate",
+  "estimatedTime": "7 minutes",
+  "startSceneId": "hotel_arrival",
+  "scenes": [
+    {
+      "id": "hotel_arrival",
+      "type": "arrival",
+      "title": "Checking In",
+      "description": "You've just arrived at the Grand Metropolitan Hotel after a long flight. Tomorrow's presentation is crucial, and you need to review some documents and respond to emails tonight. The room has a desk and you're ready to work.",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "nextSceneId": "hotel_network_select"
+    },
+    {
+      "id": "hotel_network_select",
+      "type": "network_selection",
+      "title": "Hotel Wi-Fi Options",
+      "description": "Your laptop shows several networks. The hotel information card on the desk mentions 'complimentary Wi-Fi' but the network name is partially obscured by a coffee stain.",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "networks": [
+        {
+          "id": "hotel_official",
+          "ssid": "GrandMetro_Guest",
+          "signalStrength": 5,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Open network - typical for hotels with portal login"
+        },
+        {
+          "id": "hotel_premium",
+          "ssid": "GrandMetro_Premium",
+          "signalStrength": 5,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "safe",
+          "description": "Secured premium network - may require purchase"
+        },
+        {
+          "id": "hotel_fake",
+          "ssid": "Grand_Metropolitan_FREE",
+          "signalStrength": 4,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": false,
+          "isTrap": true,
+          "riskLevel": "dangerous",
+          "description": "Suspicious - different naming convention"
+        },
+        {
+          "id": "hotel_conference",
+          "ssid": "Conference_Center",
+          "signalStrength": 3,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Conference center network - may not be for guests"
+        },
+        {
+          "id": "personal_hotspot",
+          "ssid": "iPhone-John",
+          "signalStrength": 2,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Someone's personal hotspot nearby"
+        }
+      ],
+      "actions": [
+        { "id": "call_desk", "type": "verify_staff", "label": "Call front desk to verify network", "isPrimary": true }
+      ],
+      "choices": [
+        { "actionId": "connect_hotel_official", "nextSceneId": "hotel_portal" },
+        { "actionId": "connect_hotel_premium", "nextSceneId": "hotel_premium_login" },
+        { "actionId": "connect_hotel_fake", "nextSceneId": "hotel_consequence_trap" },
+        { "actionId": "call_desk", "nextSceneId": "hotel_verified" }
+      ]
+    },
+    {
+      "id": "hotel_portal",
+      "type": "captive_portal",
+      "title": "Captive Portal",
+      "description": "A login page appears. It asks for your room number and last name to authenticate. There's also a checkbox to 'Install our HotelConnect app for the best experience.'",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "actions": [
+        { "id": "login_only", "type": "proceed", "label": "Enter room info and login", "isPrimary": true },
+        { "id": "login_and_install", "type": "install_profile", "label": "Login AND install the app", "isDanger": true },
+        { "id": "use_vpn_portal", "type": "use_vpn", "label": "Login, then immediately enable VPN" },
+        { "id": "switch_network", "type": "switch_network", "label": "Go back and try a different network" }
+      ],
+      "choices": [
+        { "actionId": "login_only", "nextSceneId": "hotel_task_email" },
+        { "actionId": "login_and_install", "nextSceneId": "hotel_consequence_app" },
+        { "actionId": "use_vpn_portal", "nextSceneId": "hotel_task_email_vpn" },
+        { "actionId": "switch_network", "nextSceneId": "hotel_network_select" }
+      ]
+    },
+    {
+      "id": "hotel_verified",
+      "type": "network_selection",
+      "title": "Verified Information",
+      "description": "The front desk confirms: 'Our free Wi-Fi is GrandMetro_Guest - you'll need your room number and last name to log in. We also have GrandMetro_Premium for $15/night with faster speeds and better security.'",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "networks": [
+        {
+          "id": "hotel_official_v",
+          "ssid": "GrandMetro_Guest",
+          "signalStrength": 5,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": true,
+          "isTrap": false,
+          "verifiedByStaff": true,
+          "riskLevel": "suspicious",
+          "description": "Official free network - VERIFIED"
+        },
+        {
+          "id": "hotel_premium_v",
+          "ssid": "GrandMetro_Premium",
+          "signalStrength": 5,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "verifiedByStaff": true,
+          "riskLevel": "safe",
+          "description": "Official premium network - VERIFIED - $15/night"
+        }
+      ],
+      "choices": [
+        { "actionId": "connect_verified_guest", "nextSceneId": "hotel_portal" },
+        { "actionId": "connect_verified_premium", "nextSceneId": "hotel_premium_connected" }
+      ]
+    },
+    {
+      "id": "hotel_premium_login",
+      "type": "task_prompt",
+      "title": "Premium Network",
+      "description": "The premium network requires a password. The hotel information card shows it costs $15/night but promises 'enterprise-grade security.'",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "task": {
+        "id": "premium_decision",
+        "type": "browse",
+        "title": "Premium Network Decision",
+        "description": "Decide whether to pay for the premium network or use the free option.",
+        "sensitivityLevel": "low"
+      },
+      "actions": [
+        { "id": "pay_premium", "type": "proceed", "label": "Pay $15 for premium (call front desk)", "isPrimary": true },
+        { "id": "use_free", "type": "switch_network", "label": "Use the free network instead" }
+      ],
+      "choices": [
+        { "actionId": "pay_premium", "nextSceneId": "hotel_premium_connected" },
+        { "actionId": "use_free", "nextSceneId": "hotel_portal" }
+      ]
+    },
+    {
+      "id": "hotel_premium_connected",
+      "type": "consequence",
+      "title": "Premium Connection",
+      "description": "You're connected to the premium network...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_premium",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Secure Choice",
+        "whatHappened": "You chose the premium, password-protected network. This provides encryption between your device and the access point, making it significantly harder for nearby attackers to intercept your traffic.",
+        "whyRisky": "This is a much safer choice than open networks. The only remaining risk is that the hotel could theoretically monitor traffic, but reputable hotels don't do this.",
+        "saferAlternative": "For maximum security, still use a VPN even on the premium network. But your choice was solid - paying for security is often worth it when doing sensitive work.",
+        "technicalExplanation": "WPA2 encryption protects data between your device and the router. Unlike open networks, an attacker can't simply capture and read packets without knowing the password.",
+        "safetyPointsChange": 20,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "hotel_task_presentation"
+    },
+    {
+      "id": "hotel_consequence_trap",
+      "type": "consequence",
+      "title": "Fake Hotel Network",
+      "description": "You connected to what you thought was the hotel's network...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_hotel_trap",
+        "type": "credential_harvested",
+        "severity": "danger",
+        "title": "Evil Twin Attack",
+        "whatHappened": "You connected to 'Grand_Metropolitan_FREE' - a fake network. Notice how it uses underscores instead of the hotel's camelCase naming? A fake login portal appeared and captured your room number, name, and the password you entered.",
+        "whyRisky": "Attackers specifically target hotels because guests are often tired from travel and in a hurry to connect. The slightly different network name was designed to seem legitimate while actually being a trap.",
+        "saferAlternative": "Always verify the exact network name with hotel staff. Pay attention to naming conventions - legitimate hotel networks usually follow a consistent pattern.",
+        "technicalExplanation": "This 'evil twin' attack is common in hotels. Attackers set up a fake network with a similar name and stronger signal. Guests connect, thinking it's legitimate, and all traffic passes through the attacker's device.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 35
+      },
+      "nextSceneId": "hotel_completion"
+    },
+    {
+      "id": "hotel_consequence_app",
+      "type": "consequence",
+      "title": "App Installation Request",
+      "description": "You installed the app the portal suggested...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_app",
+        "type": "malware_installed",
+        "severity": "danger",
+        "title": "Potentially Malicious App",
+        "whatHappened": "You installed an app from an unknown source. Even if this was a legitimate hotel app, installing software from captive portals is extremely risky. The app could have extensive permissions to access your data.",
+        "whyRisky": "Legitimate businesses rarely require app installation just to use Wi-Fi. This is a common tactic for installing monitoring software, adware, or malware. The 'app' could access your contacts, location, and other data.",
+        "saferAlternative": "Never install apps, profiles, or certificates from captive portals. If a business truly requires an app, download it directly from official app stores where it's been reviewed for security.",
+        "technicalExplanation": "Mobile device management (MDM) profiles and sideloaded apps can gain extensive access to your device - reading emails, tracking location, accessing files, and even capturing passwords.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 45
+      },
+      "nextSceneId": "hotel_completion"
+    },
+    {
+      "id": "hotel_task_email",
+      "type": "task_prompt",
+      "title": "Work Email",
+      "description": "You're connected to the hotel network. You need to check emails from your team about tomorrow's presentation.",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "task": {
+        "id": "hotel_email",
+        "type": "email",
+        "title": "Check Team Updates",
+        "description": "Review emails from your team with updates for tomorrow's presentation.",
+        "sensitivityLevel": "medium"
+      },
+      "actions": [
+        { "id": "email_proceed", "type": "proceed", "label": "Check email now" },
+        { "id": "email_vpn", "type": "use_vpn", "label": "Enable VPN, then check", "isPrimary": true }
+      ],
+      "choices": [
+        { "actionId": "email_proceed", "nextSceneId": "hotel_task_presentation" },
+        { "actionId": "email_vpn", "nextSceneId": "hotel_task_presentation_vpn" }
+      ]
+    },
+    {
+      "id": "hotel_task_email_vpn",
+      "type": "task_prompt",
+      "title": "VPN Active",
+      "description": "Your VPN is running. You can now check your emails securely.",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "task": {
+        "id": "hotel_email_vpn",
+        "type": "email",
+        "title": "Check Team Updates",
+        "description": "Review emails from your team with updates for tomorrow's presentation.",
+        "sensitivityLevel": "medium"
+      },
+      "actions": [
+        { "id": "email_proceed_vpn", "type": "proceed", "label": "Check email (VPN protected)", "isPrimary": true }
+      ],
+      "choices": [
+        { "actionId": "email_proceed_vpn", "nextSceneId": "hotel_task_presentation_vpn" }
+      ]
+    },
+    {
+      "id": "hotel_task_presentation",
+      "type": "task_prompt",
+      "title": "Presentation Files",
+      "description": "You need to download an updated presentation file that your colleague shared via a cloud link.",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "task": {
+        "id": "download_pres",
+        "type": "download",
+        "title": "Download Updated Slides",
+        "description": "Download the updated presentation from the cloud sharing link in your email.",
+        "sensitivityLevel": "high",
+        "riskHint": "Downloaded files could be intercepted or modified on insecure networks."
+      },
+      "actions": [
+        { "id": "download_now", "type": "proceed", "label": "Download the file" },
+        { "id": "download_vpn", "type": "use_vpn", "label": "Enable VPN first", "isPrimary": true },
+        { "id": "download_postpone", "type": "postpone", "label": "Use hotel business center instead" }
+      ],
+      "choices": [
+        { "actionId": "download_now", "nextSceneId": "hotel_consequence_download_risky" },
+        { "actionId": "download_vpn", "nextSceneId": "hotel_consequence_download_vpn" },
+        { "actionId": "download_postpone", "nextSceneId": "hotel_consequence_download_postponed" }
+      ]
+    },
+    {
+      "id": "hotel_task_presentation_vpn",
+      "type": "task_prompt",
+      "title": "Presentation Files",
+      "description": "Your VPN is active. You need to download an updated presentation file.",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "task": {
+        "id": "download_pres_vpn",
+        "type": "download",
+        "title": "Download Updated Slides",
+        "description": "Download the updated presentation from the cloud sharing link.",
+        "sensitivityLevel": "high"
+      },
+      "actions": [
+        { "id": "download_vpn_active", "type": "proceed", "label": "Download (VPN protected)", "isPrimary": true }
+      ],
+      "choices": [
+        { "actionId": "download_vpn_active", "nextSceneId": "hotel_consequence_download_vpn" }
+      ]
+    },
+    {
+      "id": "hotel_consequence_download_risky",
+      "type": "consequence",
+      "title": "Unprotected Download",
+      "description": "You downloaded the file on the open network...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_download_risky",
+        "type": "session_compromised",
+        "severity": "warning",
+        "title": "Risky File Transfer",
+        "whatHappened": "You downloaded files on an open hotel network without VPN protection. While cloud services use HTTPS, sophisticated attackers on hotel networks could potentially intercept or modify transfers.",
+        "whyRisky": "Open hotel networks are prime targets for attackers. Downloading work files exposes metadata and, in some attack scenarios, the files themselves could be tampered with.",
+        "saferAlternative": "Use a VPN when downloading any work files on public networks. Verify file integrity if your organization provides checksums. Consider using mobile data for sensitive transfers.",
+        "technicalExplanation": "While HTTPS protects content in transit, attackers could potentially perform SSL stripping attacks or compromise DNS to redirect to malicious servers.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 20
+      },
+      "nextSceneId": "hotel_completion"
+    },
+    {
+      "id": "hotel_consequence_download_vpn",
+      "type": "consequence",
+      "title": "Protected Download",
+      "description": "You downloaded the file with VPN protection...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_download_vpn",
+        "type": "vpn_protected",
+        "severity": "success",
+        "title": "Secure File Transfer",
+        "whatHappened": "You used VPN protection while downloading your work files. All traffic was encrypted through a secure tunnel, protecting both the files and metadata from potential attackers on the hotel network.",
+        "whyRisky": "You made the right choice. VPN protection on hotel networks is especially important because these are common targets for business travelers.",
+        "saferAlternative": "You did great! For extremely sensitive files, you might also verify file integrity using checksums if your organization provides them.",
+        "technicalExplanation": "The VPN encrypted all traffic between your device and the VPN server, making it impossible for local network attackers to intercept or modify your downloads.",
+        "safetyPointsChange": 25,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "hotel_completion"
+    },
+    {
+      "id": "hotel_consequence_download_postponed",
+      "type": "consequence",
+      "title": "Using Business Center",
+      "description": "You decided to use the hotel's business center...",
+      "location": "Grand Metropolitan Hotel - Business Center",
+      "consequence": {
+        "id": "cons_download_postponed",
+        "type": "action_postponed",
+        "severity": "success",
+        "title": "Cautious Choice",
+        "whatHappened": "You chose to use the hotel's business center, which typically has a wired connection and better security. This shows excellent security awareness.",
+        "whyRisky": "This was a safe choice. The trade-off is convenience - you had to leave your room. Business center computers may have their own risks (keyloggers, shared usage), so bring your own device if possible.",
+        "saferAlternative": "Using the business center's wired connection with your own laptop is often more secure than room Wi-Fi. Just be aware of physical security in shared spaces.",
+        "technicalExplanation": "Wired connections are generally more secure than wireless because they can't be intercepted over the air. However, they're still subject to network-level monitoring by the hotel.",
+        "safetyPointsChange": 15,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "hotel_completion"
+    },
+    {
+      "id": "hotel_completion",
+      "type": "completion",
+      "title": "Scenario Complete",
+      "description": "You've completed the Hotel Business Trip scenario! Let's see how well you navigated the hotel's network challenges.",
+      "location": "Grand Metropolitan Hotel"
+    }
+  ]
+}

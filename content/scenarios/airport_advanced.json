@@ -1,0 +1,336 @@
+{
+  "id": "airport_advanced",
+  "title": "Airport Rush",
+  "description": "Your flight is delayed, you're stressed, and you absolutely must complete some urgent work. The airport has multiple Wi-Fi options, but time pressure is making you consider cutting corners.",
+  "location": "Metropolitan International Airport",
+  "difficulty": "advanced",
+  "estimatedTime": "8 minutes",
+  "startSceneId": "airport_arrival",
+  "timerEnabled": true,
+  "timerSeconds": 300,
+  "scenes": [
+    {
+      "id": "airport_arrival",
+      "type": "arrival",
+      "title": "Flight Delayed",
+      "description": "Your flight has been delayed by 2 hours. You're exhausted, stressed, and your phone is at 15% battery. Your boss just messaged that the client contract needs your signature TODAY, and there's a deadline in 45 minutes. You find a seat near an outlet.",
+      "location": "Metropolitan International Airport - Gate B7",
+      "nextSceneId": "airport_network_select"
+    },
+    {
+      "id": "airport_network_select",
+      "type": "network_selection",
+      "title": "Airport Networks",
+      "description": "Your laptop shows multiple networks. You're stressed about the deadline. There's an airport info kiosk nearby, but there's a line.",
+      "location": "Metropolitan International Airport - Gate B7",
+      "networks": [
+        {
+          "id": "airport_official",
+          "ssid": "MetroAirport_Free",
+          "signalStrength": 4,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Official airport network - open with captive portal"
+        },
+        {
+          "id": "airport_lounge",
+          "ssid": "SkyLounge_Premium",
+          "signalStrength": 5,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "safe",
+          "description": "Airline lounge network - requires membership"
+        },
+        {
+          "id": "airport_fake_1",
+          "ssid": "Airport_Free_WiFi",
+          "signalStrength": 5,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": false,
+          "isTrap": true,
+          "riskLevel": "dangerous",
+          "description": "Strong signal, generic name - suspicious"
+        },
+        {
+          "id": "airport_fake_2",
+          "ssid": "MetroAirport-Guest",
+          "signalStrength": 4,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": false,
+          "isTrap": true,
+          "riskLevel": "dangerous",
+          "description": "Similar name but with hyphen instead of underscore"
+        },
+        {
+          "id": "mobile_hotspot",
+          "ssid": "Use your mobile data",
+          "signalStrength": 3,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "safe",
+          "description": "Your phone's personal hotspot - uses cellular data"
+        }
+      ],
+      "actions": [
+        { "id": "wait_kiosk", "type": "verify_staff", "label": "Wait in line at info kiosk to verify" },
+        { "id": "use_mobile", "type": "proceed", "label": "Use mobile data hotspot instead", "isPrimary": true }
+      ],
+      "choices": [
+        { "actionId": "connect_airport_official", "nextSceneId": "airport_portal" },
+        { "actionId": "connect_fake_1", "nextSceneId": "airport_consequence_trap" },
+        { "actionId": "connect_fake_2", "nextSceneId": "airport_consequence_trap_subtle" },
+        { "actionId": "wait_kiosk", "nextSceneId": "airport_verified" },
+        { "actionId": "use_mobile", "nextSceneId": "airport_mobile_connected" }
+      ]
+    },
+    {
+      "id": "airport_mobile_connected",
+      "type": "consequence",
+      "title": "Mobile Data",
+      "description": "You enabled your phone's hotspot...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_mobile",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Excellent Decision Under Pressure",
+        "whatHappened": "Despite the time pressure, you chose to use your mobile data hotspot instead of potentially risky airport Wi-Fi. This is the most secure option available to you right now.",
+        "whyRisky": "Using mobile data is generally safer than public Wi-Fi because the connection goes directly to your carrier's network, bypassing all local network risks.",
+        "saferAlternative": "You made the optimal choice! Mobile data is almost always more secure than public Wi-Fi, especially in high-risk environments like airports where attackers specifically target stressed travelers.",
+        "technicalExplanation": "Mobile data connections are encrypted between your device and the cell tower using strong encryption. There's no local network for attackers to exploit.",
+        "safetyPointsChange": 30,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "airport_task_contract"
+    },
+    {
+      "id": "airport_portal",
+      "type": "captive_portal",
+      "title": "Airport Portal",
+      "description": "The airport's portal loads. It shows ads and asks you to accept terms. There's an option to 'Connect faster by downloading our Airport Companion app' and a 'Premium High-Speed Access' for $8.",
+      "location": "Metropolitan International Airport - Gate B7",
+      "actions": [
+        { "id": "accept_terms", "type": "proceed", "label": "Accept terms and connect (free)" },
+        { "id": "download_app", "type": "install_profile", "label": "Download app for faster connection", "isDanger": true },
+        { "id": "pay_premium", "type": "proceed", "label": "Pay $8 for premium access", "isPrimary": true },
+        { "id": "use_mobile_instead", "type": "switch_network", "label": "Switch to mobile data instead" }
+      ],
+      "choices": [
+        { "actionId": "accept_terms", "nextSceneId": "airport_task_contract_risky" },
+        { "actionId": "download_app", "nextSceneId": "airport_consequence_app" },
+        { "actionId": "pay_premium", "nextSceneId": "airport_task_contract" },
+        { "actionId": "use_mobile_instead", "nextSceneId": "airport_mobile_connected" }
+      ]
+    },
+    {
+      "id": "airport_verified",
+      "type": "network_selection",
+      "title": "Info Kiosk Confirmation",
+      "description": "After waiting 10 minutes (your deadline is now 35 minutes away), the staff confirms: 'Our official network is MetroAirport_Free with an underscore. Be careful - we've had reports of fake networks. The SkyLounge network is only for lounge members.'",
+      "location": "Metropolitan International Airport - Gate B7",
+      "networks": [
+        {
+          "id": "airport_official_v",
+          "ssid": "MetroAirport_Free",
+          "signalStrength": 4,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": true,
+          "isTrap": false,
+          "verifiedByStaff": true,
+          "riskLevel": "suspicious",
+          "description": "Official airport network - VERIFIED"
+        }
+      ],
+      "choices": [
+        { "actionId": "connect_verified_airport", "nextSceneId": "airport_portal" }
+      ]
+    },
+    {
+      "id": "airport_consequence_trap",
+      "type": "consequence",
+      "title": "Generic Trap Network",
+      "description": "You connected to 'Airport_Free_WiFi'...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_airport_trap",
+        "type": "credential_harvested",
+        "severity": "danger",
+        "title": "Attacker's Network",
+        "whatHappened": "You connected to a network with a suspiciously generic name and unusually strong signal. This was a portable hotspot set up by an attacker specifically to target stressed travelers.",
+        "whyRisky": "Time pressure made you rush your decision. Airports are high-value targets because travelers are often distracted and in a hurry. Generic names like 'Airport_Free_WiFi' are common attack vectors.",
+        "saferAlternative": "Even under time pressure, take 30 seconds to verify the official network name. Look for posted signs or check the airport's official website using mobile data first.",
+        "technicalExplanation": "Attackers use high-gain antennas to broadcast strong signals, making their fake networks appear as the 'best' connection. All your traffic then flows through their device.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 40
+      },
+      "nextSceneId": "airport_completion"
+    },
+    {
+      "id": "airport_consequence_trap_subtle",
+      "type": "consequence",
+      "title": "Subtle Naming Trap",
+      "description": "You connected to 'MetroAirport-Guest'...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_airport_subtle",
+        "type": "account_locked",
+        "severity": "danger",
+        "title": "Account Security Alert",
+        "whatHappened": "You connected to 'MetroAirport-Guest' which looked legitimate at first glance. The real network uses an underscore (MetroAirport_Free), but this fake uses a hyphen and says 'Guest' instead of 'Free'. When you tried to sign the contract, your company's security system detected suspicious login activity from an unknown network and locked your account.",
+        "whyRisky": "This is a sophisticated attack that exploits the small differences people overlook when rushed. The attacker knew the official network name and created a convincing variation. Your credentials were captured and attempted reuse triggered security lockouts.",
+        "saferAlternative": "Check the exact network name character by character. In airports, even one wrong character could mean you're connecting to an attacker's network.",
+        "technicalExplanation": "Attackers research target locations to create convincing fake network names. When they capture credentials and attempt to use them, many enterprise security systems detect the anomalous login pattern and lock the account to prevent unauthorized access.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 35
+      },
+      "nextSceneId": "airport_completion"
+    },
+    {
+      "id": "airport_consequence_app",
+      "type": "consequence",
+      "title": "App Installation",
+      "description": "You downloaded the 'Airport Companion' app...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_airport_app",
+        "type": "malware_installed",
+        "severity": "danger",
+        "title": "Suspicious App Installed",
+        "whatHappened": "Under time pressure, you installed an app from a captive portal. Even if this was a legitimate airport app, installing apps this way bypasses app store security reviews.",
+        "whyRisky": "Legitimate airports don't require app installation for Wi-Fi access. This app could contain tracking software, adware, or worse. The time pressure made you skip your usual caution.",
+        "saferAlternative": "Never install apps from captive portals. If you really want an airport's app, download it from the official app store BEFORE you need it, not in a rushed moment.",
+        "technicalExplanation": "Apps installed outside official stores bypass security scanning and could request excessive permissions. Under time pressure, users often grant all permissions without reading them.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 45
+      },
+      "nextSceneId": "airport_completion"
+    },
+    {
+      "id": "airport_task_contract",
+      "type": "task_prompt",
+      "title": "Urgent Contract",
+      "description": "You're connected. The contract signing deadline is in 30 minutes. The document requires your digital signature.",
+      "location": "Metropolitan International Airport - Gate B7",
+      "task": {
+        "id": "contract_sign",
+        "type": "payment",
+        "title": "Sign Client Contract",
+        "description": "Open the secure document portal and digitally sign the client contract before the deadline.",
+        "sensitivityLevel": "critical",
+        "riskHint": "Digital signatures are legally binding and use your credentials."
+      },
+      "actions": [
+        { "id": "sign_now", "type": "proceed", "label": "Sign the contract now", "isDanger": true },
+        { "id": "sign_vpn", "type": "use_vpn", "label": "Enable VPN, then sign", "isPrimary": true },
+        { "id": "call_client", "type": "postpone", "label": "Call client to request deadline extension" }
+      ],
+      "choices": [
+        { "actionId": "sign_now", "nextSceneId": "airport_consequence_sign_risky" },
+        { "actionId": "sign_vpn", "nextSceneId": "airport_consequence_sign_vpn" },
+        { "actionId": "call_client", "nextSceneId": "airport_consequence_sign_delayed" }
+      ]
+    },
+    {
+      "id": "airport_task_contract_risky",
+      "type": "task_prompt",
+      "title": "Urgent Contract",
+      "description": "You're on the free airport network without VPN. The contract deadline is in 25 minutes.",
+      "location": "Metropolitan International Airport - Gate B7",
+      "task": {
+        "id": "contract_sign_risky",
+        "type": "payment",
+        "title": "Sign Client Contract",
+        "description": "Sign the contract on this unprotected network?",
+        "sensitivityLevel": "critical",
+        "riskHint": "You're on an open network with many potential threats."
+      },
+      "actions": [
+        { "id": "sign_anyway", "type": "proceed", "label": "Sign now - no time!", "isDanger": true },
+        { "id": "enable_vpn_late", "type": "use_vpn", "label": "Enable VPN first" },
+        { "id": "switch_mobile", "type": "switch_network", "label": "Switch to mobile data", "isPrimary": true }
+      ],
+      "choices": [
+        { "actionId": "sign_anyway", "nextSceneId": "airport_consequence_sign_risky" },
+        { "actionId": "enable_vpn_late", "nextSceneId": "airport_consequence_sign_vpn" },
+        { "actionId": "switch_mobile", "nextSceneId": "airport_mobile_connected" }
+      ]
+    },
+    {
+      "id": "airport_consequence_sign_risky",
+      "type": "consequence",
+      "title": "Unprotected Signature",
+      "description": "You signed the contract on the open network...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_sign_risky",
+        "type": "session_compromised",
+        "severity": "danger",
+        "title": "High-Risk Legal Action",
+        "whatHappened": "You signed a legally binding document on an open airport network. While the signing portal likely uses HTTPS, sophisticated attackers in airports could potentially intercept or forge this transaction.",
+        "whyRisky": "Digital signatures involve authentication credentials that could be valuable to attackers. Airports are known hotspots for corporate espionage targeting business travelers.",
+        "saferAlternative": "For legally binding documents, use mobile data or VPN. If possible, request deadline extensions rather than compromising security on critical transactions.",
+        "technicalExplanation": "Even with HTTPS, session hijacking attacks, malicious proxy configurations, or compromised certificates could potentially expose your signing credentials on open networks.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 40
+      },
+      "nextSceneId": "airport_completion"
+    },
+    {
+      "id": "airport_consequence_sign_vpn",
+      "type": "consequence",
+      "title": "Protected Signature",
+      "description": "You enabled VPN before signing...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_sign_vpn",
+        "type": "vpn_protected",
+        "severity": "success",
+        "title": "Secure Under Pressure",
+        "whatHappened": "Despite the time pressure, you took the extra minute to enable VPN protection before signing the contract. This significantly reduced the risk of credential theft or session hijacking.",
+        "whyRisky": "You made the right choice. Even though it cost a minute, the VPN encryption protects your legally binding transaction from local network attacks.",
+        "saferAlternative": "You did well! For maximum security on critical legal documents, mobile data is still preferable to any public Wi-Fi, even with VPN.",
+        "technicalExplanation": "VPN encryption ensures that even if an attacker is monitoring the network, your signing session is encrypted end-to-end and cannot be intercepted or modified.",
+        "safetyPointsChange": 30,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "airport_completion"
+    },
+    {
+      "id": "airport_consequence_sign_delayed",
+      "type": "consequence",
+      "title": "Deadline Extension",
+      "description": "You called the client...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_sign_delayed",
+        "type": "action_postponed",
+        "severity": "success",
+        "title": "Professional Judgment",
+        "whatHappened": "You called the client to explain the situation and requested a deadline extension. They agreed to extend by 4 hours until you reach a secure network. This protected both you and the client.",
+        "whyRisky": "This was an excellent decision. It required courage to ask for an extension, but it's better than compromising a legal document. Most clients appreciate security-conscious partners.",
+        "saferAlternative": "You made the optimal choice for a high-stakes situation. Explaining security concerns to clients demonstrates professionalism and protects both parties.",
+        "technicalExplanation": "By postponing the transaction, you eliminated all network-based risks entirely. For legally binding documents, this 'zero risk' approach is often the wisest choice.",
+        "safetyPointsChange": 35,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "airport_completion"
+    },
+    {
+      "id": "airport_completion",
+      "type": "completion",
+      "title": "Scenario Complete",
+      "description": "You've completed the Airport Rush scenario! This was the most challenging test of your judgment under pressure.",
+      "location": "Metropolitan International Airport"
+    }
+  ]
+}

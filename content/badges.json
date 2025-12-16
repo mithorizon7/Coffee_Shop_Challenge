@@ -1,0 +1,38 @@
+[
+  {
+    "id": "security_aware",
+    "name": "Security Aware",
+    "description": "Completed your first scenario without major security incidents",
+    "icon": "shield"
+  },
+  {
+    "id": "vpn_master",
+    "name": "VPN Master",
+    "description": "Consistently used VPN protection on public networks",
+    "icon": "lock"
+  },
+  {
+    "id": "network_detective",
+    "name": "Network Detective",
+    "description": "Successfully identified a trap network",
+    "icon": "search"
+  },
+  {
+    "id": "patient_professional",
+    "name": "Patient Professional",
+    "description": "Postponed sensitive tasks until reaching a secure network",
+    "icon": "clock"
+  },
+  {
+    "id": "perfect_score",
+    "name": "Perfect Score",
+    "description": "Completed a scenario with zero risk points",
+    "icon": "star"
+  },
+  {
+    "id": "https_hero",
+    "name": "HTTPS Hero",
+    "description": "Always verified site security before entering sensitive data",
+    "icon": "shield-check"
+  }
+]

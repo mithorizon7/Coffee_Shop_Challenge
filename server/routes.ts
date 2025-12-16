@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
-import { scenarios, availableBadges } from "../shared/scenarios";
+import { getAllScenarios, getAvailableBadges } from "../shared/scenarios";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import { isAuthenticated } from "./replit_integrations/auth";
@@ -63,6 +63,7 @@ export async function registerRoutes(
 ): Promise<Server> {
   
   app.get("/api/scenarios", (req, res) => {
+    const scenarios = getAllScenarios();
     const scenarioList = scenarios.map(s => ({
       id: s.id,
       title: s.title,
@@ -75,6 +76,7 @@ export async function registerRoutes(
   });
 
   app.get("/api/scenarios/:id", (req, res) => {
+    const scenarios = getAllScenarios();
     const scenario = scenarios.find(s => s.id === req.params.id);
     if (!scenario) {
       return res.status(404).json({ error: "Scenario not found" });
@@ -83,7 +85,7 @@ export async function registerRoutes(
   });
 
   app.get("/api/badges", (req, res) => {
-    res.json(availableBadges);
+    res.json(getAvailableBadges());
   });
 
   app.post("/api/sessions", async (req, res) => {
@@ -99,6 +101,7 @@ export async function registerRoutes(
 
       const { scenarioId, difficulty } = parseResult.data;
       
+      const scenarios = getAllScenarios();
       const scenario = scenarios.find(s => s.id === scenarioId);
       if (!scenario) {
         return res.status(400).json({ error: "Invalid scenario ID" });
@@ -193,13 +196,14 @@ export async function registerRoutes(
 
       const { scenarioId, difficulty, score, badges, grade } = parseResult.data;
 
+      const scenarios = getAllScenarios();
       const scenario = scenarios.find(s => s.id === scenarioId);
       if (!scenario) {
         return res.status(400).json({ error: "Invalid scenario ID" });
       }
 
       if (badges && badges.length > 0) {
-        const validBadgeIds = availableBadges.map(b => b.id);
+        const validBadgeIds = getAvailableBadges().map(b => b.id);
         const invalidBadges = badges.filter(b => !validBadgeIds.includes(b.id));
         if (invalidBadges.length > 0) {
           return res.status(400).json({ error: "Invalid badge IDs provided" });
