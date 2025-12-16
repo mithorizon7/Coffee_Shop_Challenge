@@ -17,6 +17,7 @@ import { motion } from "framer-motion";
 type ViewState = "landing" | "scenario_select" | "loading_scenario" | "playing";
 
 export default function Home() {
+  const { t } = useTranslation();
   const [viewState, setViewState] = useState<ViewState>("landing");
   const [currentSession, setCurrentSession] = useState<GameSession | null>(null);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
@@ -89,7 +90,7 @@ export default function Home() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading scenario...</p>
+          <p className="text-muted-foreground">{t('home.loadingScenario')}</p>
         </div>
       </div>
     );
@@ -154,29 +155,29 @@ export default function Home() {
           >
             <div>
               <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-                Choose Your Challenge
+                {t('home.chooseScenario')}
               </h1>
               <p className="text-muted-foreground">
-                Select a scenario to practice your public Wi-Fi security judgment
+                {t('home.chooseScenarioSubtitle')}
               </p>
             </div>
 
             {scenariosLoading && (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <span className="ml-3 text-muted-foreground">Loading scenarios...</span>
+                <span className="ml-3 text-muted-foreground">{t('home.loadingScenarios')}</span>
               </div>
             )}
 
             {scenariosError && (
               <Card className="p-6 text-center">
                 <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-destructive" />
-                <h3 className="font-medium text-foreground mb-2">Failed to load scenarios</h3>
+                <h3 className="font-medium text-foreground mb-2">{t('home.failedToLoadScenarios')}</h3>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Please try refreshing the page.
+                  {t('errors.loadingFailed')}
                 </p>
                 <Button onClick={() => window.location.reload()} variant="outline">
-                  Refresh Page
+                  {t('home.refreshPage')}
                 </Button>
               </Card>
             )}
@@ -244,7 +245,7 @@ export default function Home() {
               <Button variant="ghost" size="sm" asChild data-testid="button-login">
                 <a href="/api/login">
                   <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
+                  {t('home.signIn')}
                 </a>
               </Button>
             )}
@@ -265,11 +266,10 @@ export default function Home() {
               <Wifi className="w-10 h-10 text-primary" />
             </div>
             <h1 className="font-display text-4xl font-bold text-foreground">
-              The Coffee Shop Challenge
+              {t('home.title')}
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Learn to recognize public Wi-Fi security risks through realistic scenarios. 
-              Practice making smart decisions when connecting in cafes, hotels, and airports.
+              {t('home.description')}
             </p>
           </div>
 
@@ -279,10 +279,10 @@ export default function Home() {
                 <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="font-display font-semibold text-foreground mb-2">
-                Zero Risk Learning
+                {t('home.zeroRisk')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Practice in safe, fictional scenarios. No real networks or data involved.
+                {t('home.zeroRiskDesc')}
               </p>
             </Card>
 
@@ -291,10 +291,10 @@ export default function Home() {
                 <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
               </div>
               <h3 className="font-display font-semibold text-foreground mb-2">
-                Realistic Consequences
+                {t('home.realisticConsequences')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Experience plausible outcomes like credential theft, not cartoon hacking.
+                {t('home.realisticConsequencesDesc')}
               </p>
             </Card>
 
@@ -303,10 +303,10 @@ export default function Home() {
                 <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-display font-semibold text-foreground mb-2">
-                Educational Debriefs
+                {t('home.educationalDebriefs')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Every choice explained with technical context and safer alternatives.
+                {t('home.educationalDebriefsDesc')}
               </p>
             </Card>
           </div>
@@ -317,42 +317,42 @@ export default function Home() {
               onClick={handleStartChallenge}
               data-testid="button-start-challenge"
             >
-              Start the Challenge
+              {t('home.startLearning')}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <p className="text-sm text-muted-foreground">
-              Three difficulty levels from beginner to advanced
+              {t('home.difficultyLevels')}
             </p>
           </div>
 
           <Card className="p-6 bg-muted/50">
             <h3 className="font-display font-semibold text-foreground mb-3">
-              What You'll Learn
+              {t('home.whatYouWillLearn')}
             </h3>
             <ul className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>How to identify legitimate vs. fake Wi-Fi networks</span>
+                <span>{t('home.learn1')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>When to use VPN protection on public networks</span>
+                <span>{t('home.learn2')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>Which tasks are safe vs. risky on public Wi-Fi</span>
+                <span>{t('home.learn3')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>How to verify network authenticity with staff</span>
+                <span>{t('home.learn4')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>Why installing apps from captive portals is dangerous</span>
+                <span>{t('home.learn5')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>How attackers use "evil twin" networks</span>
+                <span>{t('home.learn6')}</span>
               </li>
             </ul>
           </Card>
@@ -362,8 +362,7 @@ export default function Home() {
       <footer className="border-t border-border mt-12">
         <div className="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
           <p>
-            Part of the Network Security Literacy Lab. 
-            All scenarios are fictional but based on real-world attack patterns.
+            {t('home.footer')}
           </p>
         </div>
       </footer>
