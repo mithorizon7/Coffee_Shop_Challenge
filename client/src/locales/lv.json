@@ -286,16 +286,6 @@
     "accountLocked": "Konts bloķēts",
     "privacyLeaked": "Privātums noplūdis"
   },
-  "tips": {
-    "useVpn": "Izmanto VPN visos publiskajos tīklos, īpaši sensitīviem uzdevumiem",
-    "verifyNetwork": "Vienmēr pārbaudi tīkla nosaukumus pie personāla pirms pieslēgšanās",
-    "neverInstall": "Nekad neinstalē lietotnes vai profilus no pieslēgšanās portāliem",
-    "postponeSensitive": "Atliec sensitīvus uzdevumus, piemēram, bankas darījumus, līdz esi drošā tīklā",
-    "useMobileData": "Apsver mobilā datu izmantošanu kritiskiem uzdevumiem publiskā Wi-Fi vietā",
-    "extraCaution": "Esi īpaši piesardzīgs augsta trafika vietās, piemēram, lidostās un viesnīcās",
-    "keepUpGoodWork": "Lieliski! Turpini izmantot VPN un pārbaudīt tīklus",
-    "shareKnowledge": "Dalies ar šīm drošības praksēm ar kolēģiem un ģimeni"
-  },
   "errors": {
     "scenarioNotFound": "Scenārijs nav atrasts",
     "loadingFailed": "Neizdevās ielādēt. Lūdzu, mēģini vēlreiz.",

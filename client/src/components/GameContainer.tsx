@@ -333,7 +333,7 @@ export function GameContainer({
             )}
 
             {session.vpnEnabled && (
-              <div className="fixed bottom-4 right-4 bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg">
+              <div className="fixed bottom-4 right-4 bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg pointer-events-none">
                 <Shield className="w-4 h-4" />
                 {t('game.vpnActive')}
               </div>

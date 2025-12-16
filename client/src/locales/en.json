@@ -286,16 +286,6 @@
     "accountLocked": "Account locked",
     "privacyLeaked": "Privacy leaked"
   },
-  "tips": {
-    "useVpn": "Use a VPN on all public networks, especially for sensitive tasks",
-    "verifyNetwork": "Always verify network names with staff before connecting",
-    "neverInstall": "Never install apps or profiles from captive portals",
-    "postponeSensitive": "Postpone sensitive tasks like banking until you're on a secure network",
-    "useMobileData": "Consider using mobile data instead of public Wi-Fi for critical tasks",
-    "extraCaution": "Be extra cautious in high-traffic areas like airports and hotels",
-    "keepUpGoodWork": "Great job! Keep using VPN and verifying networks",
-    "shareKnowledge": "Share these security practices with colleagues and family"
-  },
   "errors": {
     "scenarioNotFound": "Scenario not found",
     "loadingFailed": "Failed to load. Please try again.",
