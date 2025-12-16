@@ -1,0 +1,68 @@
+What this online lab is for
+
+Most people use the internet every day without ever seeing what’s really happening. Wi-Fi feels like “air,” websites feel like “magic,” and the home router feels like a mysterious black box that only breaks when someone has a Zoom call.
+
+But underneath that calm surface is something very concrete:
+
+Your home network is a collection of real devices (phones, laptops, TVs, printers, cameras, speakers) that constantly communicate.
+
+Those devices have identities and addresses.
+
+Some parts of your network are meant to be private (your home Wi-Fi), and some are effectively public (coffee shops, hotels, airports—even “password protected” networks if the password is posted on the wall).
+
+A lot of security problems aren’t “Hollywood hacking.” They’re ordinary mistakes: weak Wi-Fi settings, devices left on default passwords, connecting to the wrong network, trusting a login page you shouldn’t, or assuming “the lock icon” means everything is safe.
+
+This lab is designed to give you something most people never get:
+
+A clear, visual mental model of how networking works—plus a realistic understanding of how things go wrong—so you can make smarter decisions.
+
+What we’re trying to accomplish
+
+By the end, learners should be able to:
+
+Explain what a home network actually is
+A router + a bunch of devices + the rules they use to communicate.
+
+Understand the difference between “private” and “public” networks
+Not as a vague idea, but as a set of concrete consequences.
+
+Know what IP addresses and MAC addresses are
+And what they’re used for—without memorizing jargon.
+
+Understand what encryption does and doesn’t do
+Especially the difference between HTTP vs HTTPS, and why VPNs can matter on public Wi-Fi.
+
+Build an “instinct” for safe networking
+So the right behavior becomes automatic: guest networks, IoT isolation, safer public Wi-Fi habits, avoiding credential traps, and tightening device settings.
+
+Why this is built as a sandbox (and not “scan your real network”)
+
+Sometimes we train people in high-security environments (including government and intelligence services). In those contexts, it’s not acceptable to have learners copy/paste real identifiers (device lists, MAC addresses, SSIDs, private IPs, public IPs) into an online tool—even if the tool is well-intentioned.
+
+So this lab works differently:
+
+Everything you see is fictional but realistic.
+
+The networks are “story networks” modeled after real-world patterns.
+
+The risks and consequences are true to life—but no one touches your actual devices.
+
+This makes the experience zero-risk, while still being vivid, surprising, and memorable.
+
+How the lab is structured
+
+The lab is a set of interactive modules. Each module is like a different “lens” on the same hidden world:
+
+One module makes the network visible.
+
+One module makes encryption tangible.
+
+One module tests your judgment on public Wi-Fi.
+
+One module teaches you how to design a safer network.
+
+One module shows how everyday devices (like cameras) become dangerous when misconfigured.
+
+You can use them independently, but they’re strongest as a sequence:
+
+See it → Understand it → Feel the risk → Practice decisions → Fix the system
