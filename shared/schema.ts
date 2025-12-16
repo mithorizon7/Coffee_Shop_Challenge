@@ -1,22 +1,64 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, jsonb, boolean } from "drizzle-orm/pg-core";
+import { sql, relations } from "drizzle-orm";
+import { pgTable, text, varchar, integer, jsonb, boolean, timestamp, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User table (kept for compatibility)
-export const users = pgTable("users", {
+// Import users from auth model for relations
+import { users } from "./models/auth";
+
+// Re-export auth models
+export * from "./models/auth";
+
+// ============ PROGRESS TRACKING TABLES ============
+
+// Session storage table for authentication
+// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)]
+);
+
+// Completed game sessions stored in database for progress tracking
+export const completedSessions = pgTable("completed_sessions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  
+  userId: varchar("user_id").notNull(),
+  scenarioId: varchar("scenario_id").notNull(),
+  difficulty: varchar("difficulty").notNull(),
+  
+  safetyPoints: integer("safety_points").notNull().default(0),
+  riskPoints: integer("risk_points").notNull().default(0),
+  decisionsCount: integer("decisions_count").notNull().default(0),
+  correctDecisions: integer("correct_decisions").notNull().default(0),
+  
+  grade: varchar("grade"),
+  badges: jsonb("badges").$type<string[]>().default([]),
+  
+  startedAt: timestamp("started_at").notNull(),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+// Relations for completed sessions
+export const completedSessionsRelations = relations(completedSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [completedSessions.userId],
+    references: [users.id],
+  }),
+}));
+
+// Zod schemas for completed sessions
+export const insertCompletedSessionSchema = createInsertSchema(completedSessions).omit({
+  id: true,
+  completedAt: true,
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export type InsertCompletedSession = z.infer<typeof insertCompletedSessionSchema>;
+export type CompletedSession = typeof completedSessions.$inferSelect;
 
 // ============ GAME DATA TYPES ============
 
@@ -166,7 +208,7 @@ export const badgeSchema = z.object({
 
 export type Badge = z.infer<typeof badgeSchema>;
 
-// Game session state
+// Game session state (in-memory, used during gameplay)
 export const gameSessionSchema = z.object({
   id: z.string(),
   scenarioId: z.string(),
@@ -194,3 +236,56 @@ export const scenarioListItemSchema = z.object({
 });
 
 export type ScenarioListItem = z.infer<typeof scenarioListItemSchema>;
+
+// Progress statistics for a user
+export interface UserProgress {
+  totalSessions: number;
+  averageSafetyScore: number;
+  averageRiskScore: number;
+  totalCorrectDecisions: number;
+  totalDecisions: number;
+  accuracyRate: number;
+  badgesEarned: string[];
+  completedScenarios: string[];
+  recentSessions: CompletedSession[];
+  improvementTrend: "improving" | "stable" | "declining";
+}
+
+// Educator analytics types
+export interface LearnerStats {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  profileImageUrl: string | null;
+  sessionsCompleted: number;
+  averageAccuracy: number;
+  lastActive: Date | null;
+}
+
+export interface ScenarioStats {
+  scenarioId: string;
+  title: string;
+  difficulty: string;
+  completionCount: number;
+  averageAccuracy: number;
+  averageSafetyScore: number;
+  averageRiskScore: number;
+}
+
+export interface CommonMistake {
+  scenarioId: string;
+  badDecisionRate: number;
+  averageRiskPoints: number;
+}
+
+export interface EducatorAnalytics {
+  totalLearners: number;
+  totalSessions: number;
+  overallAccuracyRate: number;
+  averageSafetyScore: number;
+  averageRiskScore: number;
+  scenarioStats: ScenarioStats[];
+  recentLearners: LearnerStats[];
+  commonMistakes: CommonMistake[];
+}

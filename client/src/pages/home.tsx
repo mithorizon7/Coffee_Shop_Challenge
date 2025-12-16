@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Wifi, Shield, AlertTriangle, BookOpen, ArrowRight, Loader2 } from "lucide-react";
+import { Wifi, Shield, AlertTriangle, BookOpen, ArrowRight, Loader2, BarChart3, LogIn, LogOut, User, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { GameContainer } from "@/components/GameContainer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/hooks/use-auth";
+import { Link } from "wouter";
 import type { GameSession, Scenario, ScenarioListItem, DifficultyLevel } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
@@ -16,6 +18,7 @@ export default function Home() {
   const [viewState, setViewState] = useState<ViewState>("landing");
   const [currentSession, setCurrentSession] = useState<GameSession | null>(null);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
 
   const { data: scenarioList, isLoading: scenariosLoading, error: scenariosError } = useQuery<ScenarioListItem[]>({
     queryKey: ["/api/scenarios"],
@@ -105,7 +108,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b border-border">
-          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
             <button
               onClick={() => setViewState("landing")}
               className="flex items-center gap-2 hover-elevate active-elevate-2 px-2 py-1 rounded-md -ml-2"
@@ -118,7 +121,25 @@ export default function Home() {
                 Coffee Shop Challenge
               </span>
             </button>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              {isAuthenticated && (
+                <>
+                  <Link href="/progress">
+                    <Button variant="ghost" size="sm" data-testid="button-progress">
+                      <BarChart3 className="w-4 h-4 mr-2" />
+                      Progress
+                    </Button>
+                  </Link>
+                  <Link href="/educator">
+                    <Button variant="ghost" size="sm" data-testid="button-educator">
+                      <GraduationCap className="w-4 h-4 mr-2" />
+                      Educator
+                    </Button>
+                  </Link>
+                </>
+              )}
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
@@ -172,7 +193,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Wifi className="w-4 h-4 text-primary" />
@@ -181,7 +202,51 @@ export default function Home() {
               Coffee Shop Challenge
             </span>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            {isAuthenticated && (
+              <>
+                <Link href="/progress">
+                  <Button variant="ghost" size="sm" data-testid="button-progress">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Progress
+                  </Button>
+                </Link>
+                <Link href="/educator">
+                  <Button variant="ghost" size="sm" data-testid="button-educator">
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Educator
+                  </Button>
+                </Link>
+              </>
+            )}
+            {authLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                {user?.profileImageUrl && (
+                  <img 
+                    src={user.profileImageUrl} 
+                    alt="Profile" 
+                    className="w-7 h-7 rounded-full"
+                    data-testid="img-user-profile"
+                  />
+                )}
+                <Button variant="ghost" size="sm" asChild data-testid="button-logout">
+                  <a href="/api/logout">
+                    <LogOut className="w-4 h-4" />
+                  </a>
+                </Button>
+              </div>
+            ) : (
+              <Button variant="ghost" size="sm" asChild data-testid="button-login">
+                <a href="/api/login">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
+                </a>
+              </Button>
+            )}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

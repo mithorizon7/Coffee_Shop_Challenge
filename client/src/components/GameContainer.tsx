@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { MapPin, Wifi, ArrowLeft, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,16 @@ import { CompletionScreen } from "./CompletionScreen";
 import { ScoreTracker } from "./ScoreTracker";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { BadgeDisplay } from "./BadgeDisplay";
+import { useAuth } from "@/hooks/use-auth";
 import type { GameSession, Scenario, Network } from "@shared/schema";
 import { 
   getCurrentSceneFromScenario, 
   processNetworkSelection, 
   processAction, 
-  completeSession 
+  completeSession,
+  calculateGrade 
 } from "@/lib/gameEngine";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface GameContainerProps {
@@ -36,6 +37,8 @@ export function GameContainer({
 }: GameContainerProps) {
   const [session, setSession] = useState<GameSession>(initialSession);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const progressSavedRef = useRef(false);
 
   const updateSessionMutation = useMutation({
     mutationFn: async (updates: Partial<GameSession>) => {
@@ -44,6 +47,24 @@ export function GameContainer({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
+    },
+  });
+
+  const saveProgressMutation = useMutation({
+    mutationFn: async (completedSession: GameSession) => {
+      const grade = calculateGrade(completedSession.score);
+      const response = await apiRequest("POST", "/api/progress/complete", {
+        sessionId: completedSession.id,
+        scenarioId: completedSession.scenarioId,
+        difficulty: completedSession.difficulty,
+        score: completedSession.score,
+        badges: completedSession.badges,
+        grade,
+      });
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/progress"] });
     },
   });
 
@@ -108,14 +129,24 @@ export function GameContainer({
         const completedSession = completeSession(session);
         syncSession(completedSession);
         setIsTransitioning(false);
+        
+        if (isAuthenticated && !progressSavedRef.current) {
+          progressSavedRef.current = true;
+          saveProgressMutation.mutate(completedSession);
+        }
       }, 300);
     }
-  }, [session, scenario, isTransitioning, syncSession]);
+  }, [session, scenario, isTransitioning, syncSession, isAuthenticated, saveProgressMutation]);
 
   const handleComplete = useCallback(() => {
     const completedSession = completeSession(session);
     syncSession(completedSession);
-  }, [session, syncSession]);
+    
+    if (isAuthenticated && !progressSavedRef.current) {
+      progressSavedRef.current = true;
+      saveProgressMutation.mutate(completedSession);
+    }
+  }, [session, syncSession, isAuthenticated, saveProgressMutation]);
 
   if (!currentScene) {
     return (

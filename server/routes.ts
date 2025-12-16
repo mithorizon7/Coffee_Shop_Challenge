@@ -1,13 +1,39 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import { type Server } from "http";
 import { storage } from "./storage";
 import { scenarios, availableBadges } from "../shared/scenarios";
 import { z } from "zod";
 import { randomUUID } from "crypto";
+import { isAuthenticated } from "./replit_integrations/auth";
+import { db } from "./db";
+import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 const createSessionSchema = z.object({
   scenarioId: z.string(),
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
+});
+
+const completeSessionSchema = z.object({
+  sessionId: z.string(),
+  scenarioId: z.string(),
+  difficulty: z.enum(["beginner", "intermediate", "advanced"]),
+  score: z.object({
+    safetyPoints: z.number().min(0).max(100),
+    riskPoints: z.number().min(0).max(100),
+    decisionsCount: z.number().min(0).max(50),
+    correctDecisions: z.number().min(0).max(50),
+  }).refine(data => data.correctDecisions <= data.decisionsCount, {
+    message: "correctDecisions cannot exceed decisionsCount",
+  }),
+  badges: z.array(z.object({
+    id: z.string(),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    icon: z.string().optional(),
+    earnedAt: z.string().optional(),
+  })).max(10).optional(),
+  grade: z.enum(["A", "B", "C", "D", "F"]),
 });
 
 const updateSessionSchema = z.object({
@@ -142,24 +168,127 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/sessions", async (req, res) => {
+  app.get("/api/sessions", async (_req, res) => {
+    res.json([]);
+  });
+
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  app.post("/api/progress/complete", isAuthenticated, async (req: any, res) => {
     try {
-      const completed = req.query.completed === "true";
-      
-      if (completed) {
-        const sessions = await storage.getCompletedSessions();
-        res.json(sessions);
-      } else {
-        res.json([]);
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "User not authenticated" });
       }
+
+      const parseResult = completeSessionSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid session data", 
+          details: parseResult.error.flatten() 
+        });
+      }
+
+      const { scenarioId, difficulty, score, badges, grade } = parseResult.data;
+
+      const scenario = scenarios.find(s => s.id === scenarioId);
+      if (!scenario) {
+        return res.status(400).json({ error: "Invalid scenario ID" });
+      }
+
+      if (badges && badges.length > 0) {
+        const validBadgeIds = availableBadges.map(b => b.id);
+        const invalidBadges = badges.filter(b => !validBadgeIds.includes(b.id));
+        if (invalidBadges.length > 0) {
+          return res.status(400).json({ error: "Invalid badge IDs provided" });
+        }
+      }
+
+      const completedSession = await storage.saveCompletedSession({
+        userId,
+        scenarioId,
+        difficulty,
+        safetyPoints: score.safetyPoints,
+        riskPoints: score.riskPoints,
+        decisionsCount: score.decisionsCount,
+        correctDecisions: score.correctDecisions,
+        grade,
+        badges: badges?.map((b) => b.id) || [],
+        startedAt: new Date(),
+      });
+
+      res.status(201).json(completedSession);
+    } catch (error) {
+      console.error("Error saving completed session:", error);
+      res.status(500).json({ error: "Failed to save completed session" });
+    }
+  });
+
+  app.get("/api/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+
+      const progress = await storage.getUserProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching progress:", error);
+      res.status(500).json({ error: "Failed to fetch progress" });
+    }
+  });
+
+  app.get("/api/progress/sessions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+
+      const sessions = await storage.getCompletedSessionsByUser(userId);
+      res.json(sessions);
     } catch (error) {
       console.error("Error fetching sessions:", error);
       res.status(500).json({ error: "Failed to fetch sessions" });
     }
   });
 
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  app.get("/api/educator/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+
+      const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      if (!user?.isEducator) {
+        return res.status(403).json({ error: "Educator access required" });
+      }
+
+      const analytics = await storage.getEducatorAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching educator analytics:", error);
+      res.status(500).json({ error: "Failed to fetch analytics" });
+    }
+  });
+
+  app.get("/api/educator/status", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+
+      const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      res.json({ isEducator: user?.isEducator ?? false });
+    } catch (error) {
+      console.error("Error checking educator status:", error);
+      res.status(500).json({ error: "Failed to check educator status" });
+    }
   });
 
   return httpServer;
