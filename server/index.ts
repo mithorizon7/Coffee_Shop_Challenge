@@ -4,6 +4,7 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
 import { initializeContent } from "./scenarioLoader";
+import { storage } from "./storage";
 
 const app = express();
 const httpServer = createServer(app);
@@ -35,6 +36,9 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// Maximum characters to log from response body to prevent memory issues
+const MAX_LOG_BODY_LENGTH = 500;
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -51,7 +55,12 @@ app.use((req, res, next) => {
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        const bodyStr = JSON.stringify(capturedJsonResponse);
+        // Truncate large response bodies to prevent memory issues
+        const truncatedBody = bodyStr.length > MAX_LOG_BODY_LENGTH 
+          ? bodyStr.slice(0, MAX_LOG_BODY_LENGTH) + "...[truncated]"
+          : bodyStr;
+        logLine += ` :: ${truncatedBody}`;
       }
 
       log(logLine);
@@ -102,4 +111,22 @@ app.use((req, res, next) => {
       log(`serving on port ${port}`);
     },
   );
+
+  // Graceful shutdown handling
+  const shutdown = () => {
+    log("Shutting down gracefully...");
+    storage.stopCleanup();
+    httpServer.close(() => {
+      log("Server closed");
+      process.exit(0);
+    });
+    // Force exit after 10 seconds if graceful shutdown fails
+    setTimeout(() => {
+      log("Forced shutdown after timeout");
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
 })();

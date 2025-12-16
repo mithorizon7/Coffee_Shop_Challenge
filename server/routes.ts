@@ -10,7 +10,7 @@ import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 const createSessionSchema = z.object({
-  scenarioId: z.string(),
+  scenarioId: z.string().max(100).regex(/^[a-z0-9_-]+$/i, "Invalid scenario ID format"),
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
 });
 
@@ -19,6 +19,38 @@ const SESSION_ID_PATTERN = /^session_[a-f0-9-]{36}$/;
 function isValidSessionId(id: string): boolean {
   return SESSION_ID_PATTERN.test(id);
 }
+
+// Simple in-memory rate limiter for session creation
+const sessionCreationLimiter = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 10; // max 10 sessions per minute per IP
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = sessionCreationLimiter.get(ip);
+  
+  if (!record || now > record.resetAt) {
+    sessionCreationLimiter.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+  
+  record.count++;
+  return true;
+}
+
+// Clean up old rate limit entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of sessionCreationLimiter.entries()) {
+    if (now > record.resetAt) {
+      sessionCreationLimiter.delete(ip);
+    }
+  }
+}, 5 * 60 * 1000); // Every 5 minutes
 
 const completeSessionSchema = z.object({
   sessionId: z.string(),
@@ -96,6 +128,12 @@ export async function registerRoutes(
 
   app.post("/api/sessions", async (req, res) => {
     try {
+      // Rate limiting
+      const clientIp = req.ip || req.socket.remoteAddress || "unknown";
+      if (!checkRateLimit(clientIp)) {
+        return res.status(429).json({ error: "Too many requests. Please try again later." });
+      }
+
       const parseResult = createSessionSchema.safeParse(req.body);
       
       if (!parseResult.success) {
@@ -113,7 +151,7 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Invalid scenario ID" });
       }
 
-      const session = {
+      const session: import("@shared/schema").GameSession = {
         id: `session_${randomUUID()}`,
         scenarioId,
         currentSceneId: scenario.startSceneId,
@@ -126,8 +164,8 @@ export async function registerRoutes(
         },
         selectedNetworkId: undefined,
         vpnEnabled: false,
-        completedSceneIds: [] as string[],
-        badges: [] as any[],
+        completedSceneIds: [],
+        badges: [],
         startedAt: new Date().toISOString(),
         completedAt: undefined,
       };

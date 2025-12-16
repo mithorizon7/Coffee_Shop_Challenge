@@ -12,7 +12,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Link } from "wouter";
 import type { UserProgress, CompletedSession } from "@shared/schema";
 import { motion } from "framer-motion";
-import { availableBadges } from "@shared/scenarios";
+import { getAvailableBadges } from "@shared/scenarios";
 
 export default function ProgressPage() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -104,7 +104,7 @@ export default function ProgressPage() {
   };
 
   const badgeDetails = (badgeId: string) => {
-    return availableBadges.find(b => b.id === badgeId);
+    return getAvailableBadges().find(b => b.id === badgeId);
   };
 
   return (

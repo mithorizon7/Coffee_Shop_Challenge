@@ -51,13 +51,14 @@ export function setBadges(loadedBadges: Badge[]): void {
   badges = loadedBadges;
 }
 
-// Function to get all badges
+// Function to get all badges - preferred way to access badges
 export function getAvailableBadges(): Badge[] {
   return badges;
 }
 
-// For backward compatibility
-export const availableBadges = badges;
+// NOTE: The legacy `availableBadges` array export has been removed.
+// Use getAvailableBadges() to access badge data at runtime.
+// This ensures you always get the current badges loaded from JSON files.
 
 // Function to set scenarios (called by server after loading JSON)
 export function setScenarios(loadedScenarios: Scenario[]): void {

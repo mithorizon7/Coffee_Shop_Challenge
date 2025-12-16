@@ -11,8 +11,13 @@ import {
   users 
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql, count, avg } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { scenarios } from "@shared/scenarios";
+
+// Constants for analytics
+const MAX_ANALYTICS_SESSIONS = 1000; // Limit analytics queries for performance
+const IMPROVEMENT_THRESHOLD = 0.1; // 10% difference to detect improvement/decline
+const RISK_THRESHOLD = 10; // Risk points threshold for identifying common mistakes
 
 export interface IStorage {
   getGameSession(id: string): Promise<GameSession | undefined>;
@@ -152,9 +157,9 @@ export class HybridStorage implements IStorage {
       const recentAvg = sessions.slice(0, 3).reduce((sum, s) => sum + s.correctDecisions / Math.max(1, s.decisionsCount), 0) / 3;
       const olderAvg = sessions.slice(-3).reduce((sum, s) => sum + s.correctDecisions / Math.max(1, s.decisionsCount), 0) / 3;
       
-      if (recentAvg > olderAvg + 0.1) {
+      if (recentAvg > olderAvg + IMPROVEMENT_THRESHOLD) {
         improvementTrend = "improving";
-      } else if (recentAvg < olderAvg - 0.1) {
+      } else if (recentAvg < olderAvg - IMPROVEMENT_THRESHOLD) {
         improvementTrend = "declining";
       }
     }
@@ -174,10 +179,12 @@ export class HybridStorage implements IStorage {
   }
 
   async getEducatorAnalytics(): Promise<EducatorAnalytics> {
+    // Limit query results for performance at scale
     const allSessions = await db
       .select()
       .from(completedSessions)
-      .orderBy(desc(completedSessions.completedAt));
+      .orderBy(desc(completedSessions.completedAt))
+      .limit(MAX_ANALYTICS_SESSIONS);
 
     const allUsers = await db.select().from(users);
 
@@ -261,7 +268,7 @@ export class HybridStorage implements IStorage {
       .slice(0, 20);
 
     const commonMistakes: CommonMistake[] = scenarioStats
-      .filter(s => s.averageRiskScore > 10)
+      .filter(s => s.averageRiskScore > RISK_THRESHOLD)
       .map(s => ({
         scenarioId: s.scenarioId,
         badDecisionRate: 100 - s.averageAccuracy,

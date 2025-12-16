@@ -7,7 +7,7 @@ import type {
   Badge,
   DifficultyLevel 
 } from "@shared/schema";
-import { scenarios, availableBadges } from "@shared/scenarios";
+import { scenarios, getAvailableBadges } from "@shared/scenarios";
 
 export function createGameSession(
   scenarioId: string, 
@@ -126,12 +126,15 @@ export function processAction(
   let vpnEnabled = session.vpnEnabled;
   let newBadges = [...session.badges];
 
+  // Get current badges from getter to ensure we have latest loaded from JSON
+  const currentBadges = getAvailableBadges();
+
   if (actionId.includes("vpn")) {
     vpnEnabled = true;
     safetyChange = 5;
     
     if (!newBadges.find(b => b.id === "vpn_master")) {
-      const vpnBadge = availableBadges.find(b => b.id === "vpn_master");
+      const vpnBadge = currentBadges.find(b => b.id === "vpn_master");
       if (vpnBadge) {
         newBadges.push({ ...vpnBadge, earnedAt: new Date().toISOString() });
       }
@@ -141,7 +144,7 @@ export function processAction(
   if (actionId.includes("verify") || actionId.includes("staff")) {
     safetyChange = 10;
     if (!newBadges.find(b => b.id === "network_detective")) {
-      const detectiveBadge = availableBadges.find(b => b.id === "network_detective");
+      const detectiveBadge = currentBadges.find(b => b.id === "network_detective");
       if (detectiveBadge) {
         newBadges.push({ ...detectiveBadge, earnedAt: new Date().toISOString() });
       }
@@ -151,7 +154,7 @@ export function processAction(
   if (actionId.includes("postpone")) {
     safetyChange = 8;
     if (!newBadges.find(b => b.id === "patient_professional")) {
-      const patientBadge = availableBadges.find(b => b.id === "patient_professional");
+      const patientBadge = currentBadges.find(b => b.id === "patient_professional");
       if (patientBadge) {
         newBadges.push({ ...patientBadge, earnedAt: new Date().toISOString() });
       }
@@ -192,16 +195,17 @@ export function processAction(
 
 export function completeSession(session: GameSession): GameSession {
   let newBadges = [...session.badges];
+  const currentBadges = getAvailableBadges();
 
   if (session.score.riskPoints === 0) {
-    const perfectBadge = availableBadges.find(b => b.id === "perfect_score");
+    const perfectBadge = currentBadges.find(b => b.id === "perfect_score");
     if (perfectBadge && !newBadges.find(b => b.id === "perfect_score")) {
       newBadges.push({ ...perfectBadge, earnedAt: new Date().toISOString() });
     }
   }
 
   if (session.score.riskPoints < 20) {
-    const awareBadge = availableBadges.find(b => b.id === "security_aware");
+    const awareBadge = currentBadges.find(b => b.id === "security_aware");
     if (awareBadge && !newBadges.find(b => b.id === "security_aware")) {
       newBadges.push({ ...awareBadge, earnedAt: new Date().toISOString() });
     }

@@ -6,22 +6,10 @@ import { z } from "zod";
 // Import users from auth model for relations
 import { users } from "./models/auth";
 
-// Re-export auth models
+// Re-export auth models (includes sessions table)
 export * from "./models/auth";
 
 // ============ PROGRESS TRACKING TABLES ============
-
-// Session storage table for authentication
-// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)]
-);
 
 // Completed game sessions stored in database for progress tracking
 export const completedSessions = pgTable("completed_sessions", {
@@ -41,7 +29,10 @@ export const completedSessions = pgTable("completed_sessions", {
   
   startedAt: timestamp("started_at").notNull(),
   completedAt: timestamp("completed_at").notNull().defaultNow(),
-});
+}, (table) => [
+  index("IDX_completed_sessions_user_id").on(table.userId),
+  index("IDX_completed_sessions_completed_at").on(table.completedAt),
+]);
 
 // Relations for completed sessions
 export const completedSessionsRelations = relations(completedSessions, ({ one }) => ({
