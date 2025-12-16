@@ -123,6 +123,21 @@ Full i18n support with three languages:
 - Dev mode shows `[MISSING:key]` for untranslated strings
 - Prod mode falls back gracefully to lv → en
 
+## Recent Changes (December 2025)
+
+### Code Quality Improvements
+- **Removed duplicate sessions table** - Auth session table is now defined only in `server/auth.ts`
+- **Fixed badge data access** - Use `getAvailableBadges()` getter function instead of deprecated array export
+- **Rate limiting** - Session creation endpoints limited to 10 requests/minute per IP
+- **Improved type safety** - Added proper TypeScript types, removed unsafe type assertions
+- **Database indexes** - Added indexes on `completed_sessions.userId` and `completedAt`
+- **Graceful shutdown** - Storage cleanup interval properly stops on SIGTERM/SIGINT
+
+### API Usage Notes
+- **Badge access**: Always use `getAvailableBadges()` from `shared/scenarios.ts` for runtime badge data
+- **Scenario access**: Always use `getAvailableScenarios()` from `shared/scenarios.ts` for runtime scenario data
+- **Analytics limits**: Educator analytics returns maximum 1000 sessions for performance
+
 ## External Dependencies
 
 ### UI Framework
