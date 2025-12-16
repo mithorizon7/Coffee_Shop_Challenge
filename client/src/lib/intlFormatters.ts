@@ -53,10 +53,49 @@ export function formatDuration(seconds: number): string {
   const remainingSeconds = seconds % 60;
   
   if (minutes === 0) {
+    try {
+      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'always', style: 'narrow' });
+      const parts = rtf.formatToParts(-remainingSeconds, 'second');
+      const valuePart = parts.find(p => p.type === 'integer');
+      const unitPart = parts.find(p => p.type === 'literal' && p.value.trim());
+      if (valuePart && unitPart) {
+        return `${valuePart.value}${unitPart.value.trim().charAt(0)}`;
+      }
+    } catch {
+      // fallback
+    }
     return new Intl.NumberFormat(locale).format(remainingSeconds) + 's';
   }
   
   return `${new Intl.NumberFormat(locale).format(minutes)}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+export function formatDurationLong(seconds: number): string {
+  const locale = getLocale();
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  
+  const parts: string[] = [];
+  
+  if (minutes > 0) {
+    try {
+      const nf = new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' });
+      parts.push(nf.format(minutes));
+    } catch {
+      parts.push(`${minutes} min`);
+    }
+  }
+  
+  if (remainingSeconds > 0 || minutes === 0) {
+    try {
+      const nf = new Intl.NumberFormat(locale, { style: 'unit', unit: 'second', unitDisplay: 'long' });
+      parts.push(nf.format(remainingSeconds));
+    } catch {
+      parts.push(`${remainingSeconds} sec`);
+    }
+  }
+  
+  return parts.join(' ');
 }
 
 export function formatCurrency(value: number, currency: string = 'USD'): string {
