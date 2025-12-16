@@ -1,0 +1,216 @@
+Below is **copy-pasteable guidance** you can hand to your developer to fix “No i18n Extraction/Validation Tooling” *properly*, with a workflow that keeps Latvian + Russian high quality over time.
+
+---
+
+## Goal
+
+Add **repeatable, automated safety rails** so that:
+
+1. new UI text is **always extracted** into translation catalogs
+2. builds/CI **fail loudly** if Latvian/Russian are missing keys or have invalid ICU syntax
+3. translators get **stable, complete files** (no “hunt through code”)
+
+**Definition of Done**
+
+* `npm run i18n:extract` updates locale files from code
+* `npm run i18n:validate` fails if keys are missing/invalid
+* CI runs both on every PR
+* Local dev can run it in <30 seconds
+
+---
+
+## Decide: Which i18n stack are we using?
+
+If you’re in **React**, the cleanest “done right” option is:
+
+### Recommended: **LinguiJS** (best built-in extraction + compile checks)
+
+* Pros: extraction is straightforward, strict compile checks, handles ICU, great for “must be high quality” translation workflows.
+* Cons: you commit to Lingui’s message/catalog format.
+
+### Acceptable alternative: **FormatJS / react-intl** (with FormatJS CLI)
+
+* Pros: common, mature ICU support, workable extraction tooling.
+* Cons: validation is more DIY; devs must be disciplined about key consistency.
+
+### i18next note
+
+You *can* do it, but extraction + validation tends to be more custom. If you’re already using i18next, plan on adding **i18next-scanner** + a **custom key parity validator**.
+
+If you’re already past “Architecture Decisions (Day 1)”, don’t refactor everything—just implement the matching extraction/validation path below.
+
+---
+
+## Path A (Recommended): LinguiJS in React
+
+### 1) Install tooling
+
+```bash
+npm i -D @lingui/cli
+npm i @lingui/core @lingui/react
+```
+
+### 2) Add a `lingui.config.ts`
+
+Basic example:
+
+```ts
+export default {
+  locales: ["en", "lv", "ru"],
+  sourceLocale: "en",
+  catalogs: [
+    { path: "src/locales/{locale}", include: ["src"] }
+  ],
+  format: "po", // or "json" if you prefer; PO is translator-friendly
+};
+```
+
+### 3) Add npm scripts (the missing part)
+
+In `package.json`:
+
+```json
+{
+  "scripts": {
+    "i18n:extract": "lingui extract --clean",
+    "i18n:compile": "lingui compile",
+    "i18n:validate": "lingui compile --strict",
+    "i18n:check": "npm run i18n:extract && npm run i18n:validate"
+  }
+}
+```
+
+**What these do**
+
+* `extract --clean`: updates catalogs + removes unused strings
+* `compile --strict`: **fails** if messages are missing or invalid
+
+### 4) Wire it into CI
+
+Add a CI step on PRs:
+
+```bash
+npm ci
+npm run i18n:check
+npm test
+npm run build
+```
+
+### 5) Set “missing translation” behavior (don’t silently ship English)
+
+* In **production**, treat missing translations as a build failure (that’s what `--strict` is for).
+* In **development**, it can fall back to English *but must log*.
+
+---
+
+## Path B: react-intl (FormatJS CLI)
+
+### 1) Install tooling
+
+```bash
+npm i -D @formatjs/cli
+```
+
+### 2) Add scripts
+
+```json
+{
+  "scripts": {
+    "i18n:extract": "formatjs extract \"src/**/*.{ts,tsx}\" --out-file src/locales/en.json --id-interpolation-pattern \"[sha512:contenthash:base64:6]\"",
+    "i18n:validate": "node scripts/i18n-validate.js",
+    "i18n:check": "npm run i18n:extract && npm run i18n:validate"
+  }
+}
+```
+
+### 3) Add a validator script (key parity + ICU sanity)
+
+Create `scripts/i18n-validate.js` that:
+
+* loads `en.json`, `lv.json`, `ru.json`
+* checks **every key in en exists in lv/ru**
+* checks **no duplicate/empty values**
+* optionally runs `formatjs compile` / message parsing to ensure ICU validity
+
+This is the part teams often skip—don’t.
+
+---
+
+## Non-negotiable Quality Rules (tell your dev these explicitly)
+
+### 1) **Never ship text-as-ID**
+
+Do **not** use English strings as keys. Use stable keys:
+
+* ✅ `auth.login.button`
+* ❌ `"Log in"`
+
+Text changes over time; keys must not.
+
+### 2) Lock your ICU message style
+
+Pick one and enforce:
+
+* ICU plurals (`{count, plural, one {...} other {...}}`)
+* ICU selection (`{gender, select, ...}`)
+
+Then **validate** it (Lingui/FormatJS can fail builds for invalid ICU).
+
+### 3) Single source of truth for “base locale”
+
+English is the canonical key set.
+Latvian and Russian must match it exactly unless deliberately deprecated.
+
+### 4) A translation is “complete” only if:
+
+* key exists
+* value is non-empty
+* ICU placeholders match exactly (same variables)
+* (ideally) a reviewer has approved it
+
+---
+
+## Developer Workflow (the day-to-day habit)
+
+**When a dev adds/changes UI text**
+
+1. Add key in code
+2. Run: `npm run i18n:extract`
+3. Commit updated locale files (or PO files)
+4. If they changed English meaning, it triggers re-translation
+
+**Before merging any PR**
+
+* CI runs `npm run i18n:check`
+* If lv/ru missing anything → PR fails
+
+---
+
+## Translator Workflow (low friction, high quality)
+
+* Translators receive `lv` + `ru` files that already include **every key**
+* They only fill values; they do not invent keys
+* Provide context notes in messages where ambiguity exists (button vs noun, etc.)
+
+If you’re using PO files (Lingui), translators will thank you.
+
+---
+
+## Extra “Done Right” Add-ons (worth it, still simple)
+
+* **Pseudo-locale** (e.g., `en-XA`) to catch layout overflow and missing keys early
+* **Route-level smoke test** that renders every screen once and fails if any key missing
+* **Shared glossary** enforced via lint/PR checklist (even a short one)
+
+---
+
+## What I’d tell your dev to implement first
+
+If you’re React and can choose freely: **Lingui Path A** + scripts + CI in one PR.
+
+That single change eliminates 80% of “translation drift” bugs forever.
+
+---
+
+**Confidence: 0.93.**
+Very confident about the meaning of the issue and the workflow patterns. Slightly less confident about the *best* library choice for your exact codebase because I haven’t seen the repo—but the extraction/validation/CI requirements above hold regardless of stack.

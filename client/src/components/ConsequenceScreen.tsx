@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import type { Consequence } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface ConsequenceScreenProps {
   consequence: Consequence;
@@ -47,6 +48,7 @@ const cascadeIcons = {
 };
 
 export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreenProps) {
+  const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
 
@@ -69,12 +71,12 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
             <div className="flex items-center gap-4 mt-1 text-sm">
               {consequence.safetyPointsChange > 0 && (
                 <span className="text-green-600 dark:text-green-400 font-medium">
-                  +{consequence.safetyPointsChange} Safety Points
+                  {t('consequence.safetyPoints', { points: consequence.safetyPointsChange })}
                 </span>
               )}
               {consequence.riskPointsChange > 0 && (
                 <span className="text-red-600 dark:text-red-400 font-medium">
-                  +{consequence.riskPointsChange} Risk Points
+                  {t('consequence.riskPoints', { points: consequence.riskPointsChange })}
                 </span>
               )}
             </div>
@@ -87,7 +89,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
               <div>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">1</div>
-                  What Happened
+                  {t('consequence.whatHappened')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-what-happened">
                   {consequence.whatHappened}
@@ -97,7 +99,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
               <div>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">2</div>
-                  {consequence.severity === "success" ? "Why This Was Safe" : "Why This Was Risky"}
+                  {consequence.severity === "success" ? t('consequence.whySafe') : t('consequence.whyRisky')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-why-risky">
                   {consequence.whyRisky}
@@ -109,7 +111,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
               <div className={cn("p-4 rounded-lg", config.bg)}>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                   <Shield className={cn("w-4 h-4", config.iconColor)} />
-                  {consequence.severity === "success" ? "Why This Worked" : "Safer Alternative"}
+                  {consequence.severity === "success" ? t('consequence.whyWorked') : t('consequence.saferAlternative')}
                 </h3>
                 <p className="text-sm leading-relaxed" data-testid="consequence-safer-alternative">
                   {consequence.saferAlternative}
@@ -120,7 +122,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
                 <div className="p-4 rounded-lg bg-muted">
                   <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                     <Lightbulb className="w-4 h-4 text-muted-foreground" />
-                    Technical Details
+                    {t('consequence.technicalDetails')}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {consequence.technicalExplanation}
@@ -140,7 +142,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
             >
               <h3 className="font-medium text-foreground flex items-center gap-2 mb-4" data-testid="cascading-effects-heading">
                 <AlertTriangle className="w-4 h-4 text-red-500" />
-                How One Mistake Leads to More Problems
+                {t('consequence.cascadingEffects')}
               </h3>
               <div className="relative">
                 <div className="flex flex-wrap items-center gap-2">
@@ -180,7 +182,7 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
       
       <div className="flex justify-end">
         <Button onClick={onContinue} data-testid="button-continue">
-          Continue
+          {t('common.continue')}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Task, Action } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface TaskPromptCardProps {
   task: Task;
@@ -46,8 +47,10 @@ const sensitivityColors: Record<string, { bg: string; text: string; border: stri
 };
 
 export function TaskPromptCard({ task, actions, onAction, showHints = false }: TaskPromptCardProps) {
+  const { t } = useTranslation();
   const IconComponent = taskIcons[task.type] || Globe;
   const sensitivity = sensitivityColors[task.sensitivityLevel];
+  const sensitivityLabel = task.sensitivityLevel.charAt(0).toUpperCase() + task.sensitivityLevel.slice(1);
 
   return (
     <Card className="p-6">
@@ -69,7 +72,7 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
               className={cn(sensitivity.bg, sensitivity.text, sensitivity.border)}
             >
               {task.sensitivityLevel === "critical" && <AlertTriangle className="w-3 h-3 mr-1" />}
-              {task.sensitivityLevel.charAt(0).toUpperCase() + task.sensitivityLevel.slice(1)} Sensitivity
+              {t('game.sensitivity', { level: sensitivityLabel })}
             </Badge>
           </div>
           

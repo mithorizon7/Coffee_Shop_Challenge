@@ -216,89 +216,89 @@ export function completeSession(session: GameSession): GameSession {
 
 export function calculateGrade(score: Score): { 
   grade: string; 
-  label: string; 
+  labelKey: string; 
   color: string;
 } {
   const ratio = score.safetyPoints / Math.max(1, score.safetyPoints + score.riskPoints);
   
   if (ratio >= 0.9) {
-    return { grade: "A", label: "Excellent", color: "text-green-600 dark:text-green-400" };
+    return { grade: "A", labelKey: "grades.A", color: "text-green-600 dark:text-green-400" };
   } else if (ratio >= 0.75) {
-    return { grade: "B", label: "Good", color: "text-blue-600 dark:text-blue-400" };
+    return { grade: "B", labelKey: "grades.B", color: "text-blue-600 dark:text-blue-400" };
   } else if (ratio >= 0.6) {
-    return { grade: "C", label: "Average", color: "text-yellow-600 dark:text-yellow-400" };
+    return { grade: "C", labelKey: "grades.C", color: "text-yellow-600 dark:text-yellow-400" };
   } else if (ratio >= 0.4) {
-    return { grade: "D", label: "Needs Improvement", color: "text-orange-600 dark:text-orange-400" };
+    return { grade: "D", labelKey: "grades.D", color: "text-orange-600 dark:text-orange-400" };
   } else {
-    return { grade: "F", label: "Study More", color: "text-red-600 dark:text-red-400" };
+    return { grade: "F", labelKey: "grades.F", color: "text-red-600 dark:text-red-400" };
   }
 }
 
-export function getSecurityTips(session: GameSession): string[] {
-  const tips: string[] = [];
+export function getSecurityTipKeys(session: GameSession): string[] {
+  const tipKeys: string[] = [];
   
   if (!session.vpnEnabled) {
-    tips.push("Use a VPN on all public networks, especially for sensitive tasks");
+    tipKeys.push("tips.useVpn");
   }
   
   if (session.score.riskPoints > 0) {
-    tips.push("Always verify network names with staff before connecting");
-    tips.push("Never install apps or profiles from captive portals");
-    tips.push("Postpone sensitive tasks like banking until you're on a secure network");
+    tipKeys.push("tips.verifyNetworks");
+    tipKeys.push("tips.neverInstall");
+    tipKeys.push("tips.postponeSensitive");
   }
   
   if (session.score.riskPoints > 30) {
-    tips.push("Consider using mobile data instead of public Wi-Fi for critical tasks");
-    tips.push("Be extra cautious in high-traffic areas like airports and hotels");
+    tipKeys.push("tips.useMobileData");
+    tipKeys.push("tips.cautionHighTraffic");
   }
 
-  if (tips.length === 0) {
-    tips.push("Great job! Keep using VPN and verifying networks");
-    tips.push("Share these security practices with colleagues and family");
+  if (tipKeys.length === 0) {
+    tipKeys.push("tips.greatJob");
+    tipKeys.push("tips.sharePractices");
   }
   
-  return tips;
+  return tipKeys;
 }
 
-export function getDecisionProcess(): { step: number; title: string; description: string }[] {
+export function getDecisionProcessKeys(): { step: number; titleKey: string; descriptionKey: string }[] {
   return [
     {
       step: 1,
-      title: "Verify the Network",
-      description: "Ask staff for the exact network name. Don't trust similar-looking names."
+      titleKey: "decisionProcess.step1Title",
+      descriptionKey: "decisionProcess.step1Desc"
     },
     {
       step: 2,
-      title: "Check the Security",
-      description: "Prefer networks with a lock icon (password-protected). Open networks are riskier."
+      titleKey: "decisionProcess.step2Title",
+      descriptionKey: "decisionProcess.step2Desc"
     },
     {
       step: 3,
-      title: "Enable Your VPN",
-      description: "Before doing anything sensitive, turn on your VPN to encrypt all traffic."
+      titleKey: "decisionProcess.step3Title",
+      descriptionKey: "decisionProcess.step3Desc"
     },
     {
       step: 4,
-      title: "Assess the Task",
-      description: "Banking or passwords? Wait for a secure network. Just browsing? Proceed with caution."
+      titleKey: "decisionProcess.step4Title",
+      descriptionKey: "decisionProcess.step4Desc"
     },
     {
       step: 5,
-      title: "Never Install",
-      description: "Decline any prompts to install apps, profiles, or certificates from portals."
+      titleKey: "decisionProcess.step5Title",
+      descriptionKey: "decisionProcess.step5Desc"
     }
   ];
 }
 
-export function getRogueHotspotExplanation(): { title: string; description: string; howToSpot: string[] } {
+export function getRogueHotspotKeys(): { titleKey: string; descriptionKey: string; howToSpotKeys: string[] } {
   return {
-    title: "What is a Rogue Hotspot?",
-    description: "A rogue hotspot (also called an 'evil twin') is a fake Wi-Fi network set up by an attacker to look like a legitimate one. When you connect, they can see your traffic, steal passwords, or redirect you to fake websites.",
-    howToSpot: [
-      "Names that look almost right but have small differences (hyphens, underscores, extra words)",
-      "Networks claiming to be 'FREE' versions of business networks",
-      "Open networks with unusually strong signals",
-      "Multiple networks with very similar names"
+    titleKey: "rogueHotspot.title",
+    descriptionKey: "rogueHotspot.description",
+    howToSpotKeys: [
+      "rogueHotspot.spot1",
+      "rogueHotspot.spot2",
+      "rogueHotspot.spot3",
+      "rogueHotspot.spot4"
     ]
   };
 }

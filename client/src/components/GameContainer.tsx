@@ -22,6 +22,7 @@ import {
 } from "@/lib/gameEngine";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface GameContainerProps {
   initialSession: GameSession;
@@ -36,6 +37,7 @@ export function GameContainer({
   onExit, 
   onRestart 
 }: GameContainerProps) {
+  const { t } = useTranslation();
   const [session, setSession] = useState<GameSession>(initialSession);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -170,8 +172,8 @@ export function GameContainer({
   if (!currentScene) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Scene not found</p>
-        <Button onClick={onExit} className="mt-4">Return to Menu</Button>
+        <p className="text-muted-foreground">{t('game.sceneNotFound')}</p>
+        <Button onClick={onExit} className="mt-4">{t('game.returnToMenu')}</Button>
       </div>
     );
   }
@@ -199,7 +201,7 @@ export function GameContainer({
               data-testid="button-exit"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Exit
+              {t('game.exit')}
             </Button>
             
             <div className="flex-1 flex justify-center">
@@ -252,10 +254,10 @@ export function GameContainer({
               <Card className="p-6 text-center">
                 <Wifi className="w-12 h-12 mx-auto mb-4 text-primary" />
                 <p className="text-muted-foreground mb-4">
-                  Ready to start the scenario?
+                  {t('game.readyToStart')}
                 </p>
                 <Button onClick={handleContinue} data-testid="button-start-scenario">
-                  Find Networks
+                  {t('game.findNetworks')}
                 </Button>
               </Card>
             )}
@@ -264,7 +266,7 @@ export function GameContainer({
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Wifi className="w-4 h-4" />
-                  <span>Available Networks</span>
+                  <span>{t('network.availableNetworks')}</span>
                 </div>
                 <div className="space-y-3">
                   {currentScene.networks.map((network) => (
@@ -298,7 +300,7 @@ export function GameContainer({
 
             {currentScene.type === "captive_portal" && !currentScene.networks && currentScene.actions && (
               <Card className="p-6">
-                <h3 className="font-medium text-foreground mb-4">Portal Options</h3>
+                <h3 className="font-medium text-foreground mb-4">{t('game.portalOptions')}</h3>
                 <div className="flex flex-wrap gap-3">
                   {currentScene.actions.map((action) => (
                     <Button
@@ -333,7 +335,7 @@ export function GameContainer({
             {session.vpnEnabled && (
               <div className="fixed bottom-4 right-4 bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg">
                 <Shield className="w-4 h-4" />
-                VPN Active
+                {t('game.vpnActive')}
               </div>
             )}
           </motion.div>

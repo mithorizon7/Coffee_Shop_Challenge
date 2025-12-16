@@ -1,0 +1,75 @@
+Streamlined i18n Translation checklist
+
+0) Non-negotiables and Definition of Done (new)
+* ✅ English is the source locale (and is default at runtime). Reason: You need a canonical keyset and review language. “No en” turns into chaos fast.
+* ✅ Every PR that touches UI text must pass npm run i18n:check (see Tooling).
+* ✅ No PR merges with missing LV/RU translations unless explicitly marked as an approved exception (rare) with a tracked follow-up.
+
+A) Day-1 architecture (must)
+* ✅ Use ICU-capable i18n (no exceptions).
+* ✅ Key-based IDs (stable keys; no text-as-ID).
+* ✅ Locales: en (source), lv, ru.
+* ✅ Decide loading strategy: bundled vs lazy-loaded per locale (document it).
+* ✅ Fallback chain: user preference → browser locale → default (lv) → en.
+* ✅ Define namespaces: common, nav, errors, activity.*, etc.
+* ✅ Define key conventions (new): feature.screen.element.state (and document examples). Reason: prevents random keys like button1, msg_42.
+Recommendation: Runtime default lv, ru selectable, en as final fallback.
+
+B) Tooling (must, minimal, but strict) — strengthened
+Goal: extraction + validation are routine, fast, and enforced.
+* ✅ Add npm scripts (names fixed across repos):
+    * i18n:extract – extracts keys/messages from source
+    * i18n:validate – fails on problems (below)
+    * i18n:check – runs extract + validate
+* ✅ i18n:validate must fail CI on:
+    * invalid ICU syntax
+    * missing locale files
+    * missing keys in lv/ru compared to en (new, important)
+    * placeholder mismatch (e.g., en has {count}, ru doesn’t) (new)
+    * duplicate keys / empty translations (configurable; I’d fail on empty in prod builds)
+* ✅ CI: run npm run i18n:check on every PR.
+* ✅ (Optional but high leverage) Pre-commit or pre-push hook runs i18n:check for changed files.
+Optional (week 2):
+* pseudo-localization
+* lint rule blocking hardcoded strings
+
+C) Coding patterns (must) — slightly expanded
+* ✅ All user-facing strings go through i18n:
+    * UI labels, headings, tooltips, empty states
+    * aria-label / alt text / validation errors (keep this explicit)
+* ✅ Use ICU for plural/select (especially Russian).
+* ✅ No string concatenation for sentences.
+* ✅ Use Intl.* formatting helpers (dates/numbers) with locale from i18n layer.
+* ✅ Don’t translate “domain tokens” without a glossary rule (new):
+    * product names, feature names, acronyms, certain technical terms
+Latvia-specific guidance (must):
+* Avoid fragments that assume English word order.
+* Prefer full messages with placeholders.
+* Avoid “clever” idioms and culture-bound metaphors in system text.
+
+D) Layout/design constraints (must)
+* ✅ Allow ~30–40% expansion for buttons/headings.
+* ✅ No text baked into images.
+* ✅ Support Cyrillic + Latvian diacritics with font stack that truly covers both.
+* ✅ Test early in lv/ru with realistic strings (not lorem ipsum).
+* ✅ Avoid fixed-width button containers / “one-line only” assumptions (new but practical).
+
+E) QA workflow (must) — sharpened
+* ✅ Language switcher is easy to find.
+* ✅ Release smoke test:
+    * critical flows in lv + ru
+    * no overlap/truncation
+    * no missing placeholders
+* ✅ Dev mode behavior: missing translations are loud and obvious (e.g., [MISSING:key]).
+* ✅ Prod behavior: no raw keys displayed; fallback to lv → en.
+New QA guardrail I strongly recommend:
+* ✅ Add one automated “render sweep” test (even minimal) that mounts key screens in lv/ru and fails if any [MISSING: appears.
+
+F) Translation operations (new, small but crucial)
+* ✅ Maintain a tiny glossary (even 15–30 terms) for consistency across apps.
+* ✅ Decide who owns translation quality sign-off (PM? native reviewer?).
+* ✅ Establish update rhythm:
+    * dev runs extract
+    * translators update lv/ru
+    * validate/compile gates merging
+This section is what keeps “native professional quality” from degrading after week 3.

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { DifficultyLevel, ScenarioListItem } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface DifficultySelectorProps {
   scenarios: ScenarioListItem[];
@@ -11,21 +12,21 @@ interface DifficultySelectorProps {
 
 const difficultyConfig: Record<DifficultyLevel, {
   icon: typeof Shield;
-  label: string;
-  description: string;
-  features: string[];
+  labelKey: string;
+  descriptionKey: string;
+  featureKeys: string[];
   color: string;
   bgColor: string;
   borderColor: string;
 }> = {
   beginner: {
     icon: Shield,
-    label: "Beginner",
-    description: "Learn the basics with clear guidance",
-    features: [
-      "Obvious trap network names",
-      "Helpful security warnings",
-      "Detailed feedback on decisions",
+    labelKey: "scenario.difficulty.beginner",
+    descriptionKey: "scenario.difficultyDesc.beginner",
+    featureKeys: [
+      "scenario.difficultyFeatures.beginner1",
+      "scenario.difficultyFeatures.beginner2",
+      "scenario.difficultyFeatures.beginner3",
     ],
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-50 dark:bg-green-950",
@@ -33,12 +34,12 @@ const difficultyConfig: Record<DifficultyLevel, {
   },
   intermediate: {
     icon: Scale,
-    label: "Intermediate",
-    description: "More realistic scenarios with subtle threats",
-    features: [
-      "Confusing network names (SSID spoofing)",
-      "Fewer hints and warnings",
-      "Mixed legitimate and malicious options",
+    labelKey: "scenario.difficulty.intermediate",
+    descriptionKey: "scenario.difficultyDesc.intermediate",
+    featureKeys: [
+      "scenario.difficultyFeatures.intermediate1",
+      "scenario.difficultyFeatures.intermediate2",
+      "scenario.difficultyFeatures.intermediate3",
     ],
     color: "text-amber-600 dark:text-amber-400",
     bgColor: "bg-amber-50 dark:bg-amber-950",
@@ -46,12 +47,12 @@ const difficultyConfig: Record<DifficultyLevel, {
   },
   advanced: {
     icon: Target,
-    label: "Advanced",
-    description: "High-pressure scenarios like real-world attacks",
-    features: [
-      "2-minute countdown timer",
-      "Convincing social engineering prompts",
-      "No security hints provided",
+    labelKey: "scenario.difficulty.advanced",
+    descriptionKey: "scenario.difficultyDesc.advanced",
+    featureKeys: [
+      "scenario.difficultyFeatures.advanced1",
+      "scenario.difficultyFeatures.advanced2",
+      "scenario.difficultyFeatures.advanced3",
     ],
     color: "text-red-600 dark:text-red-400",
     bgColor: "bg-red-50 dark:bg-red-950",
@@ -60,6 +61,8 @@ const difficultyConfig: Record<DifficultyLevel, {
 };
 
 export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorProps) {
+  const { t } = useTranslation();
+  
   const groupedScenarios = scenarios.reduce((acc, scenario) => {
     if (!acc[scenario.difficulty]) {
       acc[scenario.difficulty] = [];
@@ -90,13 +93,13 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
               </div>
               <div className="flex-1">
                 <h3 className="font-display font-semibold text-foreground">
-                  {config.label}
+                  {t(config.labelKey)}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {config.description}
+                  {t(config.descriptionKey)}
                 </p>
                 <ul className="mt-2 space-y-1">
-                  {config.features.map((feature, index) => (
+                  {config.featureKeys.map((featureKey, index) => (
                     <li key={index} className="text-xs text-muted-foreground flex items-center gap-1.5">
                       <span className={cn(
                         "w-1.5 h-1.5 rounded-full flex-shrink-0",
@@ -104,7 +107,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                         difficulty === 'intermediate' && "bg-amber-500 dark:bg-amber-400",
                         difficulty === 'advanced' && "bg-red-500 dark:bg-red-400"
                       )} />
-                      {feature}
+                      {t(featureKey)}
                     </li>
                   ))}
                 </ul>

@@ -8,6 +8,7 @@ import {
 import type { Score } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface ScoreTrackerProps {
   score: Score;
@@ -15,6 +16,7 @@ interface ScoreTrackerProps {
 }
 
 export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
+  const { t } = useTranslation();
   const totalPoints = score.safetyPoints + score.riskPoints;
   const safetyPercentage = totalPoints > 0 ? (score.safetyPoints / totalPoints) * 100 : 50;
 
@@ -52,16 +54,16 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-xs p-3">
           <div className="space-y-2 text-sm">
-            <p className="font-medium">How scoring works:</p>
+            <p className="font-medium">{t('scoring.howItWorks')}</p>
             <div className="flex items-start gap-2">
               <Shield className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-              <p><span className="font-medium text-green-600 dark:text-green-400">Safety Points:</span> Earned by making secure choices like using VPN, avoiding suspicious networks, or postponing sensitive tasks.</p>
+              <p><span className="font-medium text-green-600 dark:text-green-400">{t('game.safetyPoints')}:</span> {t('scoring.safetyExplain')}</p>
             </div>
             <div className="flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-              <p><span className="font-medium text-red-600 dark:text-red-400">Risk Points:</span> Accumulated when taking risky actions like connecting to unsecured networks or entering sensitive data on public Wi-Fi.</p>
+              <p><span className="font-medium text-red-600 dark:text-red-400">{t('game.riskPoints')}:</span> {t('scoring.riskExplain')}</p>
             </div>
-            <p className="text-muted-foreground text-xs pt-1 border-t border-border">Lower risk points = better grade!</p>
+            <p className="text-muted-foreground text-xs pt-1 border-t border-border">{t('scoring.lowerRiskBetter')}</p>
           </div>
         </TooltipContent>
       </Tooltip>
@@ -73,11 +75,11 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-foreground flex items-center gap-2">
           <Target className="w-4 h-4" />
-          Score
+          {t('game.score')}
         </h3>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <CheckCircle className="w-3.5 h-3.5" />
-          {score.correctDecisions}/{score.decisionsCount} correct
+          {t('game.correctFormat', { correct: score.correctDecisions, total: score.decisionsCount })}
         </div>
       </div>
       
@@ -86,7 +88,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
               <Shield className="w-4 h-4" />
-              Safety Points
+              {t('game.safetyPoints')}
             </span>
             <motion.span 
               key={score.safetyPoints}
@@ -108,7 +110,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-1.5 text-red-600 dark:text-red-400">
               <AlertTriangle className="w-4 h-4" />
-              Risk Points
+              {t('game.riskPoints')}
             </span>
             <motion.span 
               key={score.riskPoints}
@@ -129,7 +131,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
       
       <div className="pt-2 border-t border-border">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Decisions Made</span>
+          <span className="text-muted-foreground">{t('game.decisionsCount')}</span>
           <span className="font-medium">{score.decisionsCount}</span>
         </div>
       </div>

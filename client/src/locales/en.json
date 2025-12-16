@@ -15,7 +15,9 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
   },
   "nav": {
     "home": "Home",
@@ -67,6 +69,22 @@
       "intermediate": "Intermediate", 
       "advanced": "Advanced"
     },
+    "difficultyDesc": {
+      "beginner": "Learn the basics with clear guidance",
+      "intermediate": "More realistic scenarios with subtle threats",
+      "advanced": "High-pressure scenarios like real-world attacks"
+    },
+    "difficultyFeatures": {
+      "beginner1": "Obvious trap network names",
+      "beginner2": "Helpful security warnings",
+      "beginner3": "Detailed feedback on decisions",
+      "intermediate1": "Confusing network names (SSID spoofing)",
+      "intermediate2": "Fewer hints and warnings",
+      "intermediate3": "Mixed legitimate and malicious options",
+      "advanced1": "2-minute countdown timer",
+      "advanced2": "Convincing social engineering prompts",
+      "advanced3": "No security hints provided"
+    },
     "difficultyHint": {
       "beginner": "Perfect for first-time learners. Introduces core concepts with clear guidance.",
       "intermediate": "For those with some experience. Adds complexity and time pressure.",
@@ -82,7 +100,9 @@
     "network": "Network",
     "networks": "Networks",
     "selectNetwork": "Select a Network",
+    "availableNetworks": "Available Networks",
     "signalStrength": "Signal strength",
+    "signalStrengthAria": "Signal strength: {strength} of 5",
     "secured": "Secured",
     "open": "Open",
     "securityType": "Security type",
@@ -91,6 +111,7 @@
     "verified": "Verified",
     "verifiedByStaff": "Verified by staff",
     "suspicious": "Suspicious",
+    "caution": "Caution",
     "dangerous": "Dangerous",
     "safe": "Safe",
     "connect": "Connect",
@@ -113,14 +134,25 @@
     "riskPoints": "Risk Points",
     "decisionsCount": "Decisions Made",
     "correctDecisions": "Correct Decisions",
+    "correctFormat": "{correct}/{total} correct",
     "timeRemaining": "Time remaining",
     "vpnEnabled": "VPN enabled",
     "vpnDisabled": "VPN disabled",
     "enableVpn": "Enable VPN",
     "disableVpn": "Disable VPN",
     "vpnProtected": "VPN Protected",
+    "vpnActive": "VPN Active",
     "risk": "Risk",
-    "riskScore": "Risk score"
+    "riskScore": "Risk score",
+    "exit": "Exit",
+    "returnToMenu": "Return to Menu",
+    "sceneNotFound": "Scene not found",
+    "readyToStart": "Ready to start the scenario?",
+    "findNetworks": "Find Networks",
+    "portalOptions": "Portal Options",
+    "sensitivity": "{level} Sensitivity",
+    "noBadgesYet": "Complete challenges to earn badges",
+    "badgesEarned": "Badges Earned"
   },
   "actions": {
     "verifyWithStaff": "Ask staff for the correct network",
@@ -142,13 +174,17 @@
     "whyWorked": "Why This Worked",
     "technicalDetails": "Technical Details",
     "cascadingEffects": "How One Mistake Leads to More Problems",
-    "pointsEarned": "+{points} Safety Points",
-    "pointsLost": "+{points} Risk Points"
+    "safetyPoints": "+{points} Safety Points",
+    "riskPoints": "+{points} Risk Points"
   },
   "completion": {
+    "title": "Scenario Complete!",
+    "finishedScenario": "You've finished \"{title}\"",
     "scenarioComplete": "Scenario Complete",
     "yourGrade": "Your Grade",
     "finalScore": "Final Score",
+    "whatToRemember": "What To Remember Next Time",
+    "tryAnotherScenario": "Try Another Scenario",
     "tipsTitle": "What To Remember Next Time",
     "decisionProcess": {
       "title": "Your Repeatable Decision Process",
@@ -179,11 +215,61 @@
     }
   },
   "grades": {
-    "A": "Security Expert",
-    "B": "Good Judgment",
-    "C": "Needs Practice",
-    "D": "High Risk",
+    "A": "Excellent",
+    "B": "Good",
+    "C": "Average",
+    "D": "Needs Improvement",
     "F": "Study More"
+  },
+  "tips": {
+    "useVpn": "Use a VPN on all public networks, especially for sensitive tasks",
+    "verifyNetworks": "Always verify network names with staff before connecting",
+    "neverInstall": "Never install apps or profiles from captive portals",
+    "postponeSensitive": "Postpone sensitive tasks like banking until you're on a secure network",
+    "useMobileData": "Consider using mobile data instead of public Wi-Fi for critical tasks",
+    "cautionHighTraffic": "Be extra cautious in high-traffic areas like airports and hotels",
+    "greatJob": "Great job! Keep using VPN and verifying networks",
+    "sharePractices": "Share these security practices with colleagues and family"
+  },
+  "decisionProcess": {
+    "title": "Your Repeatable Decision Process",
+    "subtitle": "Use this checklist every time you connect to public Wi-Fi:",
+    "step1Title": "Verify the Network",
+    "step1Desc": "Ask staff for the exact network name. Don't trust similar-looking names.",
+    "step2Title": "Check the Security",
+    "step2Desc": "Prefer networks with a lock icon (password-protected). Open networks are riskier.",
+    "step3Title": "Enable Your VPN",
+    "step3Desc": "Before doing anything sensitive, turn on your VPN to encrypt all traffic.",
+    "step4Title": "Assess the Task",
+    "step4Desc": "Banking or passwords? Wait for a secure network. Just browsing? Proceed with caution.",
+    "step5Title": "Never Install",
+    "step5Desc": "Decline any prompts to install apps, profiles, or certificates from portals."
+  },
+  "rogueHotspot": {
+    "title": "What is a Rogue Hotspot?",
+    "description": "A rogue hotspot (also called an \"evil twin\") is a fake Wi-Fi network set up by an attacker to look like a legitimate one. When you connect, they can see your traffic, steal passwords, or redirect you to fake websites.",
+    "howToSpot": "How to spot one:",
+    "spot1": "Names that look almost right but have small differences (hyphens, underscores, extra words)",
+    "spot2": "Networks claiming to be \"FREE\" versions of business networks",
+    "spot3": "Open networks with unusually strong signals",
+    "spot4": "Multiple networks with very similar names"
+  },
+  "consequence": {
+    "whatHappened": "What Happened",
+    "whyRisky": "Why This Was Risky",
+    "whySafe": "Why This Was Safe",
+    "saferAlternative": "Safer Alternative",
+    "whyWorked": "Why This Worked",
+    "technicalDetails": "Technical Details",
+    "cascadingEffects": "How One Mistake Leads to More Problems",
+    "safetyPoints": "+{points} Safety Points",
+    "riskPoints": "+{points} Risk Points"
+  },
+  "completion": {
+    "title": "Scenario Complete!",
+    "finishedScenario": "You've finished \"{title}\"",
+    "whatToRemember": "What To Remember Next Time",
+    "tryAnotherScenario": "Try Another Scenario"
   },
   "scoring": {
     "howItWorks": "How scoring works:",
@@ -219,6 +305,8 @@
   "aria": {
     "languageSelector": "Select language",
     "themeToggle": "Toggle dark mode",
+    "themeToggleLight": "Switch to light mode",
+    "themeToggleDark": "Switch to dark mode",
     "sidebarToggle": "Toggle sidebar",
     "closeDialog": "Close dialog",
     "networkCard": "Network option",

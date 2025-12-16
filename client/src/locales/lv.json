@@ -15,7 +15,9 @@
     "cancel": "Atcelt",
     "confirm": "Apstiprināt",
     "yes": "Jā",
-    "no": "Nē"
+    "no": "Nē",
+    "switchToLight": "Pārslēgt uz gaišo režīmu",
+    "switchToDark": "Pārslēgt uz tumšo režīmu"
   },
   "nav": {
     "home": "Sākums",
@@ -67,6 +69,22 @@
       "intermediate": "Vidējais",
       "advanced": "Augstākais"
     },
+    "difficultyDesc": {
+      "beginner": "Apgūsti pamatus ar skaidru vadību",
+      "intermediate": "Reālistiskāki scenāriji ar smalkām draudēm",
+      "advanced": "Augsta spiediena scenāriji kā reālā dzīvē"
+    },
+    "difficultyFeatures": {
+      "beginner1": "Acīmredzami slazda tīklu nosaukumi",
+      "beginner2": "Noderīgi drošības brīdinājumi",
+      "beginner3": "Detalizēta atgriezeniskā saite par lēmumiem",
+      "intermediate1": "Mulsinoši tīklu nosaukumi (SSID viltošana)",
+      "intermediate2": "Mazāk mājienu un brīdinājumu",
+      "intermediate3": "Jauktas likumīgas un ļaunprātīgas opcijas",
+      "advanced1": "2 minūšu atskaites taimeris",
+      "advanced2": "Pārliecinoši sociālās inženierijas uzvednes",
+      "advanced3": "Nav drošības mājienu"
+    },
     "difficultyHint": {
       "beginner": "Ideāli pirmreizējiem lietotājiem. Iepazīstina ar pamatjēdzieniem ar skaidru vadību.",
       "intermediate": "Tiem, kam ir zināma pieredze. Pievieno sarežģītību un laika spiedienu.",
@@ -82,7 +100,9 @@
     "network": "Tīkls",
     "networks": "Tīkli",
     "selectNetwork": "Izvēlies Tīklu",
+    "availableNetworks": "Pieejamie Tīkli",
     "signalStrength": "Signāla stiprums",
+    "signalStrengthAria": "Signāla stiprums: {strength} no 5",
     "secured": "Aizsargāts",
     "open": "Atvērts",
     "securityType": "Drošības tips",
@@ -91,6 +111,7 @@
     "verified": "Pārbaudīts",
     "verifiedByStaff": "Personāla pārbaudīts",
     "suspicious": "Aizdomīgs",
+    "caution": "Uzmanību",
     "dangerous": "Bīstams",
     "safe": "Drošs",
     "connect": "Pieslēgties",
@@ -113,14 +134,25 @@
     "riskPoints": "Riska Punkti",
     "decisionsCount": "Pieņemtie Lēmumi",
     "correctDecisions": "Pareizi Lēmumi",
+    "correctFormat": "{correct}/{total} pareizi",
     "timeRemaining": "Atlikušais laiks",
     "vpnEnabled": "VPN ieslēgts",
     "vpnDisabled": "VPN izslēgts",
     "enableVpn": "Ieslēgt VPN",
     "disableVpn": "Izslēgt VPN",
     "vpnProtected": "VPN Aizsargāts",
+    "vpnActive": "VPN Aktīvs",
     "risk": "Risks",
-    "riskScore": "Riska vērtējums"
+    "riskScore": "Riska vērtējums",
+    "exit": "Iziet",
+    "returnToMenu": "Atgriezties uz Izvēlni",
+    "sceneNotFound": "Skats nav atrasts",
+    "readyToStart": "Gatavs sākt scenāriju?",
+    "findNetworks": "Atrast Tīklus",
+    "portalOptions": "Portāla Opcijas",
+    "sensitivity": "{level} Jutīgums",
+    "noBadgesYet": "Pabeidz izaicinājumus, lai nopelnītu nozīmītes",
+    "badgesEarned": "Nopelnītās Nozīmītes"
   },
   "actions": {
     "verifyWithStaff": "Jautāt personālam pareizo tīklu",
@@ -142,13 +174,17 @@
     "whyWorked": "Kāpēc Tas Darbojās",
     "technicalDetails": "Tehniskie Detaļas",
     "cascadingEffects": "Kā Viena Kļūda Noved pie Vairākām Problēmām",
-    "pointsEarned": "+{points} Drošības Punkti",
-    "pointsLost": "+{points} Riska Punkti"
+    "safetyPoints": "+{points} Drošības Punkti",
+    "riskPoints": "+{points} Riska Punkti"
   },
   "completion": {
+    "title": "Scenārijs Pabeigts!",
+    "finishedScenario": "Tu pabeidzi \"{title}\"",
     "scenarioComplete": "Scenārijs Pabeigts",
     "yourGrade": "Tavs Vērtējums",
     "finalScore": "Gala Rezultāts",
+    "whatToRemember": "Ko Atcerēties Nākamreiz",
+    "tryAnotherScenario": "Izmēģini Citu Scenāriju",
     "tipsTitle": "Ko Atcerēties Nākamreiz",
     "decisionProcess": {
       "title": "Tavs Atkārtojamais Lēmumu Process",
@@ -179,11 +215,61 @@
     }
   },
   "grades": {
-    "A": "Drošības Eksperts",
-    "B": "Labs Spriedums",
-    "C": "Nepieciešama Prakse",
-    "D": "Augsts Risks",
+    "A": "Izcili",
+    "B": "Labi",
+    "C": "Vidēji",
+    "D": "Jāuzlabo",
     "F": "Jāmācās Vairāk"
+  },
+  "tips": {
+    "useVpn": "Izmanto VPN visos publiskajos tīklos, īpaši sensitīviem uzdevumiem",
+    "verifyNetworks": "Vienmēr pārbaudi tīklu nosaukumus ar personālu pirms pieslēgšanās",
+    "neverInstall": "Nekad neinstalē lietotnes vai profilus no captive portāliem",
+    "postponeSensitive": "Atliec sensitīvus uzdevumus kā banku darījumus līdz esi drošā tīklā",
+    "useMobileData": "Apsver mobilo datu izmantošanu kritiskiem uzdevumiem nevis publisko Wi-Fi",
+    "cautionHighTraffic": "Esi īpaši piesardzīgs ļoti apmeklētās vietās kā lidostās un viesnīcās",
+    "greatJob": "Lieliski! Turpini izmantot VPN un pārbaudīt tīklus",
+    "sharePractices": "Dalies ar šīm drošības praksēm ar kolēģiem un ģimeni"
+  },
+  "decisionProcess": {
+    "title": "Tavs Atkārtojamais Lēmumu Process",
+    "subtitle": "Izmanto šo kontrolsarakstu katru reizi, kad pieslēdzies publiskajam Wi-Fi:",
+    "step1Title": "Pārbaudi Tīklu",
+    "step1Desc": "Jautā personālam precīzu tīkla nosaukumu. Neuzticies līdzīgi izskatīgiem nosaukumiem.",
+    "step2Title": "Pārbaudi Drošību",
+    "step2Desc": "Dod priekšroku tīkliem ar atslēgas ikonu (ar paroli aizsargāti). Atvērtie tīkli ir riskantāki.",
+    "step3Title": "Ieslēdz Savu VPN",
+    "step3Desc": "Pirms sensitīvu darbību veikšanas, ieslēdz VPN, lai šifrētu visu trafiku.",
+    "step4Title": "Novērtē Uzdevumu",
+    "step4Desc": "Banku darījumi vai paroles? Gaidi drošu tīklu. Tikai pārlūko? Turpini ar piesardzību.",
+    "step5Title": "Nekad Neinstalē",
+    "step5Desc": "Atsakies no jebkādiem aicinājumiem instalēt lietotnes, profilus vai sertifikātus no portāliem."
+  },
+  "rogueHotspot": {
+    "title": "Kas ir Viltus Hotspots?",
+    "description": "Viltus hotspots (saukts arī par \"ļauno dvīni\") ir viltus Wi-Fi tīkls, ko uzbrucējs izveidojis, lai izskatītos kā likumīgs. Kad pieslēdzies, viņi var redzēt tavu trafiku, nozagt paroles vai novirzīt uz viltus vietnēm.",
+    "howToSpot": "Kā atpazīt:",
+    "spot1": "Nosaukumi, kas izskatās gandrīz pareizi, bet ar nelielām atšķirībām (defises, pasvītrojumi, papildu vārdi)",
+    "spot2": "Tīkli, kas apgalvo, ka ir \"BEZMAKSAS\" biznesa tīklu versijas",
+    "spot3": "Atvērti tīkli ar neparasti spēcīgiem signāliem",
+    "spot4": "Vairāki tīkli ar ļoti līdzīgiem nosaukumiem"
+  },
+  "consequence": {
+    "whatHappened": "Kas Notika",
+    "whyRisky": "Kāpēc Tas Bija Riskanti",
+    "whySafe": "Kāpēc Tas Bija Droši",
+    "saferAlternative": "Drošāka Alternatīva",
+    "whyWorked": "Kāpēc Tas Strādāja",
+    "technicalDetails": "Tehniskās Detaļas",
+    "cascadingEffects": "Kā Viena Kļūda Noved pie Citām Problēmām",
+    "safetyPoints": "+{points} Drošības Punkti",
+    "riskPoints": "+{points} Riska Punkti"
+  },
+  "completion": {
+    "title": "Scenārijs Pabeigts!",
+    "finishedScenario": "Tu pabeidzi \"{title}\"",
+    "whatToRemember": "Ko Atcerēties Nākamreiz",
+    "tryAnotherScenario": "Izmēģini Citu Scenāriju"
   },
   "scoring": {
     "howItWorks": "Kā darbojas punktu skaitīšana:",
@@ -219,6 +305,8 @@
   "aria": {
     "languageSelector": "Izvēlēties valodu",
     "themeToggle": "Pārslēgt tumšo režīmu",
+    "themeToggleLight": "Pārslēgt uz gaišo režīmu",
+    "themeToggleDark": "Pārslēgt uz tumšo režīmu",
     "sidebarToggle": "Pārslēgt sānjoslu",
     "closeDialog": "Aizvērt dialogu",
     "networkCard": "Tīkla opcija",

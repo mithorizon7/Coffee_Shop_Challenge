@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Network } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface NetworkCardProps {
   network: Network;
@@ -12,6 +13,7 @@ interface NetworkCardProps {
 }
 
 export function NetworkCard({ network, onSelect, showWarnings = false, isSelected = false }: NetworkCardProps) {
+  const { t } = useTranslation();
   const signalBars = Array.from({ length: 5 }, (_, i) => i < network.signalStrength);
   
   const getRiskBadge = () => {
@@ -19,7 +21,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
       return (
         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Verified
+          {t('network.verified')}
         </Badge>
       );
     }
@@ -29,7 +31,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800">
             <AlertTriangle className="w-3 h-3 mr-1" />
-            Suspicious
+            {t('network.suspicious')}
           </Badge>
         );
       }
@@ -37,7 +39,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
         return (
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800">
             <AlertTriangle className="w-3 h-3 mr-1" />
-            Caution
+            {t('network.caution')}
           </Badge>
         );
       }
@@ -45,7 +47,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
             <Shield className="w-3 h-3 mr-1" />
-            Safe
+            {t('network.safe')}
           </Badge>
         );
       }
@@ -90,7 +92,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
                 ) : (
                   <>
                     <WifiOff className="w-3 h-3" />
-                    Open
+                    {t('network.open')}
                   </>
                 )}
               </span>
@@ -102,7 +104,7 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
           </div>
         </div>
         
-        <div className="flex items-end gap-0.5 h-5 flex-shrink-0" aria-label={`Signal strength: ${network.signalStrength} of 5`}>
+        <div className="flex items-end gap-0.5 h-5 flex-shrink-0" aria-label={t('network.signalStrengthAria', { strength: network.signalStrength })}>
           {signalBars.map((active, i) => (
             <div
               key={i}

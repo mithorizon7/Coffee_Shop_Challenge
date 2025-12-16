@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { BadgeDisplay } from "./BadgeDisplay";
 import { ScoreTracker } from "./ScoreTracker";
 import type { GameSession, Scenario } from "@shared/schema";
-import { calculateGrade, getSecurityTips, getDecisionProcess, getRogueHotspotExplanation } from "@/lib/gameEngine";
+import { calculateGrade, getSecurityTipKeys, getDecisionProcessKeys, getRogueHotspotKeys } from "@/lib/gameEngine";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface CompletionScreenProps {
   session: GameSession;
@@ -21,10 +22,11 @@ export function CompletionScreen({
   onPlayAgain, 
   onSelectNewScenario 
 }: CompletionScreenProps) {
+  const { t } = useTranslation();
   const grade = calculateGrade(session.score);
-  const tips = getSecurityTips(session);
-  const decisionProcess = getDecisionProcess();
-  const rogueExplanation = getRogueHotspotExplanation();
+  const tipKeys = getSecurityTipKeys(session);
+  const decisionProcessKeys = getDecisionProcessKeys();
+  const rogueKeys = getRogueHotspotKeys();
 
   return (
     <motion.div
@@ -43,10 +45,10 @@ export function CompletionScreen({
         </motion.div>
         
         <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-          Scenario Complete!
+          {t('completion.title')}
         </h1>
         <p className="text-muted-foreground">
-          You've finished "{scenario.title}"
+          {t('completion.finishedScenario', { title: scenario.title })}
         </p>
       </div>
 
@@ -66,7 +68,7 @@ export function CompletionScreen({
               {grade.grade}
             </motion.div>
             <p className={cn("text-sm font-medium", grade.color)}>
-              {grade.label}
+              {t(grade.labelKey)}
             </p>
           </div>
         </div>
@@ -83,10 +85,10 @@ export function CompletionScreen({
       <Card className="p-6">
         <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
           <Lightbulb className="w-5 h-5 text-amber-500" />
-          What To Remember Next Time
+          {t('completion.whatToRemember')}
         </h3>
         <ul className="space-y-2">
-          {tips.map((tip, index) => (
+          {tipKeys.map((tipKey, index) => (
             <motion.li
               key={index}
               initial={{ opacity: 0, x: -20 }}
@@ -95,7 +97,7 @@ export function CompletionScreen({
               className="flex items-start gap-2 text-sm text-muted-foreground"
             >
               <TrendingUp className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-              <span>{tip}</span>
+              <span>{t(tipKey)}</span>
             </motion.li>
           ))}
         </ul>
@@ -104,13 +106,13 @@ export function CompletionScreen({
       <Card className="p-6">
         <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
           <CheckCircle className="w-5 h-5 text-green-500" />
-          Your Repeatable Decision Process
+          {t('decisionProcess.title')}
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Use this checklist every time you connect to public Wi-Fi:
+          {t('decisionProcess.subtitle')}
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {decisionProcess.map((item, index) => (
+          {decisionProcessKeys.map((item, index) => (
             <motion.div
               key={item.step}
               initial={{ opacity: 0, y: 10 }}
@@ -122,9 +124,9 @@ export function CompletionScreen({
                 <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
                   {item.step}
                 </span>
-                <span className="text-sm font-medium text-foreground">{item.title}</span>
+                <span className="text-sm font-medium text-foreground">{t(item.titleKey)}</span>
               </div>
-              <p className="text-xs text-muted-foreground pl-7">{item.description}</p>
+              <p className="text-xs text-muted-foreground pl-7">{t(item.descriptionKey)}</p>
             </motion.div>
           ))}
         </div>
@@ -133,18 +135,18 @@ export function CompletionScreen({
       <Card className="p-6 border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/30">
         <h3 className="font-medium text-foreground flex items-center gap-2 mb-3">
           <AlertTriangle className="w-5 h-5 text-amber-500" />
-          {rogueExplanation.title}
+          {t(rogueKeys.titleKey)}
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
-          {rogueExplanation.description}
+          {t(rogueKeys.descriptionKey)}
         </p>
         <div className="space-y-2">
-          <p className="text-xs font-medium text-foreground">How to spot one:</p>
+          <p className="text-xs font-medium text-foreground">{t('rogueHotspot.howToSpot')}</p>
           <ul className="space-y-1">
-            {rogueExplanation.howToSpot.map((item, index) => (
+            {rogueKeys.howToSpotKeys.map((spotKey, index) => (
               <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground">
                 <span className="text-amber-500 mt-0.5">-</span>
-                <span>{item}</span>
+                <span>{t(spotKey)}</span>
               </li>
             ))}
           </ul>
@@ -158,13 +160,13 @@ export function CompletionScreen({
           data-testid="button-play-again"
         >
           <RotateCcw className="w-4 h-4 mr-2" />
-          Play Again
+          {t('scenario.playAgain')}
         </Button>
         <Button
           onClick={onSelectNewScenario}
           data-testid="button-new-scenario"
         >
-          Try Another Scenario
+          {t('completion.tryAnotherScenario')}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>

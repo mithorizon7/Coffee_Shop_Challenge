@@ -1,9 +1,9 @@
 import { Shield, Lock, Search, Clock, Star, Award } from "lucide-react";
-import { Badge as UIBadge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Badge } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface BadgeDisplayProps {
   badges: Badge[];
@@ -47,11 +47,13 @@ const badgeColors: Record<string, { bg: string; text: string; border: string }> 
 };
 
 export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
+  const { t } = useTranslation();
+
   if (badges.length === 0) {
     return (
       <div className="text-center py-4 text-muted-foreground text-sm">
         <Award className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p>Complete challenges to earn badges</p>
+        <p>{t('game.noBadgesYet')}</p>
       </div>
     );
   }
@@ -94,7 +96,7 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
     <div className="space-y-3">
       <h3 className="font-medium text-foreground flex items-center gap-2">
         <Award className="w-4 h-4" />
-        Badges Earned
+        {t('game.badgesEarned')}
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {badges.map((badge, index) => {
