@@ -98,7 +98,12 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                 <ul className="mt-2 space-y-1">
                   {config.features.map((feature, index) => (
                     <li key={index} className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      <span className={cn("w-1 h-1 rounded-full flex-shrink-0", config.bgColor.replace('bg-', 'bg-').replace('50', '500').replace('950', '400'))} style={{ backgroundColor: difficulty === 'beginner' ? 'rgb(34 197 94)' : difficulty === 'intermediate' ? 'rgb(245 158 11)' : 'rgb(239 68 68)' }} />
+                      <span className={cn(
+                        "w-1.5 h-1.5 rounded-full flex-shrink-0",
+                        difficulty === 'beginner' && "bg-green-500 dark:bg-green-400",
+                        difficulty === 'intermediate' && "bg-amber-500 dark:bg-amber-400",
+                        difficulty === 'advanced' && "bg-red-500 dark:bg-red-400"
+                      )} />
                       {feature}
                     </li>
                   ))}

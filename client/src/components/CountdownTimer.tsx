@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Timer, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -6,25 +6,40 @@ import { cn } from "@/lib/utils";
 interface CountdownTimerProps {
   totalSeconds: number;
   isActive: boolean;
+  sceneId: string;
   onTimeUp?: () => void;
 }
 
-export function CountdownTimer({ totalSeconds, isActive, onTimeUp }: CountdownTimerProps) {
+export function CountdownTimer({ totalSeconds, isActive, sceneId, onTimeUp }: CountdownTimerProps) {
   const [secondsRemaining, setSecondsRemaining] = useState(totalSeconds);
   const [isPulsing, setIsPulsing] = useState(false);
+  const hasTriggeredTimeUp = useRef(false);
+  const prevSceneId = useRef(sceneId);
+  const prevIsActive = useRef(isActive);
 
   useEffect(() => {
-    setSecondsRemaining(totalSeconds);
-  }, [totalSeconds]);
+    const sceneChanged = sceneId !== prevSceneId.current;
+    const becameActive = isActive && !prevIsActive.current;
+    
+    if (sceneChanged || becameActive) {
+      setSecondsRemaining(totalSeconds);
+      hasTriggeredTimeUp.current = false;
+    }
+    
+    prevSceneId.current = sceneId;
+    prevIsActive.current = isActive;
+  }, [sceneId, isActive, totalSeconds]);
 
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || secondsRemaining <= 0) return;
 
     const interval = setInterval(() => {
       setSecondsRemaining((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
-          onTimeUp?.();
+          if (!hasTriggeredTimeUp.current) {
+            hasTriggeredTimeUp.current = true;
+            setTimeout(() => onTimeUp?.(), 0);
+          }
           return 0;
         }
         return prev - 1;
@@ -32,7 +47,7 @@ export function CountdownTimer({ totalSeconds, isActive, onTimeUp }: CountdownTi
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isActive, onTimeUp]);
+  }, [isActive, secondsRemaining, onTimeUp]);
 
   useEffect(() => {
     setIsPulsing(secondsRemaining <= 30 && secondsRemaining > 0);

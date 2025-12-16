@@ -211,10 +211,11 @@ export function GameContainer({
             </div>
             
             <div className="flex items-center gap-3">
-              {isAdvanced && isDecisionScene && (
+              {isAdvanced && isDecisionScene && currentScene && (
                 <CountdownTimer
                   totalSeconds={120}
                   isActive={isDecisionScene && !isTransitioning}
+                  sceneId={currentScene.id}
                   onTimeUp={handleTimeUp}
                 />
               )}
