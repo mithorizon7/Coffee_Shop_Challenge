@@ -79,6 +79,28 @@ The `shared/` directory contains code used by both frontend and backend:
 - `schema.ts`: Database schema and Zod validation types
 - `scenarios.ts`: Runtime scenario access via dynamic getters (loads from JSON)
 
+### Internationalization (i18n)
+Full i18n support with three languages:
+- **English (en)**: Default language
+- **Latvian (lv)**: Full translation
+- **Russian (ru)**: Full translation with proper ICU pluralization
+
+**Key Files:**
+- `client/src/lib/i18n.ts` - i18next configuration with ICU support
+- `client/src/lib/intlFormatters.ts` - Locale-aware number/date/duration formatting
+- `client/src/locales/*.json` - Translation files (en.json, lv.json, ru.json)
+- `client/src/components/LanguageSwitcher.tsx` - Language switcher UI
+
+**i18n Validation Tooling:**
+- `node scripts/i18n-extract.js` - Extract translation keys from source code
+- `node scripts/i18n-validate.js` - Validate key parity and ICU syntax across locales
+
+**Translation Guidelines:**
+- Use stable key-based IDs (e.g., `home.title`) not English text as keys
+- Keep technical terms untranslated: Wi-Fi, VPN, SSID
+- Use ICU MessageFormat for pluralization: `{count, plural, one {...} other {...}}`
+- Russian requires additional plural forms: one, few, many, other
+
 ## External Dependencies
 
 ### UI Framework
