@@ -81,25 +81,41 @@ The `shared/` directory contains code used by both frontend and backend:
 
 ### Internationalization (i18n)
 Full i18n support with three languages:
-- **English (en)**: Default language
-- **Latvian (lv)**: Full translation
+- **English (en)**: Source locale (canonical keyset)
+- **Latvian (lv)**: Full translation, first fallback
 - **Russian (ru)**: Full translation with proper ICU pluralization
+
+**Loading Strategy:** Bundled (all locales loaded at startup for instant switching)
+
+**Fallback Chain:** User preference (localStorage) → Browser locale → Latvian → English
 
 **Key Files:**
 - `client/src/lib/i18n.ts` - i18next configuration with ICU support
 - `client/src/lib/intlFormatters.ts` - Locale-aware number/date/duration formatting
 - `client/src/locales/*.json` - Translation files (en.json, lv.json, ru.json)
 - `client/src/components/LanguageSwitcher.tsx` - Language switcher UI
+- `content/i18n-glossary.md` - Translation glossary (30+ terms)
 
 **i18n Validation Tooling:**
 - `node scripts/i18n-extract.js` - Extract translation keys from source code
 - `node scripts/i18n-validate.js` - Validate key parity and ICU syntax across locales
 
+**Key Naming Conventions:**
+- Format: `namespace.screen.element.state`
+- Examples:
+  - `home.title` - Homepage title
+  - `game.network.connect` - Game network connect button
+  - `scenario.difficulty.beginner` - Scenario difficulty label
+  - `errors.networkError` - Error messages
+- Namespaces: common, nav, home, scenario, network, game, actions, consequence, completion, grades, tips, threats, aria, errors
+
 **Translation Guidelines:**
 - Use stable key-based IDs (e.g., `home.title`) not English text as keys
-- Keep technical terms untranslated: Wi-Fi, VPN, SSID
+- Keep technical terms untranslated: Wi-Fi, VPN, SSID, WPA, HTTPS
 - Use ICU MessageFormat for pluralization: `{count, plural, one {...} other {...}}`
-- Russian requires additional plural forms: one, few, many, other
+- Russian requires all four plural forms: one, few, many, other
+- Dev mode shows `[MISSING:key]` for untranslated strings
+- Prod mode falls back gracefully to lv → en
 
 ## External Dependencies
 
