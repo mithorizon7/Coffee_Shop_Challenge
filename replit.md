@@ -68,10 +68,16 @@ The game uses a scene-based state machine:
 - **Tasks**: Actions players must complete with sensitivity ratings
 - **Sessions**: Player progress tracking with scores, badges, and completed scenes
 
+### Content Files (Educator-Editable)
+Game content is separated from code for easy editing by educators:
+- `content/scenarios/*.json` - Scenario definitions (one file per scenario)
+- `content/badges.json` - Badge definitions and descriptions
+- Loaded at server startup via `server/scenarioLoader.ts`
+
 ### Shared Code
 The `shared/` directory contains code used by both frontend and backend:
 - `schema.ts`: Database schema and Zod validation types
-- `scenarios.ts`: Game scenario definitions and badge configurations
+- `scenarios.ts`: Runtime scenario access via dynamic getters (loads from JSON)
 
 ## External Dependencies
 
