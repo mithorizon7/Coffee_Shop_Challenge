@@ -27,6 +27,7 @@
     "selectLanguage": "Select language"
   },
   "home": {
+    "appName": "Coffee Shop Challenge",
     "title": "The Coffee Shop Challenge",
     "subtitle": "Learn to make smart decisions on public Wi-Fi",
     "description": "Learn to recognize public Wi-Fi security risks through realistic scenarios. Practice making smart decisions when connecting in cafes, hotels, and airports.",

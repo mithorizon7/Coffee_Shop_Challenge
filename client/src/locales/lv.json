@@ -27,6 +27,7 @@
     "selectLanguage": "Izvēlēties valodu"
   },
   "home": {
+    "appName": "Kafejnīcas Izaicinājums",
     "title": "Kafejnīcas Izaicinājums",
     "subtitle": "Iemācies pieņemt gudrus lēmumus publiskajā Wi-Fi",
     "description": "Iemācies atpazīt publiskā Wi-Fi drošības riskus reālistiskos scenārijos. Praktizē gudru lēmumu pieņemšanu, pieslēdzoties kafejnīcās, viesnīcās un lidostās.",

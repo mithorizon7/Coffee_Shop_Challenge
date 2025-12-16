@@ -121,7 +121,7 @@ export default function Home() {
                 <Wifi className="w-4 h-4 text-primary" />
               </div>
               <span className="font-display font-semibold text-foreground">
-                Coffee Shop Challenge
+                {t('home.appName')}
               </span>
             </button>
             <div className="flex items-center gap-2">
@@ -130,13 +130,13 @@ export default function Home() {
                   <Link href="/progress">
                     <Button variant="ghost" size="sm" data-testid="button-progress">
                       <BarChart3 className="w-4 h-4 mr-2" />
-                      Progress
+                      {t('home.progress')}
                     </Button>
                   </Link>
                   <Link href="/educator">
                     <Button variant="ghost" size="sm" data-testid="button-educator">
                       <GraduationCap className="w-4 h-4 mr-2" />
-                      Educator
+                      {t('home.educator')}
                     </Button>
                   </Link>
                 </>
@@ -203,7 +203,7 @@ export default function Home() {
               <Wifi className="w-4 h-4 text-primary" />
             </div>
             <span className="font-display font-semibold text-foreground">
-              Coffee Shop Challenge
+              {t('home.appName')}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -212,13 +212,13 @@ export default function Home() {
                 <Link href="/progress">
                   <Button variant="ghost" size="sm" data-testid="button-progress">
                     <BarChart3 className="w-4 h-4 mr-2" />
-                    Progress
+                    {t('home.progress')}
                   </Button>
                 </Link>
                 <Link href="/educator">
                   <Button variant="ghost" size="sm" data-testid="button-educator">
                     <GraduationCap className="w-4 h-4 mr-2" />
-                    Educator
+                    {t('home.educator')}
                   </Button>
                 </Link>
               </>
