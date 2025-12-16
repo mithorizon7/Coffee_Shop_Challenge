@@ -1,0 +1,202 @@
+{
+  "common": {
+    "start": "Sākt",
+    "continue": "Turpināt",
+    "back": "Atpakaļ",
+    "reset": "Atiestatīt",
+    "learnMore": "Uzzināt vairāk",
+    "loading": "Ielādē...",
+    "error": "Kļūda",
+    "success": "Veiksmīgi",
+    "warning": "Brīdinājums",
+    "danger": "Bīstami",
+    "close": "Aizvērt",
+    "save": "Saglabāt",
+    "cancel": "Atcelt",
+    "confirm": "Apstiprināt",
+    "yes": "Jā",
+    "no": "Nē"
+  },
+  "nav": {
+    "home": "Sākums",
+    "play": "Spēlēt",
+    "progress": "Progress",
+    "about": "Par mums",
+    "settings": "Iestatījumi",
+    "language": "Valoda",
+    "selectLanguage": "Izvēlēties valodu"
+  },
+  "home": {
+    "title": "Kafejnīcas Izaicinājums",
+    "subtitle": "Iemācies pieņemt gudrus lēmumus publiskajā Wi-Fi",
+    "description": "Praktizē drošu tīklu atpazīšanu, izvairīšanos no lamatām un savu datu aizsardzību interaktīvos scenārijos.",
+    "chooseScenario": "Izvēlies Scenāriju",
+    "scenarioCount": "{count, plural, one {# scenārijs} other {# scenāriji}} pieejami",
+    "startLearning": "Sākt Mācīties"
+  },
+  "scenario": {
+    "difficulty": {
+      "beginner": "Iesācējs",
+      "intermediate": "Vidējais",
+      "advanced": "Augstākais"
+    },
+    "difficultyHint": {
+      "beginner": "Ideāli pirmreizējiem lietotājiem. Iepazīstina ar pamatjēdzieniem ar skaidru vadību.",
+      "intermediate": "Tiem, kam ir zināma pieredze. Pievieno sarežģītību un laika spiedienu.",
+      "advanced": "Pārliecinātiem lietotājiem. Augsta spiediena scenāriji ar smalkām draudēm."
+    },
+    "estimatedTime": "Aptuvens laiks",
+    "startScenario": "Sākt Scenāriju",
+    "tryAgain": "Mēģināt Vēlreiz",
+    "selectNewScenario": "Izvēlēties Jaunu Scenāriju",
+    "playAgain": "Spēlēt Vēlreiz"
+  },
+  "network": {
+    "network": "Tīkls",
+    "networks": "Tīkli",
+    "selectNetwork": "Izvēlies Tīklu",
+    "signalStrength": "Signāla stiprums",
+    "secured": "Aizsargāts",
+    "open": "Atvērts",
+    "securityType": "Drošības tips",
+    "wpa2": "WPA2",
+    "wpa3": "WPA3",
+    "verified": "Pārbaudīts",
+    "verifiedByStaff": "Personāla pārbaudīts",
+    "suspicious": "Aizdomīgs",
+    "dangerous": "Bīstams",
+    "safe": "Drošs",
+    "connect": "Pieslēgties",
+    "disconnect": "Atslēgties",
+    "ssid": "Tīkla nosaukums (SSID)",
+    "publicNetwork": "Publiskais tīkls",
+    "privateNetwork": "Privātais tīkls",
+    "guestNetwork": "Viesu tīkls",
+    "unknownDevice": "Nezināma ierīce",
+    "connectedDevice": "Pieslēgtā ierīce",
+    "router": "Maršrutētājs",
+    "accessPoint": "Piekļuves punkts",
+    "encryption": "Šifrēšana",
+    "encrypted": "Šifrēts",
+    "unencrypted": "Nešifrēts"
+  },
+  "game": {
+    "score": "Punkti",
+    "safetyPoints": "Drošības Punkti",
+    "riskPoints": "Riska Punkti",
+    "decisionsCount": "Pieņemtie Lēmumi",
+    "correctDecisions": "Pareizi Lēmumi",
+    "timeRemaining": "Atlikušais laiks",
+    "vpnEnabled": "VPN ieslēgts",
+    "vpnDisabled": "VPN izslēgts",
+    "enableVpn": "Ieslēgt VPN",
+    "disableVpn": "Izslēgt VPN",
+    "vpnProtected": "VPN Aizsargāts",
+    "risk": "Risks",
+    "riskScore": "Riska vērtējums"
+  },
+  "actions": {
+    "verifyWithStaff": "Jautāt personālam pareizo tīklu",
+    "callFrontDesk": "Zvanīt reģistratūrai, lai pārbaudītu tīklu",
+    "waitAtKiosk": "Gaidīt rindā pie info kioskā, lai pārbaudītu",
+    "proceedNow": "Turpināt tagad",
+    "useVpnFirst": "Vispirms ieslēgt VPN",
+    "postpone": "Gaidīt līdz drošākam",
+    "installApp": "Instalēt lietotni",
+    "decline": "Noraidīt",
+    "acceptTerms": "Pieņemt noteikumus",
+    "skipTerms": "Izlaist"
+  },
+  "consequence": {
+    "whatHappened": "Kas Notika",
+    "whyRisky": "Kāpēc Tas Bija Riskanti",
+    "whySafe": "Kāpēc Tas Bija Droši",
+    "saferAlternative": "Drošāka Alternatīva",
+    "whyWorked": "Kāpēc Tas Darbojās",
+    "technicalDetails": "Tehniskie Detaļas",
+    "cascadingEffects": "Kā Viena Kļūda Noved pie Vairākām Problēmām",
+    "pointsEarned": "+{points} Drošības Punkti",
+    "pointsLost": "+{points} Riska Punkti"
+  },
+  "completion": {
+    "scenarioComplete": "Scenārijs Pabeigts",
+    "yourGrade": "Tavs Vērtējums",
+    "finalScore": "Gala Rezultāts",
+    "tipsTitle": "Ko Atcerēties Nākamreiz",
+    "decisionProcess": {
+      "title": "Tavs Atkārtojamais Lēmumu Process",
+      "subtitle": "Izmanto šo kontrolsarakstu katru reizi, kad pieslēdzies publiskajam Wi-Fi:",
+      "step1Title": "Pārbaudi Tīklu",
+      "step1Desc": "Jautā personālam precīzu tīkla nosaukumu. Neuzticies līdzīgi izskatošiem nosaukumiem.",
+      "step2Title": "Pārbaudi Drošību",
+      "step2Desc": "Izvēlies tīklus ar slēdzenes ikonu (ar paroli aizsargātus). Atvērtie tīkli ir riskantāki.",
+      "step3Title": "Ieslēdz VPN",
+      "step3Desc": "Pirms jebkādas sensitīvas darbības ieslēdz VPN, lai šifrētu visu trafiku.",
+      "step4Title": "Novērtē Uzdevumu",
+      "step4Desc": "Bankas darījumi vai paroles? Gaidi drošāku tīklu. Tikai pārlūkošana? Turpini ar piesardzību.",
+      "step5Title": "Nekad Neinstalē",
+      "step5Desc": "Noraidi jebkurus lūgumus instalēt lietotnes, profilus vai sertifikātus no portāliem."
+    },
+    "rogueHotspot": {
+      "title": "Kas ir Viltus Hotspots?",
+      "description": "Viltus hotspots (saukts arī par 'ļauno dvīni') ir viltots Wi-Fi tīkls, ko uzstāda uzbrucējs, lai tas izskatītos kā likumīgs. Kad pieslēdzies, viņi var redzēt tavu trafiku, nozagt paroles vai novirzīt tevi uz viltotām vietnēm.",
+      "howToSpotTitle": "Kā to atpazīt:",
+      "spot1": "Nosaukumi, kas izskatās gandrīz pareizi, bet ar mazām atšķirībām (defises, pasvītrojumi, papildu vārdi)",
+      "spot2": "Tīkli, kas apgalvo, ka ir 'BEZMAKSAS' versijas biznesa tīkliem",
+      "spot3": "Atvērti tīkli ar neparasti stipru signālu",
+      "spot4": "Vairāki tīkli ar ļoti līdzīgiem nosaukumiem"
+    },
+    "badges": {
+      "title": "Nopelnītās Nozīmītes",
+      "noBadges": "Vēl nav nopelnītas nozīmītes"
+    }
+  },
+  "grades": {
+    "A": "Drošības Eksperts",
+    "B": "Labs Spriedums",
+    "C": "Nepieciešama Prakse",
+    "D": "Augsts Risks",
+    "F": "Jāmācās Vairāk"
+  },
+  "scoring": {
+    "howItWorks": "Kā darbojas punktu skaitīšana:",
+    "safetyExplain": "Tiek nopelnīti par drošiem lēmumiem, piemēram, VPN izmantošanu, aizdomīgu tīklu izvairīšanos vai sensitīvu uzdevumu atlikšanu.",
+    "riskExplain": "Tiek uzkrāti par riskantām darbībām, piemēram, pieslēgšanos neaizsargātiem tīkliem vai sensitīvu datu ievadīšanu publiskajā Wi-Fi.",
+    "lowerRiskBetter": "Mazāk riska punktu = labāks vērtējums!"
+  },
+  "threats": {
+    "phishing": "Pikšķerēšana",
+    "tracking": "Izsekošana",
+    "credentialHarvested": "Akreditācijas dati savākti",
+    "sessionCompromised": "Sesija kompromitēta",
+    "malwareInstalled": "Ļaunatūra instalēta",
+    "accountLocked": "Konts bloķēts",
+    "privacyLeaked": "Privātums noplūdis"
+  },
+  "tips": {
+    "useVpn": "Izmanto VPN visos publiskajos tīklos, īpaši sensitīviem uzdevumiem",
+    "verifyNetwork": "Vienmēr pārbaudi tīkla nosaukumus pie personāla pirms pieslēgšanās",
+    "neverInstall": "Nekad neinstalē lietotnes vai profilus no pieslēgšanās portāliem",
+    "postponeSensitive": "Atliec sensitīvus uzdevumus, piemēram, bankas darījumus, līdz esi drošā tīklā",
+    "useMobileData": "Apsver mobilā datu izmantošanu kritiskiem uzdevumiem publiskā Wi-Fi vietā",
+    "extraCaution": "Esi īpaši piesardzīgs augsta trafika vietās, piemēram, lidostās un viesnīcās",
+    "keepUpGoodWork": "Lieliski! Turpini izmantot VPN un pārbaudīt tīklus",
+    "shareKnowledge": "Dalies ar šīm drošības praksēm ar kolēģiem un ģimeni"
+  },
+  "errors": {
+    "scenarioNotFound": "Scenārijs nav atrasts",
+    "loadingFailed": "Neizdevās ielādēt. Lūdzu, mēģini vēlreiz.",
+    "networkError": "Tīkla kļūda. Lūdzu, pārbaudi savienojumu.",
+    "sessionExpired": "Sesija beigusies. Sāk jaunu spēli."
+  },
+  "aria": {
+    "languageSelector": "Izvēlēties valodu",
+    "themeToggle": "Pārslēgt tumšo režīmu",
+    "sidebarToggle": "Pārslēgt sānjoslu",
+    "closeDialog": "Aizvērt dialogu",
+    "networkCard": "Tīkla opcija",
+    "scoreTracker": "Pašreizējie punkti",
+    "timer": "Atlikušais laiks",
+    "vpnToggle": "Pārslēgt VPN aizsardzību"
+  }
+}

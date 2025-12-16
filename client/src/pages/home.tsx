@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Wifi, Shield, AlertTriangle, BookOpen, ArrowRight, Loader2, BarChart3, LogIn, LogOut, User, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { GameContainer } from "@/components/GameContainer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "wouter";
 import type { GameSession, Scenario, ScenarioListItem, DifficultyLevel } from "@shared/schema";
@@ -138,6 +140,7 @@ export default function Home() {
                   </Link>
                 </>
               )}
+              <LanguageSwitcher />
               <ThemeToggle />
             </div>
           </div>
@@ -245,6 +248,7 @@ export default function Home() {
                 </a>
               </Button>
             )}
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>
