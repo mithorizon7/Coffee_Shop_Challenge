@@ -148,6 +148,11 @@ export const consequenceSchema = z.object({
   technicalExplanation: z.string().optional(),
   safetyPointsChange: z.number(),
   riskPointsChange: z.number(),
+  cascadingEffects: z.array(z.object({
+    order: z.number(),
+    effect: z.string(),
+    icon: z.enum(["credential", "account", "money", "identity", "privacy", "malware"]).optional(),
+  })).optional(),
 });
 
 export type Consequence = z.infer<typeof consequenceSchema>;

@@ -1,0 +1,119 @@
+Internationalization & Translation Quality — Context for This Checklist (Latvia v1)
+We are launching this suite of online learning apps in Latvia first, and from day one the product must feel like it was designed in-language, not “translated later.”
+That means Latvian (lv) and Russian (ru) are not optional add-ons or rough drafts. They are primary experiences. Learners should never feel that English is the “real” version and Latvian/Russian are approximations. English should still be the default page, but there needs to be Latvian and Russian versions that can easily be toggled as well. 
+
+Our quality bar
+For Latvian and Russian, the standard is:
+* Reads as native — natural phrasing, not literal word-for-word translation
+* Technically accurate — networking terms are correct and consistent across apps
+* Consistent tone — clear, calm, professional, learner-friendly
+* Culturally fluent — examples and microcopy feel local and appropriate
+* Polished UI fit — no awkward truncation or broken layouts that betray translation
+In other words: we want the Latvian and Russian experiences to look and feel as if a professional native translator (with technical fluency) produced every string, and a native reviewer signed off on the final product.
+Why this checklist exists
+High-quality localization is easiest when it is built in from the beginning. If internationalization is bolted on later, teams end up rewriting components, hardcoding workarounds, and shipping uneven translations.
+This checklist is our shared baseline to make sure:
+* All user-facing text is translatable and consistently managed
+* Plurals and grammar work correctly (especially important for Russian and Latvian)
+* Date/number formatting matches local expectations
+* UI layouts can handle real translated text without breaking
+* The translation workflow stays manageable as the product evolves
+Scope: Four separate apps, one shared standard
+We are building four separate applications (Cartographer, Glass Wall, Coffee Shop Challenge, Fix-It Planner). Even though they are separate codebases, they must feel like one coherent suite in Latvian and Russian—using the same terminology, style, and tone everywhere.
+This checklist is not meant to slow development down. It’s meant to prevent rework and ensure that Latvia’s first release meets the quality bar we’re setting for everything that comes next.
+ Latvia v1 — Term Locks (LV + RU) — Minimal Glossary for Consistency
+1) Do-not-translate tokens (keep exactly as shown)
+Use these exactly across all apps:
+* Wi-Fi, VPN, IP, MAC, SSID, HTTP, HTTPS, TLS, NAT, IoT
+If you need to explain once (tooltip or first mention):
+* LV: “tīkla nosaukums (SSID)”
+* RU: “имя сети (SSID)”
+
+2) Preferred translation locks (use these consistently)
+English (Canonical)	Russian (Use)	Latvian (Use)	Notes
+Network	сеть	tīkls	Core term—don’t alternate synonyms.
+Private network	частная сеть	privātais tīkls	
+Public network	общедоступная сеть	publiskais tīkls	“Public” = shared/less trusted.
+Router	маршрутизатор	maršrutētājs	Use formal term consistently.
+Access point	точка доступа	piekļuves punkts	For Wi-Fi infrastructure when needed.
+Device	устройство	ierīce	
+Connected device	подключённое устройство	pieslēgtā ierīce	
+Unknown device	неизвестное устройство	nezināma ierīce	
+Guest network	гостевая сеть	viesu tīkls	
+Main network	основная сеть	galvenais tīkls	Lock RU as “основная сеть” for simplicity.
+IoT device	устройство IoT	IoT ierīce	Optional first-use expansion: LV “lietu interneta (IoT) ierīce”.
+Encryption	шифрование	šifrēšana	
+Encrypted	зашифрованный	šifrēts	
+Unencrypted	незашифрованный	nešifrēts	
+Request	запрос	pieprasījums	App 2 uses this constantly.
+Response	ответ	atbilde	
+Port	порт	ports	Keep as the networking meaning.
+Risk	риск	risks	Used in scoring and debriefs.
+Risk score	оценка риска	riska vērtējums	App 4.
+Phishing	фишинг	pikšķerēšana	Appears in public Wi-Fi app.
+Tracking	отслеживание	izsekošana	
+3) Microcopy locks (keep UI consistent)
+English	Russian (Use)	Latvian (Use)
+Start	Начать	Sākt
+Continue	Продолжить	Turpināt
+Learn more	Подробнее	Uzzināt vairāk
+Back	Назад	Atpakaļ
+Reset	Сбросить	Atiestatīt
+4) Guardrails (so translators don’t fight the UI)
+* Use ICU plurals/selects (no handmade plural logic), especially important for Russian and Latvian.
+* Avoid “sentence Lego” (no concatenating fragments like "Hello " + name).
+* Use Intl.* for dates/numbers (Latvia/Russia formatting differs from US).
+* If a translator wants to change a locked term, it must be a deliberate glossary update, not a one-off variation.
+
+
+A streamlined checklist I’d hand to the team (Latvia v1)
+A) Day-1 architecture (must)
+* ✅ Use ICU-capable i18n (no exceptions).
+* ✅ Key-based IDs (stable keys; no text-as-ID).
+* ✅ Locales: lv and ru (optionally en as fallback).
+* ✅ Fallback chain: user preference → browser locale → default (lv or en) (you decide).
+* ✅ Define “translation namespaces”: common, nav, errors, app1, app2, etc.
+Recommendation: For Latvia launch, consider defaulting to lv with ru selectable, unless your program expects many English-first learners.
+
+B) Tooling (must, but minimal)
+* ✅ Extraction script (e.g., i18n:extract)
+* ✅ Compile/validate ICU messages (i18n:compile)
+* ✅ CI fails only on:
+    * invalid ICU syntax
+    * missing required placeholders
+    * missing locale files
+Optional (nice, not required day 1):
+* pseudo-localization
+* lint rule blocking hardcoded strings (add in week 2)
+
+C) Coding patterns (must)
+* ✅ All user-facing strings go through i18n, including aria-label, tooltips, empty states.
+* ✅ Use ICU for plural/select (especially important for Russian).
+* ✅ No string concatenation for sentences.
+* ✅ Use Intl.* formatting helpers (dates/numbers) with locale from the i18n layer.
+Extra Latvia-specific guidance (must):
+* Avoid sentence fragments that assume English word order.
+* Prefer full messages with placeholders.
+
+D) Layout/design constraints (must)
+* ✅ Allow ~30–40% expansion for buttons and headings.
+* ✅ No text baked into images.
+* ✅ Support Cyrillic and Latvian diacritics with your chosen font stack.
+* ✅ Test in both lv and ru early with real-ish strings (Russian is often longer).
+
+E) QA workflow (must)
+* ✅ Add a language switcher that is easy to find (top right is fine).
+* ✅ Smoke test for every release:
+    * critical flows in lv + ru
+    * no overlapping/truncated buttons
+    * no missing key placeholders (like {count})
+* ✅ In dev mode: highlight missing translations clearly (e.g., [MISSING: key]).
+* ✅ In prod: fail gracefully (fallback to lv or en), don’t show raw keys.
+
+What I’d move to “Later” to avoid burden
+* RTL support and RTL testing
+* Testing non-Latin scripts beyond Cyrillic
+* Full TMS integration (Crowdin/Lokalise) unless you already have translators in that pipeline
+* Aggressive linting that blocks all hardcoded strings
+* Complicated URL-based locale routing (unless you need shareable localized URLs)
+ 

@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, AlertCircle, ArrowRight, Shield, Lightbulb } from "lucide-react";
+import { AlertTriangle, CheckCircle, AlertCircle, ArrowRight, Shield, Lightbulb, Key, User, DollarSign, UserX, Eye, Bug, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Consequence } from "@shared/schema";
@@ -35,6 +35,15 @@ const severityConfig = {
     headerBg: "bg-red-100 dark:bg-red-900",
     Icon: AlertTriangle,
   },
+};
+
+const cascadeIcons = {
+  credential: Key,
+  account: User,
+  money: DollarSign,
+  identity: UserX,
+  privacy: Eye,
+  malware: Bug,
 };
 
 export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreenProps) {
@@ -120,6 +129,50 @@ export function ConsequenceScreen({ consequence, onContinue }: ConsequenceScreen
               )}
             </div>
           </div>
+
+          {consequence.cascadingEffects && consequence.cascadingEffects.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="pt-4 border-t border-border"
+            >
+              <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
+                <AlertTriangle className="w-4 h-4 text-red-500" />
+                How One Mistake Leads to More Problems
+              </h3>
+              <div className="relative">
+                <div className="flex flex-wrap items-center gap-2">
+                  {consequence.cascadingEffects
+                    .sort((a, b) => a.order - b.order)
+                    .map((effect, index) => {
+                      const IconComponent = effect.icon ? cascadeIcons[effect.icon] : AlertCircle;
+                      return (
+                        <motion.div
+                          key={effect.order}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.4 + index * 0.15 }}
+                          className="flex items-center gap-2"
+                        >
+                          <div className="flex items-center gap-2 p-2 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800">
+                            <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0">
+                              <IconComponent className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                            </div>
+                            <span className="text-xs text-red-800 dark:text-red-200 max-w-[180px]">
+                              {effect.effect}
+                            </span>
+                          </div>
+                          {index < (consequence.cascadingEffects?.length || 0) - 1 && (
+                            <ChevronRight className="w-4 h-4 text-red-400 flex-shrink-0" />
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
       </Card>
       

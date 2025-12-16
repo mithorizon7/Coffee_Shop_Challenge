@@ -171,7 +171,13 @@
         "saferAlternative": "Even under time pressure, take 30 seconds to verify the official network name. Look for posted signs or check the airport's official website using mobile data first.",
         "technicalExplanation": "Attackers use high-gain antennas to broadcast strong signals, making their fake networks appear as the 'best' connection. All your traffic then flows through their device.",
         "safetyPointsChange": 0,
-        "riskPointsChange": 40
+        "riskPointsChange": 40,
+        "cascadingEffects": [
+          { "order": 1, "effect": "All your traffic passes through attacker's device", "icon": "privacy" },
+          { "order": 2, "effect": "Login credentials for work systems captured", "icon": "credential" },
+          { "order": 3, "effect": "Corporate network access is compromised", "icon": "account" },
+          { "order": 4, "effect": "Sensitive business data exposed to competitors", "icon": "identity" }
+        ]
       },
       "nextSceneId": "airport_completion"
     },
@@ -191,7 +197,13 @@
         "saferAlternative": "Check the exact network name character by character. In airports, even one wrong character could mean you're connecting to an attacker's network.",
         "technicalExplanation": "Attackers research target locations to create convincing fake network names. When they capture credentials and attempt to use them, many enterprise security systems detect the anomalous login pattern and lock the account to prevent unauthorized access.",
         "safetyPointsChange": 0,
-        "riskPointsChange": 35
+        "riskPointsChange": 35,
+        "cascadingEffects": [
+          { "order": 1, "effect": "Fake network captured your work credentials", "icon": "credential" },
+          { "order": 2, "effect": "Attacker attempted to access your corporate account", "icon": "account" },
+          { "order": 3, "effect": "Security system locked your account to protect it", "icon": "identity" },
+          { "order": 4, "effect": "You missed the contract deadline while locked out", "icon": "money" }
+        ]
       },
       "nextSceneId": "airport_completion"
     },

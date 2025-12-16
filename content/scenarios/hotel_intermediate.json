@@ -202,7 +202,13 @@
         "saferAlternative": "Always verify the exact network name with hotel staff. Pay attention to naming conventions - legitimate hotel networks usually follow a consistent pattern.",
         "technicalExplanation": "This 'evil twin' attack is common in hotels. Attackers set up a fake network with a similar name and stronger signal. Guests connect, thinking it's legitimate, and all traffic passes through the attacker's device.",
         "safetyPointsChange": 0,
-        "riskPointsChange": 35
+        "riskPointsChange": 35,
+        "cascadingEffects": [
+          { "order": 1, "effect": "Fake portal captured your name and room number", "icon": "credential" },
+          { "order": 2, "effect": "Attacker links your identity to browsing activity", "icon": "privacy" },
+          { "order": 3, "effect": "Corporate data from email becomes accessible", "icon": "account" },
+          { "order": 4, "effect": "Business secrets or client info may be compromised", "icon": "identity" }
+        ]
       },
       "nextSceneId": "hotel_completion"
     },
@@ -222,7 +228,13 @@
         "saferAlternative": "Never install apps, profiles, or certificates from captive portals. If a business truly requires an app, download it directly from official app stores where it's been reviewed for security.",
         "technicalExplanation": "Mobile device management (MDM) profiles and sideloaded apps can gain extensive access to your device - reading emails, tracking location, accessing files, and even capturing passwords.",
         "safetyPointsChange": 0,
-        "riskPointsChange": 45
+        "riskPointsChange": 45,
+        "cascadingEffects": [
+          { "order": 1, "effect": "Malicious app gains device permissions", "icon": "malware" },
+          { "order": 2, "effect": "App reads your contacts, emails, and files", "icon": "privacy" },
+          { "order": 3, "effect": "Your location is tracked in real-time", "icon": "identity" },
+          { "order": 4, "effect": "Credentials are captured and sold or used", "icon": "money" }
+        ]
       },
       "nextSceneId": "hotel_completion"
     },

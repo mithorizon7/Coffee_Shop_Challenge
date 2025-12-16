@@ -234,7 +234,13 @@
         "saferAlternative": "Always verify the exact network name with staff before connecting. Look for secured networks (with the lock icon) and be suspicious of networks that are open but claim to be from a business.",
         "technicalExplanation": "Evil twin attacks work by broadcasting a stronger signal than the legitimate network, causing devices to connect automatically. The attacker then intercepts all traffic or presents fake login pages.",
         "safetyPointsChange": 0,
-        "riskPointsChange": 30
+        "riskPointsChange": 30,
+        "cascadingEffects": [
+          { "order": 1, "effect": "Your email credentials were captured by the fake login page", "icon": "credential" },
+          { "order": 2, "effect": "Attacker uses your email to reset passwords on other accounts", "icon": "account" },
+          { "order": 3, "effect": "Your linked bank and shopping accounts are now accessible", "icon": "money" },
+          { "order": 4, "effect": "Personal data from these accounts enables identity theft", "icon": "identity" }
+        ]
       },
       "nextSceneId": "completion"
     },
@@ -354,7 +360,12 @@
         "saferAlternative": "Never access banking on public Wi-Fi without a VPN. Better yet, postpone banking until you're on a trusted private network. If urgent, use your mobile data instead of public Wi-Fi.",
         "technicalExplanation": "While modern HTTPS is secure, attackers on the same network could attempt downgrade attacks, DNS spoofing to fake bank sites, or exploit any misconfigurations in your browser's certificate validation.",
         "safetyPointsChange": 0,
-        "riskPointsChange": 40
+        "riskPointsChange": 40,
+        "cascadingEffects": [
+          { "order": 1, "effect": "Your banking session may be intercepted on the public network", "icon": "credential" },
+          { "order": 2, "effect": "Attacker captures your login credentials or session token", "icon": "account" },
+          { "order": 3, "effect": "Unauthorized transfers drain your account before you notice", "icon": "money" }
+        ]
       },
       "nextSceneId": "completion"
     },
