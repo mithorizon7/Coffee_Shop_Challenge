@@ -99,6 +99,12 @@ Full i18n support with three languages:
 **i18n Validation Tooling:**
 - `node scripts/i18n-extract.js` - Extract translation keys from source code
 - `node scripts/i18n-validate.js` - Validate key parity and ICU syntax across locales
+- Run both: `node scripts/i18n-extract.js && node scripts/i18n-validate.js`
+
+**CI Integration:**
+- Run validation on every PR: `node scripts/i18n-validate.js` (exits 1 on failure)
+- Validation fails on: invalid ICU syntax, missing keys, placeholder mismatch, empty values
+- For pre-commit hooks, add: `node scripts/i18n-validate.js` to your workflow
 
 **Key Naming Conventions:**
 - Format: `namespace.screen.element.state`
