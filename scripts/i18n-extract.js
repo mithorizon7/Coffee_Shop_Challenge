@@ -3,9 +3,9 @@
  * i18n Key Extraction Script
  * 
  * Scans source files for translation keys used in:
- * - t('key') calls
+ * - t('key'), translate('key'), and aliased functions
  * - <Trans i18nKey="key"> components
- * - useTranslation with keyPrefix
+ * - useTranslation with keyPrefix and namespace
  * 
  * Reports missing keys across ALL locales (en, lv, ru)
  */
@@ -21,45 +21,62 @@ const SRC_DIR = path.join(__dirname, '..', 'client', 'src');
 const LOCALES_DIR = path.join(SRC_DIR, 'locales');
 const LOCALES = ['en', 'lv', 'ru'];
 
-// Multiple patterns to catch different i18next usages
-const PATTERNS = [
-  // t('key') or t("key") or t(`key`) - any function ending with 't' or 'translate'
-  /\b(?:t|translate)\s*\(\s*['"`]([^'"`\n]+)['"`]/g,
-  // <Trans i18nKey="key">
-  /<Trans[^>]*\si18nKey\s*=\s*['"`]([^'"`]+)['"`]/g,
-  // i18nKey={'key'} or i18nKey={"key"}
-  /i18nKey\s*=\s*\{?\s*['"`]([^'"`]+)['"`]\s*\}?/g,
-];
-
-// Pattern to detect namespace usage: useTranslation('namespace') or useTranslation(['ns1', 'ns2'])
-const NAMESPACE_PATTERN = /useTranslation\s*\(\s*['"`]([^'"`]+)['"`]/g;
-// Pattern to detect keyPrefix usage (for context)
-const KEY_PREFIX_PATTERN = /useTranslation\s*\([^)]*keyPrefix\s*:\s*['"`]([^'"`]+)['"`]/g;
-
 function extractKeysFromFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
   const keys = new Set();
-  const prefixes = [];
   
-  // Find any keyPrefix declarations
+  // Find aliased t functions: const { t: translate } = useTranslation()
+  // or const translate = t
+  const aliasPatterns = [
+    /\{\s*t\s*:\s*(\w+)\s*\}/g,           // { t: alias }
+    /const\s+(\w+)\s*=\s*t\b/g,            // const alias = t
+    /let\s+(\w+)\s*=\s*t\b/g,              // let alias = t
+  ];
+  
+  const tFunctionNames = ['t'];  // Start with 't'
+  
+  for (const pattern of aliasPatterns) {
+    let match;
+    const regex = new RegExp(pattern.source, pattern.flags);
+    while ((match = regex.exec(content)) !== null) {
+      tFunctionNames.push(match[1]);
+    }
+  }
+  
+  // Find keyPrefix: useTranslation({ keyPrefix: 'prefix' }) or useTranslation('ns', { keyPrefix: 'prefix' })
+  const keyPrefixPattern = /keyPrefix\s*:\s*['"`]([^'"`]+)['"`]/g;
+  const prefixes = [];
   let prefixMatch;
-  const prefixRegex = new RegExp(KEY_PREFIX_PATTERN.source, KEY_PREFIX_PATTERN.flags);
-  while ((prefixMatch = prefixRegex.exec(content)) !== null) {
+  while ((prefixMatch = keyPrefixPattern.exec(content)) !== null) {
     prefixes.push(prefixMatch[1]);
   }
   
+  // Build dynamic pattern for all t function names
+  const tFuncPattern = tFunctionNames.join('|');
+  
+  // Key extraction patterns
+  const patterns = [
+    // t('key') or alias('key') - function call with string
+    new RegExp(`\\b(?:${tFuncPattern})\\s*\\(\\s*['"\`]([^'"\`\\n]+)['"\`]`, 'g'),
+    // <Trans i18nKey="key">
+    /<Trans[^>]*\si18nKey\s*=\s*['"`]([^'"`]+)['"`]/g,
+    // i18nKey={'key'} or i18nKey={"key"}
+    /i18nKey\s*=\s*\{?\s*['"`]([^'"`]+)['"`]\s*\}?/g,
+  ];
+  
   // Extract keys using all patterns
-  for (const pattern of PATTERNS) {
+  for (const pattern of patterns) {
     let match;
     const regex = new RegExp(pattern.source, pattern.flags);
     while ((match = regex.exec(content)) !== null) {
       const key = match[1];
       // Skip dynamic keys (containing variables)
-      if (!key.includes('${') && !key.includes('{') && key.trim()) {
+      if (!key.includes('${') && key.trim()) {
         keys.add(key);
         
-        // If there are prefixes in this file, also try prefixed versions
+        // If there are prefixes in this file, also add prefixed versions
         for (const prefix of prefixes) {
+          // Only prefix if key doesn't already look fully qualified
           if (!key.includes('.')) {
             keys.add(`${prefix}.${key}`);
           }
@@ -168,13 +185,13 @@ function main() {
     }
   }
   
-  // Check for unused keys (in en.json but not in code)
+  // Check for unused keys (in en.json but not in code) - informational only
   const enKeys = localeKeys['en'];
   const unusedKeys = Array.from(enKeys).filter(k => !allKeys.has(k)).sort();
   
   if (unusedKeys.length > 0) {
-    console.log('=== POTENTIALLY UNUSED KEYS (in en.json but not found in code) ===\n');
-    console.log('Note: Some may be dynamically constructed or from JSON content files.\n');
+    console.log('=== POTENTIALLY UNUSED KEYS ===');
+    console.log('(Keys in en.json not found in code - may be from JSON content files)\n');
     unusedKeys.slice(0, 20).forEach(k => console.log(`  - ${k}`));
     if (unusedKeys.length > 20) {
       console.log(`  ... and ${unusedKeys.length - 20} more`);

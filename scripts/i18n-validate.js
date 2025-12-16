@@ -61,10 +61,11 @@ function extractPlaceholders(str) {
 }
 
 // Required plural categories per locale (CLDR rules)
+// Russian requires: one (1, 21, 31...), few (2-4, 22-24...), many (0, 5-20, 25-30...), other
 const REQUIRED_PLURAL_CATEGORIES = {
-  'en': ['one', 'other'],           // English: 1 vs rest
-  'lv': ['zero', 'one', 'other'],   // Latvian: 0, 1, rest (simplified)
-  'ru': ['one', 'few', 'many', 'other'], // Russian: 1, 2-4, 5-20, rest
+  'en': ['one', 'other'],
+  'lv': ['one', 'other'],  // Latvian simplified
+  'ru': ['one', 'few', 'many', 'other'],
 };
 
 function validateICUSyntax(str, key, locale = null) {
@@ -89,22 +90,21 @@ function validateICUSyntax(str, key, locale = null) {
   
   // Check for required plural categories
   if (isPluralMsg) {
-    if (!str.includes('other')) {
+    // 'other' is always required
+    if (!/\bother\s*\{/.test(str)) {
       return `ICU plural missing required 'other' category`;
     }
     
-    // Check locale-specific plural requirements
-    if (locale && REQUIRED_PLURAL_CATEGORIES[locale]) {
-      const required = REQUIRED_PLURAL_CATEGORIES[locale];
-      const missing = required.filter(cat => {
-        // Check if category exists in the message
-        const catPattern = new RegExp(`\\b${cat}\\s*\\{`);
-        return !catPattern.test(str);
+    // Russian-specific: must have one, few, many, other for proper pluralization
+    if (locale === 'ru') {
+      const categories = ['one', 'few', 'many', 'other'];
+      const missing = categories.filter(cat => {
+        const pattern = new RegExp(`\\b${cat}\\s*\\{`);
+        return !pattern.test(str);
       });
       
-      // Only warn about missing 'one' for Russian since it's critical
-      if (locale === 'ru' && !str.includes('one {')) {
-        return `Russian plural missing 'one' category`;
+      if (missing.length > 0) {
+        return `Russian plural missing categories: ${missing.join(', ')}`;
       }
     }
   }
