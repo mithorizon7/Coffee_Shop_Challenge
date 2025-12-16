@@ -1,0 +1,113 @@
+App 3 — The Coffee Shop Challenge (Public Wi-Fi Decision Simulator)
+Purpose
+
+Train judgment under ambiguity. Teach:
+
+How public Wi-Fi risks often come from deception, not movie hacking
+
+A repeatable decision process:
+
+choose networks carefully
+
+avoid sensitive actions on suspicious networks
+
+prefer HTTPS; use VPN where appropriate
+
+don’t install random profiles/apps from captive portals
+
+Core UX concept
+
+A short scenario game with:
+
+a Wi-Fi menu (3–5 networks)
+
+a set of tasks (“check email,” “log in,” “download a file,” “pay”)
+
+timed prompts / distractions (optional)
+
+a consequence engine that produces believable outcomes
+
+Avoid cartoon outcomes
+
+Instead of “wallet drains to $0,” use realistic consequence types:
+
+Credential harvested by phishing portal
+
+Session token compromised after a bad decision
+
+Malware prompt accepted
+
+Account lock due to suspicious login
+
+Privacy leakage / tracking increase
+
+Keep it dramatic, but plausible.
+
+Game loop
+
+Arrive at café/hotel
+
+Choose a network
+
+Encounter a portal or login task
+
+Choose actions (connect, verify, use VPN, postpone, switch networks)
+
+Consequence + debrief
+
+Score + badge + “what to do next time”
+
+Mechanics to implement
+A) Risk scoring
+
+Use a transparent, educational scoring model:
+
+“Risk points” increase for:
+
+connecting to suspicious SSID
+
+logging into sensitive accounts on unknown network
+
+installing anything prompted
+
+“Safety points” increase for:
+
+choosing secured network
+
+using VPN on public Wi-Fi
+
+postponing sensitive actions
+
+verifying SSID with staff (simulation)
+
+B) Debrief after every consequence
+
+Each consequence screen must answer:
+
+What you did
+
+Why it was risky/safe
+
+What a safer alternative was
+
+C) Difficulty levels
+
+Beginner: obvious trap network names
+
+Intermediate: subtle SSID confusion (similar names)
+
+Advanced: time pressure + plausible prompts
+
+Build requirements
+
+Branching narrative engine (state machine):
+
+scenes, choices, consequences, and scoring
+
+Content files separated from code:
+
+JSON for scenes and outcomes so educators can edit without redeploying logic
+
+Security posture
+
+No real network data. No real browsing. No external links required.
