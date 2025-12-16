@@ -1,6 +1,7 @@
 import { Check, Circle, ChevronRight } from "lucide-react";
 import type { Scene } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface ProgressIndicatorProps {
   scenes: Scene[];
@@ -8,17 +9,18 @@ interface ProgressIndicatorProps {
   completedSceneIds: string[];
 }
 
-const sceneTypeLabels: Record<string, string> = {
-  arrival: "Start",
-  network_selection: "Network",
-  captive_portal: "Portal",
-  task_prompt: "Task",
-  consequence: "Result",
-  debrief: "Review",
-  completion: "Complete",
+const sceneTypeLabelKeys: Record<string, string> = {
+  arrival: "game.sceneType.start",
+  network_selection: "game.sceneType.network",
+  captive_portal: "game.sceneType.portal",
+  task_prompt: "game.sceneType.task",
+  consequence: "game.sceneType.result",
+  debrief: "game.sceneType.review",
+  completion: "game.sceneType.complete",
 };
 
 export function ProgressIndicator({ scenes, currentSceneId, completedSceneIds }: ProgressIndicatorProps) {
+  const { t } = useTranslation();
   const mainScenes = scenes.filter(scene => 
     ["arrival", "network_selection", "task_prompt", "completion"].includes(scene.type)
   );
@@ -33,6 +35,7 @@ export function ProgressIndicator({ scenes, currentSceneId, completedSceneIds }:
         const isCurrent = scene.id === currentSceneId || 
           (currentIndex === -1 && index === completedSceneIds.length);
         const isPast = isCompleted || index < currentIndex;
+        const labelKey = sceneTypeLabelKeys[scene.type];
 
         return (
           <div key={scene.id} className="flex items-center">
@@ -55,7 +58,7 @@ export function ProgressIndicator({ scenes, currentSceneId, completedSceneIds }:
                 "text-xs hidden sm:inline whitespace-nowrap",
                 isCurrent ? "text-foreground font-medium" : "text-muted-foreground"
               )}>
-                {sceneTypeLabels[scene.type] || scene.type}
+                {labelKey ? t(labelKey) : scene.type}
               </span>
             </div>
             
@@ -68,7 +71,7 @@ export function ProgressIndicator({ scenes, currentSceneId, completedSceneIds }:
       
       {mainScenes.length > 5 && (
         <span className="text-xs text-muted-foreground ml-1">
-          +{mainScenes.length - 5} more
+          {t('game.moreSteps', { count: mainScenes.length - 5 })}
         </span>
       )}
     </div>

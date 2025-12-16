@@ -152,7 +152,27 @@
     "portalOptions": "Portal Options",
     "sensitivity": "{level} Sensitivity",
     "noBadgesYet": "Complete challenges to earn badges",
-    "badgesEarned": "Badges Earned"
+    "badgesEarned": "Badges Earned",
+    "sceneType": {
+      "start": "Start",
+      "network": "Network",
+      "portal": "Portal",
+      "task": "Task",
+      "result": "Result",
+      "review": "Review",
+      "complete": "Complete"
+    },
+    "moreSteps": "+{count} more",
+    "chooseNetwork": "Choose a Network",
+    "availableNetworks": "Available Networks",
+    "chooseTask": "What would you like to do?",
+    "selectTask": "Select a task",
+    "taskSensitivity": "Sensitivity: {level}",
+    "sensitivityLevels": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    }
   },
   "actions": {
     "verifyWithStaff": "Ask staff for the correct network",

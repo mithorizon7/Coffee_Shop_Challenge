@@ -152,7 +152,27 @@
     "portalOptions": "Варианты Портала",
     "sensitivity": "{level} Чувствительность",
     "noBadgesYet": "Завершите испытания, чтобы заработать награды",
-    "badgesEarned": "Полученные Награды"
+    "badgesEarned": "Полученные Награды",
+    "sceneType": {
+      "start": "Старт",
+      "network": "Сеть",
+      "portal": "Портал",
+      "task": "Задача",
+      "result": "Результат",
+      "review": "Обзор",
+      "complete": "Готово"
+    },
+    "moreSteps": "+{count} ещё",
+    "chooseNetwork": "Выберите Сеть",
+    "availableNetworks": "Доступные Сети",
+    "chooseTask": "Что вы хотите сделать?",
+    "selectTask": "Выберите задачу",
+    "taskSensitivity": "Чувствительность: {level}",
+    "sensitivityLevels": {
+      "low": "Низкая",
+      "medium": "Средняя",
+      "high": "Высокая"
+    }
   },
   "actions": {
     "verifyWithStaff": "Спросить у персонала правильную сеть",

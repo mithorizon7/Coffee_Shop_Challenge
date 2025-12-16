@@ -152,7 +152,27 @@
     "portalOptions": "Portāla Opcijas",
     "sensitivity": "{level} Jutīgums",
     "noBadgesYet": "Pabeidz izaicinājumus, lai nopelnītu nozīmītes",
-    "badgesEarned": "Nopelnītās Nozīmītes"
+    "badgesEarned": "Nopelnītās Nozīmītes",
+    "sceneType": {
+      "start": "Sākums",
+      "network": "Tīkls",
+      "portal": "Portāls",
+      "task": "Uzdevums",
+      "result": "Rezultāts",
+      "review": "Pārskats",
+      "complete": "Pabeigts"
+    },
+    "moreSteps": "+{count} vairāk",
+    "chooseNetwork": "Izvēlies Tīklu",
+    "availableNetworks": "Pieejamie Tīkli",
+    "chooseTask": "Ko vēlies darīt?",
+    "selectTask": "Izvēlies uzdevumu",
+    "taskSensitivity": "Jutīgums: {level}",
+    "sensitivityLevels": {
+      "low": "Zems",
+      "medium": "Vidējs",
+      "high": "Augsts"
+    }
   },
   "actions": {
     "verifyWithStaff": "Jautāt personālam pareizo tīklu",
