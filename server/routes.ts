@@ -14,6 +14,12 @@ const createSessionSchema = z.object({
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
 });
 
+// Session ID validation - must match expected format
+const SESSION_ID_PATTERN = /^session_[a-f0-9-]{36}$/;
+function isValidSessionId(id: string): boolean {
+  return SESSION_ID_PATTERN.test(id);
+}
+
 const completeSessionSchema = z.object({
   sessionId: z.string(),
   scenarioId: z.string(),
@@ -136,7 +142,12 @@ export async function registerRoutes(
 
   app.get("/api/sessions/:id", async (req, res) => {
     try {
-      const session = await storage.getGameSession(req.params.id);
+      const sessionId = req.params.id;
+      if (!isValidSessionId(sessionId)) {
+        return res.status(400).json({ error: "Invalid session ID format" });
+      }
+      
+      const session = await storage.getGameSession(sessionId);
       if (!session) {
         return res.status(404).json({ error: "Session not found" });
       }
@@ -149,6 +160,11 @@ export async function registerRoutes(
 
   app.patch("/api/sessions/:id", async (req, res) => {
     try {
+      const sessionId = req.params.id;
+      if (!isValidSessionId(sessionId)) {
+        return res.status(400).json({ error: "Invalid session ID format" });
+      }
+      
       const parseResult = updateSessionSchema.safeParse(req.body);
       
       if (!parseResult.success) {
@@ -158,7 +174,7 @@ export async function registerRoutes(
         });
       }
 
-      const session = await storage.updateGameSession(req.params.id, parseResult.data);
+      const session = await storage.updateGameSession(sessionId, parseResult.data);
       
       if (!session) {
         return res.status(404).json({ error: "Session not found" });

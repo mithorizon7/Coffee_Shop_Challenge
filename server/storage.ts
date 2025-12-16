@@ -27,11 +27,50 @@ export interface IStorage {
   setUserEducatorStatus(userId: string, isEducator: boolean): Promise<void>;
 }
 
+const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+const CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+
 export class HybridStorage implements IStorage {
   private gameSessions: Map<string, GameSession>;
+  private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.gameSessions = new Map();
+    this.startCleanupInterval();
+  }
+
+  private startCleanupInterval(): void {
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupStaleSessions();
+    }, CLEANUP_INTERVAL_MS);
+  }
+
+  private cleanupStaleSessions(): void {
+    const now = Date.now();
+    let cleaned = 0;
+    const entries = Array.from(this.gameSessions.entries());
+    
+    for (const [id, session] of entries) {
+      const sessionAge = now - new Date(session.startedAt).getTime();
+      const isCompleted = !!session.completedAt;
+      const isStale = sessionAge > SESSION_TTL_MS;
+      
+      if (isCompleted || isStale) {
+        this.gameSessions.delete(id);
+        cleaned++;
+      }
+    }
+    
+    if (cleaned > 0) {
+      console.log(`[Storage] Cleaned up ${cleaned} stale game sessions`);
+    }
+  }
+
+  stopCleanup(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
   }
 
   async getGameSession(id: string): Promise<GameSession | undefined> {
@@ -53,9 +92,21 @@ export class HybridStorage implements IStorage {
   }
 
   async saveCompletedSession(session: InsertCompletedSession): Promise<CompletedSession> {
+    const insertData = {
+      userId: session.userId,
+      scenarioId: session.scenarioId,
+      difficulty: session.difficulty,
+      safetyPoints: session.safetyPoints ?? 0,
+      riskPoints: session.riskPoints ?? 0,
+      decisionsCount: session.decisionsCount ?? 0,
+      correctDecisions: session.correctDecisions ?? 0,
+      grade: session.grade,
+      badges: (session.badges ?? []) as string[],
+      startedAt: session.startedAt,
+    };
     const [result] = await db
       .insert(completedSessions)
-      .values(session)
+      .values(insertData)
       .returning();
     return result;
   }
@@ -93,8 +144,8 @@ export class HybridStorage implements IStorage {
     const totalDecisions = sessions.reduce((sum, s) => sum + s.decisionsCount, 0);
 
     const allBadges = sessions.flatMap(s => (s.badges as string[]) || []);
-    const uniqueBadges = [...new Set(allBadges)];
-    const completedScenarios = [...new Set(sessions.map(s => s.scenarioId))];
+    const uniqueBadges = Array.from(new Set(allBadges));
+    const completedScenarios = Array.from(new Set(sessions.map(s => s.scenarioId)));
 
     let improvementTrend: "improving" | "stable" | "declining" = "stable";
     if (sessions.length >= 3) {
