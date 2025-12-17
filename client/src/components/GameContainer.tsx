@@ -1,8 +1,9 @@
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { MapPin, Wifi, ArrowLeft, Shield } from "lucide-react";
+import { MapPin, Wifi, ArrowLeft, Shield, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import captivePortalImage from "@assets/ChatGPT_Image_Dec_17,_2025,_04_26_45_PM_1766006848813.png";
 import { NetworkCard } from "./NetworkCard";
 import { TaskPromptCard } from "./TaskPromptCard";
 import { ConsequenceScreen } from "./ConsequenceScreen";
@@ -300,21 +301,46 @@ export function GameContainer({
             )}
 
             {currentScene.type === "captive_portal" && !currentScene.networks && currentScene.actions && (
-              <Card className="p-6">
-                <h3 className="font-medium text-foreground mb-4">{t('game.portalOptions')}</h3>
-                <div className="flex flex-wrap gap-3">
-                  {currentScene.actions.map((action) => (
-                    <Button
-                      key={action.id}
-                      variant={action.isDanger ? "destructive" : action.isPrimary ? "default" : "outline"}
-                      onClick={() => handleAction(action.id)}
-                      data-testid={`action-${action.id}`}
-                    >
-                      {t(`scenarios.${scenario.id}.actions.${action.id}.label`, { defaultValue: action.label })}
-                    </Button>
-                  ))}
-                </div>
-              </Card>
+              <div className="space-y-6">
+                <Card className="p-6 bg-muted/30">
+                  <div className="flex items-start gap-3 mb-4">
+                    <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-medium text-foreground mb-2">{t('captivePortal.whatIs')}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {t('captivePortal.explanation')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 rounded-md overflow-hidden border border-border shadow-sm max-w-md mx-auto">
+                    <img 
+                      src={captivePortalImage} 
+                      alt={t('captivePortal.imageAlt')} 
+                      className="w-full h-auto"
+                      data-testid="captive-portal-example-image"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center mt-3 italic">
+                    {t('captivePortal.imageCaption')}
+                  </p>
+                </Card>
+
+                <Card className="p-6">
+                  <h3 className="font-medium text-foreground mb-4">{t('game.portalOptions')}</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {currentScene.actions.map((action) => (
+                      <Button
+                        key={action.id}
+                        variant={action.isDanger ? "destructive" : action.isPrimary ? "default" : "outline"}
+                        onClick={() => handleAction(action.id)}
+                        data-testid={`action-${action.id}`}
+                      >
+                        {t(`scenarios.${scenario.id}.actions.${action.id}.label`, { defaultValue: action.label })}
+                      </Button>
+                    ))}
+                  </div>
+                </Card>
+              </div>
             )}
 
             {currentScene.type === "task_prompt" && currentScene.task && currentScene.actions && (

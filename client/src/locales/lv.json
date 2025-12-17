@@ -1,4 +1,10 @@
 {
+  "captivePortal": {
+    "whatIs": "Kas ir Captive Portal?",
+    "explanation": "Captive portal ir pieslēgšanās lapa, kas parādās, kad pieslēdzaties publiskajam Wi-Fi. Viesnīcas, lidostas un kafejnīcas tās izmanto, lai verificētu viesus, pieņemtu lietošanas noteikumus vai iekasētu maksu. Kaut arī likumīgi portāli ir izplatīti, uzbrucēji var izveidot viltus portālus, lai nozagtu jūsu akreditācijas datus. Esiet piesardzīgi: nekad neinstalējiet lietotnes un neievadiet sensitīvu informāciju, izņemot to, kas ir absolūti nepieciešams.",
+    "imageAlt": "Viesnīcas Wi-Fi captive portal pieslēgšanās lapas piemērs",
+    "imageCaption": "Piemērs: Tipisks viesnīcas captive portal, kas lūdz piekrist noteikumiem pirms pieslēgšanās"
+  },
   "common": {
     "start": "Sākt",
     "continue": "Turpināt",

@@ -1,4 +1,10 @@
 {
+  "captivePortal": {
+    "whatIs": "What is a Captive Portal?",
+    "explanation": "A captive portal is the login page that appears when you connect to public Wi-Fi. Hotels, airports, and coffee shops use them to verify guests, accept terms of service, or collect payment. While legitimate portals are common, attackers can create fake ones to steal your credentials. Be cautious: never install apps or enter sensitive information beyond what's absolutely required.",
+    "imageAlt": "Example of a hotel Wi-Fi captive portal login page",
+    "imageCaption": "Example: A typical hotel captive portal asking you to agree to terms before connecting"
+  },
   "common": {
     "start": "Start",
     "continue": "Continue",
