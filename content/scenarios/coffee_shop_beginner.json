@@ -47,14 +47,14 @@
         },
         {
           "id": "net_open",
-          "ssid": "FreePublicWiFi",
-          "signalStrength": 3,
+          "ssid": "DailyGrind_Open",
+          "signalStrength": 4,
           "isSecured": false,
           "securityType": "open",
-          "isLegitimate": false,
-          "isTrap": true,
-          "riskLevel": "dangerous",
-          "description": "Generic open network - could be anyone"
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Coffee shop guest network - no password required"
         },
         {
           "id": "net_neighbor",
@@ -247,22 +247,22 @@
     {
       "id": "consequence_open",
       "type": "consequence",
-      "title": "Risky Connection",
-      "description": "You connected to an open network with a generic name...",
+      "title": "Connected to Open Network",
+      "description": "You connected to the coffee shop's open guest network...",
       "location": "The Daily Grind Coffee Shop",
       "consequence": {
         "id": "cons_open",
         "type": "privacy_leaked",
         "severity": "warning",
-        "title": "Unprotected Network",
-        "whatHappened": "You connected to 'FreePublicWiFi' - a completely open network with no encryption. Anyone nearby could potentially see your unencrypted traffic.",
-        "whyRisky": "Open networks with generic names could be set up by anyone. Without encryption, your browsing activity, search queries, and any non-HTTPS data is visible to others on the same network.",
-        "saferAlternative": "Choose networks that require a password (showing a lock icon). Verify the network name with the establishment. If you must use an open network, enable a VPN immediately.",
-        "technicalExplanation": "On unencrypted networks, attackers can use packet sniffing tools to capture network traffic. While HTTPS protects the content of secure websites, metadata like which sites you visit is still visible.",
-        "safetyPointsChange": 0,
-        "riskPointsChange": 20
+        "title": "Unencrypted Connection",
+        "whatHappened": "You connected to 'DailyGrind_Open' - the coffee shop's legitimate open network. While this is a real network, it has no password protection, meaning your traffic isn't encrypted at the network level.",
+        "whyRisky": "Even legitimate open networks don't encrypt your traffic. Anyone on the same network can potentially see your browsing activity and any data sent over non-HTTPS connections. It's like having a conversation in a crowded room.",
+        "saferAlternative": "The secured 'DailyGrind_Guest' network with WPA2 encryption is a better choice. It encrypts your traffic at the network level. When using any public network, enable a VPN for maximum protection.",
+        "technicalExplanation": "WPA2 encryption scrambles data between your device and the router. Open networks transmit everything in plain text. While HTTPS protects individual website connections, network-level encryption adds another security layer.",
+        "safetyPointsChange": 5,
+        "riskPointsChange": 10
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "task_email"
     },
     {
       "id": "consequence_neighbor",

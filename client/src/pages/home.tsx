@@ -99,6 +99,7 @@ export default function Home() {
   if (viewState === "playing" && currentSession && selectedScenario) {
     return (
       <GameContainer
+        key={currentSession.id}
         initialSession={currentSession}
         scenario={selectedScenario}
         onExit={handleExitGame}
