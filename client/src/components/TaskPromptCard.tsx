@@ -120,7 +120,7 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false, sce
               <Tooltip key={action.id}>
                 <TooltipTrigger asChild>
                   <Button
-                    variant={action.isDanger ? "destructive" : action.isPrimary ? "default" : "outline"}
+                    variant="outline"
                     onClick={() => onAction(action.id)}
                     data-testid={`action-${action.id}`}
                   >

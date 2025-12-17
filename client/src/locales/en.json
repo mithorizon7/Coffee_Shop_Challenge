@@ -8,6 +8,7 @@
   "common": {
     "start": "Start",
     "continue": "Continue",
+    "tryAnotherOption": "Try another option",
     "back": "Back",
     "reset": "Reset",
     "learnMore": "Learn more",

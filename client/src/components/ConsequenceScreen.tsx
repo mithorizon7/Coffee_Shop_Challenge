@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, AlertCircle, ArrowRight, Shield, Lightbulb, Key, User, DollarSign, UserX, Eye, Bug, ChevronRight } from "lucide-react";
+import { AlertTriangle, CheckCircle, AlertCircle, ArrowRight, Shield, Lightbulb, Key, User, DollarSign, UserX, Eye, Bug, ChevronRight, RotateCcw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Consequence } from "@shared/schema";
@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 interface ConsequenceScreenProps {
   consequence: Consequence;
   onContinue: () => void;
+  onTryAnother?: () => void;
   scenarioId?: string;
 }
 
@@ -48,7 +49,7 @@ const cascadeIcons = {
   malware: Bug,
 };
 
-export function ConsequenceScreen({ consequence, onContinue, scenarioId }: ConsequenceScreenProps) {
+export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scenarioId }: ConsequenceScreenProps) {
   const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
@@ -99,18 +100,6 @@ export function ConsequenceScreen({ consequence, onContinue, scenarioId }: Conse
             <h2 className="font-display text-xl font-semibold text-foreground">
               {getTranslatedTitle()}
             </h2>
-            <div className="flex items-center gap-4 mt-1 text-sm">
-              {consequence.safetyPointsChange > 0 && (
-                <span className="text-green-600 dark:text-green-400 font-medium">
-                  {t('consequence.safetyPoints', { points: consequence.safetyPointsChange })}
-                </span>
-              )}
-              {consequence.riskPointsChange > 0 && (
-                <span className="text-red-600 dark:text-red-400 font-medium">
-                  {t('consequence.riskPoints', { points: consequence.riskPointsChange })}
-                </span>
-              )}
-            </div>
           </div>
         </div>
         
@@ -211,7 +200,13 @@ export function ConsequenceScreen({ consequence, onContinue, scenarioId }: Conse
         </div>
       </Card>
       
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        {onTryAnother && (
+          <Button variant="outline" onClick={onTryAnother} data-testid="button-try-another">
+            <RotateCcw className="w-4 h-4 mr-2" />
+            {t('common.tryAnotherOption')}
+          </Button>
+        )}
         <Button onClick={onContinue} data-testid="button-continue">
           {t('common.continue')}
           <ArrowRight className="w-4 h-4 ml-2" />

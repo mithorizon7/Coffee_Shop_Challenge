@@ -8,6 +8,7 @@
   "common": {
     "start": "Sākt",
     "continue": "Turpināt",
+    "tryAnotherOption": "Izmēģināt citu opciju",
     "back": "Atpakaļ",
     "reset": "Atiestatīt",
     "learnMore": "Uzzināt vairāk",

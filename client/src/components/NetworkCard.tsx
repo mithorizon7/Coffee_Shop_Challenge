@@ -44,20 +44,6 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
             </div>
             
             <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                {network.isSecured ? (
-                  <>
-                    <Lock className="w-3 h-3" />
-                    {network.securityType.toUpperCase()}
-                  </>
-                ) : (
-                  <>
-                    <WifiOff className="w-3 h-3" />
-                    {t('network.open')}
-                  </>
-                )}
-              </span>
-              
               {network.verifiedByStaff && (
                 <span className="text-green-600 dark:text-green-400">{t('network.verifiedByStaff')}</span>
               )}

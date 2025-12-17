@@ -8,7 +8,6 @@ import { NetworkCard } from "./NetworkCard";
 import { TaskPromptCard } from "./TaskPromptCard";
 import { ConsequenceScreen } from "./ConsequenceScreen";
 import { CompletionScreen } from "./CompletionScreen";
-import { ScoreTracker } from "./ScoreTracker";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { BadgeDisplay } from "./BadgeDisplay";
 import { CountdownTimer } from "./CountdownTimer";
@@ -41,6 +40,7 @@ export function GameContainer({
   const { t } = useTranslation();
   const [session, setSession] = useState<GameSession>(initialSession);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [sessionSnapshots, setSessionSnapshots] = useState<GameSession[]>([]);
   const { isAuthenticated } = useAuth();
   const progressSavedRef = useRef(false);
 
@@ -110,25 +110,50 @@ export function GameContainer({
     if (isTransitioning) return;
     
     setIsTransitioning(true);
+    const currentSceneType = currentScene?.type;
+    
+    if (currentSceneType === "network_selection" || currentSceneType === "captive_portal" || currentSceneType === "task_prompt") {
+      setSessionSnapshots(prev => [...prev, JSON.parse(JSON.stringify(session))]);
+    }
+    
     const { updatedSession } = processNetworkSelection(session, network, scenario);
     
     setTimeout(() => {
       syncSession(updatedSession);
       setIsTransitioning(false);
     }, 300);
-  }, [session, scenario, isTransitioning, syncSession]);
+  }, [session, scenario, isTransitioning, syncSession, currentScene?.type]);
 
   const handleAction = useCallback((actionId: string) => {
     if (isTransitioning) return;
     
     setIsTransitioning(true);
+    const currentSceneType = currentScene?.type;
+    
+    if (currentSceneType === "network_selection" || currentSceneType === "captive_portal" || currentSceneType === "task_prompt") {
+      setSessionSnapshots(prev => [...prev, JSON.parse(JSON.stringify(session))]);
+    }
+    
     const { updatedSession } = processAction(session, actionId, scenario);
     
     setTimeout(() => {
       syncSession(updatedSession);
       setIsTransitioning(false);
     }, 300);
-  }, [session, scenario, isTransitioning, syncSession]);
+  }, [session, scenario, isTransitioning, syncSession, currentScene?.type]);
+  
+  const handleTryAnother = useCallback(() => {
+    if (isTransitioning || sessionSnapshots.length === 0) return;
+    
+    setIsTransitioning(true);
+    const previousSession = sessionSnapshots[sessionSnapshots.length - 1];
+    
+    setTimeout(() => {
+      setSessionSnapshots(prev => prev.slice(0, -1));
+      syncSession(previousSession);
+      setIsTransitioning(false);
+    }, 300);
+  }, [sessionSnapshots, isTransitioning, syncSession]);
 
   const handleContinue = useCallback(() => {
     if (isTransitioning) return;
@@ -223,7 +248,6 @@ export function GameContainer({
                 />
               )}
               <BadgeDisplay badges={session.badges} compact />
-              <ScoreTracker score={session.score} compact />
             </div>
           </div>
         </div>
@@ -287,7 +311,7 @@ export function GameContainer({
                     {currentScene.actions.map((action) => (
                       <Button
                         key={action.id}
-                        variant={action.isPrimary ? "default" : "outline"}
+                        variant="outline"
                         onClick={() => handleAction(action.id)}
                         data-testid={`action-${action.id}`}
                       >
@@ -331,7 +355,7 @@ export function GameContainer({
                     {currentScene.actions.map((action) => (
                       <Button
                         key={action.id}
-                        variant={action.isDanger ? "destructive" : action.isPrimary ? "default" : "outline"}
+                        variant="outline"
                         onClick={() => handleAction(action.id)}
                         data-testid={`action-${action.id}`}
                       >
@@ -357,6 +381,7 @@ export function GameContainer({
               <ConsequenceScreen
                 consequence={currentScene.consequence}
                 onContinue={handleContinue}
+                onTryAnother={sessionSnapshots.length > 0 ? handleTryAnother : undefined}
                 scenarioId={scenario.id}
               />
             )}
