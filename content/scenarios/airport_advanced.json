@@ -82,7 +82,7 @@
       ],
       "actions": [
         { "id": "wait_kiosk", "type": "verify_staff", "label": "Wait in line at info kiosk to verify" },
-        { "id": "use_mobile", "type": "proceed", "label": "Use mobile data hotspot instead", "isPrimary": true }
+        { "id": "use_mobile", "type": "proceed", "label": "Use mobile data hotspot instead" }
       ],
       "choices": [
         { "actionId": "connect_airport_official", "nextSceneId": "airport_portal" },
@@ -110,7 +110,50 @@
         "safetyPointsChange": 30,
         "riskPointsChange": 0
       },
-      "nextSceneId": "airport_task_contract"
+      "nextSceneId": "airport_task_contract_mobile"
+    },
+    {
+      "id": "airport_task_contract_mobile",
+      "type": "task_prompt",
+      "title": "Urgent Contract",
+      "description": "You're securely connected via mobile data. The contract signing deadline is in 30 minutes. The document requires your digital signature.",
+      "location": "Metropolitan International Airport - Gate B7",
+      "task": {
+        "id": "contract_sign_mobile",
+        "type": "payment",
+        "title": "Sign Client Contract",
+        "description": "Open the secure document portal and digitally sign the client contract before the deadline.",
+        "sensitivityLevel": "critical",
+        "riskHint": "You're on a secure mobile data connection."
+      },
+      "actions": [
+        { "id": "sign_mobile", "type": "proceed", "label": "Sign the contract now" },
+        { "id": "call_client_mobile", "type": "postpone", "label": "Call client to request deadline extension anyway" }
+      ],
+      "choices": [
+        { "actionId": "sign_mobile", "nextSceneId": "airport_consequence_sign_mobile" },
+        { "actionId": "call_client_mobile", "nextSceneId": "airport_consequence_sign_delayed" }
+      ]
+    },
+    {
+      "id": "airport_consequence_sign_mobile",
+      "type": "consequence",
+      "title": "Secure Mobile Signature",
+      "description": "You signed the contract on your mobile data connection...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_sign_mobile",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Contract Signed Securely",
+        "whatHappened": "You signed the legally binding contract while connected through your mobile data. This bypassed all the risks associated with airport Wi-Fi networks entirely.",
+        "whyRisky": "There's minimal risk here. Your cellular connection is encrypted end-to-end between your phone and the carrier's cell tower. No one at the airport can intercept your traffic because you're not using any local network they could compromise. The signing portal's HTTPS encryption adds another layer on top. You've done this the right way.",
+        "saferAlternative": "You made an excellent choice. For truly paranoid security on extremely high-value contracts, some professionals use dedicated hardware tokens or require in-person signing. But for routine business contracts, mobile data is the gold standard for security on the go.",
+        "technicalExplanation": "Mobile data uses LTE/5G encryption that's far more difficult to intercept than Wi-Fi. Combined with the HTTPS encryption of the signing portal, your credentials and the signed document were protected by multiple layers of strong encryption. Local attackers had no opportunity to intercept.",
+        "safetyPointsChange": 35,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "airport_completion"
     },
     {
       "id": "airport_portal",
@@ -120,14 +163,14 @@
       "location": "Metropolitan International Airport - Gate B7",
       "actions": [
         { "id": "accept_terms", "type": "proceed", "label": "Accept terms and connect (free)" },
-        { "id": "download_app", "type": "install_profile", "label": "Download app for faster connection", "isDanger": true },
-        { "id": "pay_premium", "type": "proceed", "label": "Pay $8 for premium access", "isPrimary": true },
+        { "id": "download_app", "type": "install_profile", "label": "Download app for faster connection" },
+        { "id": "pay_premium", "type": "proceed", "label": "Pay $8 for premium access" },
         { "id": "use_mobile_instead", "type": "switch_network", "label": "Switch to mobile data instead" }
       ],
       "choices": [
         { "actionId": "accept_terms", "nextSceneId": "airport_task_contract_risky" },
         { "actionId": "download_app", "nextSceneId": "airport_consequence_app" },
-        { "actionId": "pay_premium", "nextSceneId": "airport_task_contract" },
+        { "actionId": "pay_premium", "nextSceneId": "airport_task_contract_premium" },
         { "actionId": "use_mobile_instead", "nextSceneId": "airport_mobile_connected" }
       ]
     },
@@ -228,29 +271,49 @@
       "nextSceneId": "airport_completion"
     },
     {
-      "id": "airport_task_contract",
+      "id": "airport_task_contract_premium",
       "type": "task_prompt",
       "title": "Urgent Contract",
-      "description": "You're connected. The contract signing deadline is in 30 minutes. The document requires your digital signature.",
+      "description": "You're connected to the premium airport network ($8). The contract signing deadline is in 30 minutes. The document requires your digital signature.",
       "location": "Metropolitan International Airport - Gate B7",
       "task": {
-        "id": "contract_sign",
+        "id": "contract_sign_premium",
         "type": "payment",
         "title": "Sign Client Contract",
         "description": "Open the secure document portal and digitally sign the client contract before the deadline.",
         "sensitivityLevel": "critical",
-        "riskHint": "Digital signatures are legally binding and use your credentials."
+        "riskHint": "You're on a paid network but it's still public Wi-Fi."
       },
       "actions": [
-        { "id": "sign_now", "type": "proceed", "label": "Sign the contract now", "isDanger": true },
-        { "id": "sign_vpn", "type": "use_vpn", "label": "Enable VPN, then sign", "isPrimary": true },
-        { "id": "call_client", "type": "postpone", "label": "Call client to request deadline extension" }
+        { "id": "sign_premium", "type": "proceed", "label": "Sign the contract now" },
+        { "id": "sign_vpn_premium", "type": "use_vpn", "label": "Enable VPN first, then sign" },
+        { "id": "call_client_premium", "type": "postpone", "label": "Call client to request deadline extension" }
       ],
       "choices": [
-        { "actionId": "sign_now", "nextSceneId": "airport_consequence_sign_risky" },
-        { "actionId": "sign_vpn", "nextSceneId": "airport_consequence_sign_vpn" },
-        { "actionId": "call_client", "nextSceneId": "airport_consequence_sign_delayed" }
+        { "actionId": "sign_premium", "nextSceneId": "airport_consequence_sign_premium" },
+        { "actionId": "sign_vpn_premium", "nextSceneId": "airport_consequence_sign_vpn" },
+        { "actionId": "call_client_premium", "nextSceneId": "airport_consequence_sign_delayed" }
       ]
+    },
+    {
+      "id": "airport_consequence_sign_premium",
+      "type": "consequence",
+      "title": "Premium Network Signature",
+      "description": "You signed the contract on the premium network...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_sign_premium",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Reasonable Security",
+        "whatHappened": "You signed the contract while connected to the premium airport network. Paying for premium access typically provides better network isolation and sometimes encryption, making it more secure than the free open network.",
+        "whyRisky": "This was a reasonable choice given the time pressure. Premium airport networks often have better security practices than free networks, and the payment barrier reduces casual attackers. Combined with the HTTPS encryption of the signing portal, your transaction had decent protection. The remaining risk is that you're still on shared infrastructure, but premium networks are less targeted than free ones.",
+        "saferAlternative": "For maximum security on legal documents, mobile data or VPN would be ideal. But the premium network was a practical choice that balanced security with your deadline pressure. You recognized that not all networks are equal.",
+        "technicalExplanation": "Premium networks often implement client isolation, preventing other users from seeing your traffic even on the same network. Combined with HTTPS, this provides reasonable protection. The $8 payment also creates a barrier that deters opportunistic attackers who prefer free networks with more targets.",
+        "safetyPointsChange": 20,
+        "riskPointsChange": 5
+      },
+      "nextSceneId": "airport_completion"
     },
     {
       "id": "airport_task_contract_risky",
@@ -267,9 +330,9 @@
         "riskHint": "You're on an open network with many potential threats."
       },
       "actions": [
-        { "id": "sign_anyway", "type": "proceed", "label": "Sign now - no time!", "isDanger": true },
+        { "id": "sign_anyway", "type": "proceed", "label": "Sign now - no time!" },
         { "id": "enable_vpn_late", "type": "use_vpn", "label": "Enable VPN first" },
-        { "id": "switch_mobile", "type": "switch_network", "label": "Switch to mobile data", "isPrimary": true }
+        { "id": "switch_mobile", "type": "switch_network", "label": "Switch to mobile data" }
       ],
       "choices": [
         { "actionId": "sign_anyway", "nextSceneId": "airport_consequence_sign_risky" },

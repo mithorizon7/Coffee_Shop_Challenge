@@ -73,8 +73,7 @@
           "id": "verify",
           "type": "verify_staff",
           "label": "Ask staff for the correct network",
-          "description": "Walk to the counter and confirm the official Wi-Fi name",
-          "isPrimary": true
+          "description": "Walk to the counter and confirm the official Wi-Fi name"
         }
       ],
       "choices": [
@@ -135,7 +134,7 @@
         "riskHint": "Email accounts often contain sensitive information and password reset links."
       },
       "actions": [
-        { "id": "proceed_email", "type": "proceed", "label": "Check email now", "isPrimary": true },
+        { "id": "proceed_email", "type": "proceed", "label": "Check email now" },
         { "id": "use_vpn_email", "type": "use_vpn", "label": "Enable VPN first, then check email" },
         { "id": "postpone_email", "type": "postpone", "label": "Wait until you're on a more secure network" }
       ],
@@ -160,7 +159,7 @@
         "riskHint": "Email accounts often contain sensitive information and password reset links."
       },
       "actions": [
-        { "id": "proceed_email", "type": "proceed", "label": "Check email now", "isPrimary": true },
+        { "id": "proceed_email", "type": "proceed", "label": "Check email now" },
         { "id": "use_vpn_email", "type": "use_vpn", "label": "Enable VPN first, then check email" },
         { "id": "postpone_email", "type": "postpone", "label": "Wait until you're on a more secure network" }
       ],
@@ -185,9 +184,9 @@
         "riskHint": "Banking involves your most sensitive financial credentials."
       },
       "actions": [
-        { "id": "proceed_banking", "type": "proceed", "label": "Log into bank now", "isDanger": true },
+        { "id": "proceed_banking", "type": "proceed", "label": "Log into bank now" },
         { "id": "use_vpn_banking", "type": "use_vpn", "label": "Enable VPN first" },
-        { "id": "postpone_banking", "type": "postpone", "label": "Handle this later on a secure network", "isPrimary": true }
+        { "id": "postpone_banking", "type": "postpone", "label": "Handle this later on a secure network" }
       ],
       "choices": [
         { "actionId": "proceed_banking", "nextSceneId": "consequence_banking_risky" },
@@ -210,7 +209,7 @@
         "riskHint": "Banking involves your most sensitive financial credentials."
       },
       "actions": [
-        { "id": "proceed_banking_vpn", "type": "proceed", "label": "Log into bank (VPN active)", "isPrimary": true },
+        { "id": "proceed_banking_vpn", "type": "proceed", "label": "Log into bank (VPN active)" },
         { "id": "postpone_banking", "type": "postpone", "label": "Still prefer to wait for home network" }
       ],
       "choices": [

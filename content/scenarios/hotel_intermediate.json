@@ -79,7 +79,7 @@
         }
       ],
       "actions": [
-        { "id": "call_desk", "type": "verify_staff", "label": "Call front desk to verify network", "isPrimary": true }
+        { "id": "call_desk", "type": "verify_staff", "label": "Call front desk to verify network" }
       ],
       "choices": [
         { "actionId": "connect_hotel_official", "nextSceneId": "hotel_portal" },
@@ -95,8 +95,8 @@
       "description": "A login page appears. It asks for your room number and last name to authenticate. There's also a checkbox to 'Install our HotelConnect app for the best experience.'",
       "location": "Grand Metropolitan Hotel - Room 412",
       "actions": [
-        { "id": "login_only", "type": "proceed", "label": "Enter room info and login", "isPrimary": true },
-        { "id": "login_and_install", "type": "install_profile", "label": "Login AND install the app", "isDanger": true },
+        { "id": "login_only", "type": "proceed", "label": "Enter room info and login" },
+        { "id": "login_and_install", "type": "install_profile", "label": "Login AND install the app" },
         { "id": "use_vpn_portal", "type": "use_vpn", "label": "Login, then immediately enable VPN" },
         { "id": "switch_network", "type": "switch_network", "label": "Go back and try a different network" }
       ],
@@ -158,7 +158,7 @@
         "sensitivityLevel": "low"
       },
       "actions": [
-        { "id": "pay_premium", "type": "proceed", "label": "Pay $15 for premium (call front desk)", "isPrimary": true },
+        { "id": "pay_premium", "type": "proceed", "label": "Pay $15 for premium (call front desk)" },
         { "id": "use_free", "type": "switch_network", "label": "Use the free network instead" }
       ],
       "choices": [
@@ -253,7 +253,7 @@
       },
       "actions": [
         { "id": "email_proceed", "type": "proceed", "label": "Check email now" },
-        { "id": "email_vpn", "type": "use_vpn", "label": "Enable VPN, then check", "isPrimary": true }
+        { "id": "email_vpn", "type": "use_vpn", "label": "Enable VPN, then check" }
       ],
       "choices": [
         { "actionId": "email_proceed", "nextSceneId": "hotel_task_presentation" },
@@ -274,7 +274,7 @@
         "sensitivityLevel": "medium"
       },
       "actions": [
-        { "id": "email_proceed_vpn", "type": "proceed", "label": "Check email (VPN protected)", "isPrimary": true }
+        { "id": "email_proceed_vpn", "type": "proceed", "label": "Check email (VPN protected)" }
       ],
       "choices": [
         { "actionId": "email_proceed_vpn", "nextSceneId": "hotel_task_presentation_vpn" }
@@ -296,7 +296,7 @@
       },
       "actions": [
         { "id": "download_now", "type": "proceed", "label": "Download the file" },
-        { "id": "download_vpn", "type": "use_vpn", "label": "Enable VPN first", "isPrimary": true },
+        { "id": "download_vpn", "type": "use_vpn", "label": "Enable VPN first" },
         { "id": "download_postpone", "type": "postpone", "label": "Use hotel business center instead" }
       ],
       "choices": [
@@ -319,7 +319,7 @@
         "sensitivityLevel": "high"
       },
       "actions": [
-        { "id": "download_vpn_active", "type": "proceed", "label": "Download (VPN protected)", "isPrimary": true }
+        { "id": "download_vpn_active", "type": "proceed", "label": "Download (VPN protected)" }
       ],
       "choices": [
         { "actionId": "download_vpn_active", "nextSceneId": "hotel_consequence_download_vpn" }
