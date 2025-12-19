@@ -50,38 +50,37 @@ const cascadeIcons = {
 };
 
 export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scenarioId }: ConsequenceScreenProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
   
+  const tryTranslate = (key: string, fallback: string | undefined) => {
+    if (!scenarioId || !fallback) return fallback;
+    return i18n.exists(key) ? t(key) : fallback;
+  };
+  
   const getTranslatedTitle = () => {
-    if (!scenarioId) return consequence.title;
-    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.title`, { defaultValue: consequence.title });
+    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.title`, consequence.title);
   };
   
   const getTranslatedWhatHappened = () => {
-    if (!scenarioId) return consequence.whatHappened;
-    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.whatHappened`, { defaultValue: consequence.whatHappened });
+    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.whatHappened`, consequence.whatHappened);
   };
   
   const getTranslatedWhyRisky = () => {
-    if (!scenarioId) return consequence.whyRisky;
-    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.whyRisky`, { defaultValue: consequence.whyRisky });
+    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.whyRisky`, consequence.whyRisky);
   };
   
   const getTranslatedSaferAlternative = () => {
-    if (!scenarioId) return consequence.saferAlternative;
-    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.saferAlternative`, { defaultValue: consequence.saferAlternative });
+    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.saferAlternative`, consequence.saferAlternative);
   };
   
   const getTranslatedTechnicalExplanation = () => {
-    if (!scenarioId || !consequence.technicalExplanation) return consequence.technicalExplanation;
-    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.technicalExplanation`, { defaultValue: consequence.technicalExplanation });
+    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.technicalExplanation`, consequence.technicalExplanation);
   };
   
   const getTranslatedCascadingEffect = (effect: { order: number; effect: string; icon?: string }) => {
-    if (!scenarioId) return effect.effect;
-    return t(`scenarios.${scenarioId}.consequences.${consequence.id}.cascading.${effect.order - 1}`, { defaultValue: effect.effect });
+    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.cascading.${effect.order - 1}`, effect.effect);
   };
 
   return (

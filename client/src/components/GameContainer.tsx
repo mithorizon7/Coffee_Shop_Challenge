@@ -37,8 +37,13 @@ export function GameContainer({
   onExit, 
   onRestart 
 }: GameContainerProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [session, setSession] = useState<GameSession>(initialSession);
+  
+  const tryTranslate = useCallback((key: string, fallback: string | undefined) => {
+    if (!fallback) return fallback;
+    return i18n.exists(key) ? t(key) : fallback;
+  }, [t, i18n]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [sessionSnapshots, setSessionSnapshots] = useState<GameSession[]>([]);
   const { isAuthenticated } = useAuth();
@@ -265,13 +270,13 @@ export function GameContainer({
             <div className="mb-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <MapPin className="w-4 h-4" />
-                <span>{t(`scenarios.${scenario.id}.location`, { defaultValue: currentScene.location })}</span>
+                <span>{tryTranslate(`scenarios.${scenario.id}.location`, currentScene.location)}</span>
               </div>
               <h1 className="font-display text-2xl font-bold text-foreground mb-2">
-                {t(`scenarios.${scenario.id}.scenes.${currentScene.id}.title`, { defaultValue: currentScene.title })}
+                {tryTranslate(`scenarios.${scenario.id}.scenes.${currentScene.id}.title`, currentScene.title)}
               </h1>
               <p className="text-muted-foreground leading-relaxed" data-testid="scene-description">
-                {t(`scenarios.${scenario.id}.scenes.${currentScene.id}.description`, { defaultValue: currentScene.description })}
+                {tryTranslate(`scenarios.${scenario.id}.scenes.${currentScene.id}.description`, currentScene.description)}
               </p>
             </div>
 
@@ -316,7 +321,7 @@ export function GameContainer({
                         data-testid={`action-${action.id}`}
                       >
                         {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
-                        {t(`scenarios.${scenario.id}.actions.${action.id}.label`, { defaultValue: action.label })}
+                        {tryTranslate(`scenarios.${scenario.id}.actions.${action.id}.label`, action.label)}
                       </Button>
                     ))}
                   </div>
@@ -359,7 +364,7 @@ export function GameContainer({
                         onClick={() => handleAction(action.id)}
                         data-testid={`action-${action.id}`}
                       >
-                        {t(`scenarios.${scenario.id}.actions.${action.id}.label`, { defaultValue: action.label })}
+                        {tryTranslate(`scenarios.${scenario.id}.actions.${action.id}.label`, action.label)}
                       </Button>
                     ))}
                   </div>

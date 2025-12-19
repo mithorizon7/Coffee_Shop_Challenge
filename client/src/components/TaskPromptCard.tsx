@@ -48,34 +48,34 @@ const sensitivityColors: Record<string, { bg: string; text: string; border: stri
 };
 
 export function TaskPromptCard({ task, actions, onAction, showHints = false, scenarioId }: TaskPromptCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const IconComponent = taskIcons[task.type] || Globe;
   const sensitivity = sensitivityColors[task.sensitivityLevel];
   const sensitivityLabel = task.sensitivityLevel.charAt(0).toUpperCase() + task.sensitivityLevel.slice(1);
   
+  const tryTranslate = (key: string, fallback: string | undefined) => {
+    if (!scenarioId || !fallback) return fallback;
+    return i18n.exists(key) ? t(key) : fallback;
+  };
+  
   const getTranslatedTaskTitle = () => {
-    if (!scenarioId) return task.title;
-    return t(`scenarios.${scenarioId}.tasks.${task.id}.title`, { defaultValue: task.title });
+    return tryTranslate(`scenarios.${scenarioId}.tasks.${task.id}.title`, task.title);
   };
   
   const getTranslatedTaskDescription = () => {
-    if (!scenarioId) return task.description;
-    return t(`scenarios.${scenarioId}.tasks.${task.id}.description`, { defaultValue: task.description });
+    return tryTranslate(`scenarios.${scenarioId}.tasks.${task.id}.description`, task.description);
   };
   
   const getTranslatedRiskHint = () => {
-    if (!scenarioId || !task.riskHint) return task.riskHint;
-    return t(`scenarios.${scenarioId}.tasks.${task.id}.riskHint`, { defaultValue: task.riskHint });
+    return tryTranslate(`scenarios.${scenarioId}.tasks.${task.id}.riskHint`, task.riskHint);
   };
   
   const getTranslatedActionLabel = (action: Action) => {
-    if (!scenarioId) return action.label;
-    return t(`scenarios.${scenarioId}.actions.${action.id}.label`, { defaultValue: action.label });
+    return tryTranslate(`scenarios.${scenarioId}.actions.${action.id}.label`, action.label);
   };
   
   const getTranslatedActionDescription = (action: Action) => {
-    if (!scenarioId || !action.description) return action.description;
-    return t(`scenarios.${scenarioId}.actions.${action.id}.description`, { defaultValue: action.description });
+    return tryTranslate(`scenarios.${scenarioId}.actions.${action.id}.description`, action.description);
   };
 
   return (
