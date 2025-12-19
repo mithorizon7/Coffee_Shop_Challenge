@@ -200,6 +200,7 @@
     "saferAlternative": "Drošāka Alternatīva",
     "whyWorked": "Kāpēc Tas Darbojās",
     "technicalDetails": "Tehniskie Detaļas",
+    "cascadingTitle": "Kā Tas Var Saasinās",
     "cascadingEffects": "Kā Viena Kļūda Noved pie Vairākām Problēmām",
     "safetyPoints": "+{points} Drošības Punkti",
     "riskPoints": "+{points} Riska Punkti"
@@ -280,23 +281,6 @@
     "spot2": "Tīkli, kas apgalvo, ka ir \"BEZMAKSAS\" biznesa tīklu versijas",
     "spot3": "Atvērti tīkli ar neparasti spēcīgiem signāliem",
     "spot4": "Vairāki tīkli ar ļoti līdzīgiem nosaukumiem"
-  },
-  "consequence": {
-    "whatHappened": "Kas Notika",
-    "whyRisky": "Kāpēc Tas Bija Riskanti",
-    "whySafe": "Kāpēc Tas Bija Droši",
-    "saferAlternative": "Drošāka Alternatīva",
-    "whyWorked": "Kāpēc Tas Strādāja",
-    "technicalDetails": "Tehniskās Detaļas",
-    "cascadingEffects": "Kā Viena Kļūda Noved pie Citām Problēmām",
-    "safetyPoints": "+{points} Drošības Punkti",
-    "riskPoints": "+{points} Riska Punkti"
-  },
-  "completion": {
-    "title": "Scenārijs Pabeigts!",
-    "finishedScenario": "Tu pabeidzi \"{title}\"",
-    "whatToRemember": "Ko Atcerēties Nākamreiz",
-    "tryAnotherScenario": "Izmēģini Citu Scenāriju"
   },
   "scoring": {
     "howItWorks": "Kā darbojas punktu skaitīšana:",

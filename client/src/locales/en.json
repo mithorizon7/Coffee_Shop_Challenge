@@ -200,6 +200,7 @@
     "saferAlternative": "Safer Alternative",
     "whyWorked": "Why This Worked",
     "technicalDetails": "Technical Details",
+    "cascadingTitle": "How This Can Escalate",
     "cascadingEffects": "How One Mistake Leads to More Problems",
     "safetyPoints": "+{points} Safety Points",
     "riskPoints": "+{points} Risk Points"
@@ -280,23 +281,6 @@
     "spot2": "Networks claiming to be \"FREE\" versions of business networks",
     "spot3": "Open networks with unusually strong signals",
     "spot4": "Multiple networks with very similar names"
-  },
-  "consequence": {
-    "whatHappened": "What Happened",
-    "whyRisky": "Why This Was Risky",
-    "whySafe": "Why This Was Safe",
-    "saferAlternative": "Safer Alternative",
-    "whyWorked": "Why This Worked",
-    "technicalDetails": "Technical Details",
-    "cascadingEffects": "How One Mistake Leads to More Problems",
-    "safetyPoints": "+{points} Safety Points",
-    "riskPoints": "+{points} Risk Points"
-  },
-  "completion": {
-    "title": "Scenario Complete!",
-    "finishedScenario": "You've finished \"{title}\"",
-    "whatToRemember": "What To Remember Next Time",
-    "tryAnotherScenario": "Try Another Scenario"
   },
   "scoring": {
     "howItWorks": "How scoring works:",
