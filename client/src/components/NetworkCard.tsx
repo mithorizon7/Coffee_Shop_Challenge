@@ -37,17 +37,9 @@ export function NetworkCard({ network, onSelect, showWarnings = false, isSelecte
           </div>
           
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-medium text-foreground truncate" data-testid={`network-ssid-${network.id}`}>
-                {network.ssid}
-              </h3>
-            </div>
-            
-            <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-              {network.verifiedByStaff && (
-                <span className="text-green-600 dark:text-green-400">{t('network.verifiedByStaff')}</span>
-              )}
-            </div>
+            <h3 className="font-medium text-foreground truncate" data-testid={`network-ssid-${network.id}`}>
+              {network.ssid}
+            </h3>
           </div>
         </div>
         
