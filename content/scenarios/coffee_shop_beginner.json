@@ -227,7 +227,7 @@
         "safetyPointsChange": 10,
         "riskPointsChange": 0
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "task_banking"
     },
     {
       "id": "task_banking",
