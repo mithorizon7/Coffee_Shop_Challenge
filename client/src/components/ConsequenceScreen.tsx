@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, AlertCircle, ArrowRight, Shield, Lightbulb, Key, User, DollarSign, UserX, Eye, Bug, ChevronRight, RotateCcw } from "lucide-react";
+import { AlertTriangle, CheckCircle, AlertCircle, Shield, Key, User, DollarSign, UserX, Eye, Bug, ChevronRight, RotateCcw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Consequence } from "@shared/schema";
@@ -10,7 +10,6 @@ interface ConsequenceScreenProps {
   consequence: Consequence;
   onContinue: () => void;
   onTryAnother?: () => void;
-  scenarioId?: string;
 }
 
 const severityConfig = {
@@ -49,39 +48,10 @@ const cascadeIcons = {
   malware: Bug,
 };
 
-export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scenarioId }: ConsequenceScreenProps) {
-  const { t, i18n } = useTranslation();
+export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: ConsequenceScreenProps) {
+  const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
-  
-  const tryTranslate = (key: string, fallback: string | undefined) => {
-    if (!scenarioId || !fallback) return fallback;
-    return i18n.exists(key) ? t(key) : fallback;
-  };
-  
-  const getTranslatedTitle = () => {
-    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.title`, consequence.title);
-  };
-  
-  const getTranslatedWhatHappened = () => {
-    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.whatHappened`, consequence.whatHappened);
-  };
-  
-  const getTranslatedWhyRisky = () => {
-    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.whyRisky`, consequence.whyRisky);
-  };
-  
-  const getTranslatedSaferAlternative = () => {
-    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.saferAlternative`, consequence.saferAlternative);
-  };
-  
-  const getTranslatedTechnicalExplanation = () => {
-    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.technicalExplanation`, consequence.technicalExplanation);
-  };
-  
-  const getTranslatedCascadingEffect = (effect: { order: number; effect: string; icon?: string }) => {
-    return tryTranslate(`scenarios.${scenarioId}.consequences.${consequence.id}.cascading.${effect.order - 1}`, effect.effect);
-  };
 
   return (
     <motion.div
@@ -97,7 +67,7 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scena
           </div>
           <div>
             <h2 className="font-display text-xl font-semibold text-foreground">
-              {getTranslatedTitle()}
+              {consequence.title}
             </h2>
           </div>
         </div>
@@ -111,7 +81,7 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scena
                   {t('consequence.whatHappened')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-what-happened">
-                  {getTranslatedWhatHappened()}
+                  {consequence.whatHappened}
                 </p>
               </div>
               
@@ -121,7 +91,7 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scena
                   {consequence.severity === "success" ? t('consequence.whySafe') : t('consequence.whyRisky')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-why-risky">
-                  {getTranslatedWhyRisky()}
+                  {consequence.whyRisky}
                 </p>
               </div>
             </div>
@@ -132,83 +102,74 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother, scena
                   <Shield className={cn("w-4 h-4", config.iconColor)} />
                   {consequence.severity === "success" ? t('consequence.whyWorked') : t('consequence.saferAlternative')}
                 </h3>
-                <p className="text-sm leading-relaxed" data-testid="consequence-safer-alternative">
-                  {getTranslatedSaferAlternative()}
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {consequence.saferAlternative}
                 </p>
               </div>
               
               {consequence.technicalExplanation && (
-                <div className="p-4 rounded-lg bg-muted">
+                <div className="p-4 rounded-lg bg-muted/50">
                   <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
-                    <Lightbulb className="w-4 h-4 text-muted-foreground" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     {t('consequence.technicalDetails')}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {getTranslatedTechnicalExplanation()}
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {consequence.technicalExplanation}
                   </p>
                 </div>
               )}
             </div>
           </div>
-
+          
           {consequence.cascadingEffects && consequence.cascadingEffects.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="pt-4 border-t border-border"
-              data-testid="cascading-effects-container"
-            >
-              <h3 className="font-medium text-foreground flex items-center gap-2 mb-4" data-testid="cascading-effects-heading">
-                <AlertTriangle className="w-4 h-4 text-red-500" />
-                {t('consequence.cascadingEffects')}
+            <div className="border-t border-border pt-6">
+              <h3 className="font-medium text-foreground mb-4">
+                {t('consequence.cascadingTitle')}
               </h3>
-              <div className="relative">
-                <div className="flex flex-wrap items-center gap-2">
-                  {consequence.cascadingEffects
-                    .sort((a, b) => a.order - b.order)
-                    .map((effect, index) => {
-                      const IconComponent = effect.icon ? cascadeIcons[effect.icon] : AlertCircle;
-                      return (
-                        <motion.div
-                          key={effect.order}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.4 + index * 0.15 }}
-                          className="flex items-center gap-2"
-                          data-testid={`cascading-effect-${effect.order}`}
-                        >
-                          <div className="flex items-center gap-2 p-2 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800">
-                            <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0">
-                              <IconComponent className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
-                            </div>
-                            <span className="text-xs text-red-800 dark:text-red-200" data-testid={`cascading-effect-text-${effect.order}`}>
-                              {getTranslatedCascadingEffect(effect)}
-                            </span>
-                          </div>
-                          {index < (consequence.cascadingEffects?.length || 0) - 1 && (
-                            <ChevronRight className="w-4 h-4 text-red-400 flex-shrink-0" />
-                          )}
-                        </motion.div>
-                      );
-                    })}
-                </div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {consequence.cascadingEffects.map((effect) => {
+                  const IconComponent = cascadeIcons[effect.icon as keyof typeof cascadeIcons] || ChevronRight;
+                  return (
+                    <div
+                      key={effect.order}
+                      className="flex items-start gap-3 p-3 rounded-lg bg-muted/30"
+                    >
+                      <div className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                        config.iconBg
+                      )}>
+                        <IconComponent className={cn("w-4 h-4", config.iconColor)} />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {effect.effect}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </Card>
-      
-      <div className="flex justify-end gap-3">
+
+      <div className="flex flex-col sm:flex-row gap-3">
         {onTryAnother && (
-          <Button variant="outline" onClick={onTryAnother} data-testid="button-try-another">
+          <Button
+            variant="outline"
+            onClick={onTryAnother}
+            className="flex-1"
+            data-testid="button-try-another"
+          >
             <RotateCcw className="w-4 h-4 mr-2" />
             {t('common.tryAnotherOption')}
           </Button>
         )}
-        <Button onClick={onContinue} data-testid="button-continue">
+        <Button
+          onClick={onContinue}
+          className="flex-1"
+          data-testid="button-continue"
+        >
           {t('common.continue')}
-          <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
     </motion.div>

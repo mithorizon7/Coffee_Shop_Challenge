@@ -9,10 +9,9 @@ interface NetworkCardProps {
   onSelect: (network: Network) => void;
   showWarnings?: boolean;
   isSelected?: boolean;
-  scenarioId?: string;
 }
 
-export function NetworkCard({ network, onSelect, showWarnings = false, isSelected = false, scenarioId }: NetworkCardProps) {
+export function NetworkCard({ network, onSelect, showWarnings = false, isSelected = false }: NetworkCardProps) {
   const { t } = useTranslation();
   
   const signalBars = Array.from({ length: 5 }, (_, i) => i < network.signalStrength);

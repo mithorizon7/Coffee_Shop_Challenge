@@ -37,13 +37,9 @@ export function GameContainer({
   onExit, 
   onRestart 
 }: GameContainerProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [session, setSession] = useState<GameSession>(initialSession);
   
-  const tryTranslate = useCallback((key: string, fallback: string | undefined) => {
-    if (!fallback) return fallback;
-    return i18n.exists(key) ? t(key) : fallback;
-  }, [t, i18n]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [sessionSnapshots, setSessionSnapshots] = useState<GameSession[]>([]);
   const { isAuthenticated } = useAuth();
@@ -270,13 +266,13 @@ export function GameContainer({
             <div className="mb-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <MapPin className="w-4 h-4" />
-                <span>{tryTranslate(`scenarios.${scenario.id}.location`, currentScene.location)}</span>
+                <span>{currentScene.location}</span>
               </div>
               <h1 className="font-display text-2xl font-bold text-foreground mb-2">
-                {tryTranslate(`scenarios.${scenario.id}.scenes.${currentScene.id}.title`, currentScene.title)}
+                {currentScene.title}
               </h1>
               <p className="text-muted-foreground leading-relaxed" data-testid="scene-description">
-                {tryTranslate(`scenarios.${scenario.id}.scenes.${currentScene.id}.description`, currentScene.description)}
+                {currentScene.description}
               </p>
             </div>
 
@@ -306,7 +302,6 @@ export function GameContainer({
                       onSelect={handleNetworkSelect}
                       showWarnings={showWarnings}
                       isSelected={session.selectedNetworkId === network.id}
-                      scenarioId={scenario.id}
                     />
                   ))}
                 </div>
@@ -321,7 +316,7 @@ export function GameContainer({
                         data-testid={`action-${action.id}`}
                       >
                         {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
-                        {tryTranslate(`scenarios.${scenario.id}.actions.${action.id}.label`, action.label)}
+                        {action.label}
                       </Button>
                     ))}
                   </div>
@@ -364,7 +359,7 @@ export function GameContainer({
                         onClick={() => handleAction(action.id)}
                         data-testid={`action-${action.id}`}
                       >
-                        {tryTranslate(`scenarios.${scenario.id}.actions.${action.id}.label`, action.label)}
+                        {action.label}
                       </Button>
                     ))}
                   </div>
@@ -378,7 +373,6 @@ export function GameContainer({
                 actions={currentScene.actions}
                 onAction={handleAction}
                 showHints={showWarnings}
-                scenarioId={scenario.id}
               />
             )}
 
@@ -387,7 +381,6 @@ export function GameContainer({
                 consequence={currentScene.consequence}
                 onContinue={handleContinue}
                 onTryAnother={sessionSnapshots.length > 0 ? handleTryAnother : undefined}
-                scenarioId={scenario.id}
               />
             )}
 
