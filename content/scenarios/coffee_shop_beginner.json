@@ -164,10 +164,70 @@
         { "id": "postpone_email", "type": "postpone", "label": "Wait until you're on a more secure network" }
       ],
       "choices": [
-        { "actionId": "proceed_email", "nextSceneId": "task_banking" },
-        { "actionId": "use_vpn_email", "nextSceneId": "task_banking_vpn" },
-        { "actionId": "postpone_email", "nextSceneId": "consequence_email_postponed" }
+        { "actionId": "proceed_email", "nextSceneId": "consequence_email_unverified" },
+        { "actionId": "use_vpn_email", "nextSceneId": "consequence_email_vpn_unverified" },
+        { "actionId": "postpone_email", "nextSceneId": "consequence_email_postponed_unverified" }
       ]
+    },
+    {
+      "id": "consequence_email_unverified",
+      "type": "consequence",
+      "title": "Email Checked - But Did You Verify?",
+      "description": "You checked your email on the network...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_email_unverified",
+        "type": "missed_verification",
+        "severity": "warning",
+        "title": "Missed a Safety Step",
+        "whatHappened": "You checked your email successfully. The network you chose appears legitimate, and your email provider's HTTPS encryption protected your login. However, you connected without verifying with staff that this was the official network.",
+        "whyRisky": "Here's the problem: You got lucky, but you didn't know you were safe. 'DailyGrind_Guest' looked right, but attackers specifically create convincing names. Without verification, you had no way to distinguish the real network from a well-crafted fake. The 30 seconds it takes to ask staff could prevent hours of dealing with compromised accounts. Building the habit of verification is more important than any single safe connection.",
+        "saferAlternative": "Before connecting to any public network, ask staff for the exact network name. It only takes a moment, and it transforms guessing into knowing. This one habit blocks the most common coffee shop attack: the evil twin network.",
+        "technicalExplanation": "Even correctly-named networks can be spoofed. Attackers use the exact same SSID as legitimate networks, often with stronger signals to lure devices. The only reliable way to know you're on the right network is human verification - the barista knows which network is real.",
+        "safetyPointsChange": 5,
+        "riskPointsChange": 5
+      },
+      "nextSceneId": "task_banking"
+    },
+    {
+      "id": "consequence_email_vpn_unverified",
+      "type": "consequence",
+      "title": "VPN Protected - Good Instinct",
+      "description": "You enabled your VPN before checking email...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_email_vpn_unverified",
+        "type": "vpn_protected",
+        "severity": "success",
+        "title": "Smart Protection Layer",
+        "whatHappened": "You enabled your VPN before checking email. This was a smart move - your VPN encrypts all traffic, making it unreadable to anyone on the local network, even if you're on a compromised network.",
+        "whyRisky": "This is good security practice! The VPN protects you even if the network isn't what it claims to be. However, there's one small gap: you didn't verify the network with staff. While your VPN protects your data, verifying the network is still a good habit. Why? Because VPNs can disconnect unexpectedly, and some apps might leak data before the VPN connects.",
+        "saferAlternative": "Combining verification AND VPN gives you defense in depth - multiple layers of protection. Verify first so you know the network is legitimate, then add VPN for encrypted privacy. That way, if either protection fails, the other still works.",
+        "technicalExplanation": "VPNs create an encrypted tunnel that protects your data from local network observers. However, the initial connection to the VPN server happens over the local network. A sophisticated attacker could potentially interfere with this handshake, though this is rare. Verification + VPN eliminates this edge case.",
+        "safetyPointsChange": 15,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "task_banking_vpn"
+    },
+    {
+      "id": "consequence_email_postponed_unverified",
+      "type": "consequence",
+      "title": "Cautious Approach",
+      "description": "You decided to wait on checking email...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_email_postponed_unverified",
+        "type": "action_postponed",
+        "severity": "success",
+        "title": "Playing It Safe",
+        "whatHappened": "You decided not to check email on this network. Given that you didn't verify the network with staff, this caution is well-placed.",
+        "whyRisky": "Your instinct to be careful is valuable! You recognized uncertainty and chose safety over convenience. For routine email, this level of caution might not always be necessary on verified networks - but since you connected without verification, postponing was a reasonable choice.",
+        "saferAlternative": "For future reference: if you had verified the network with staff first, checking email would be reasonably safe (especially with a VPN). The verification step is what transforms an unknown risk into a known quantity.",
+        "technicalExplanation": "Postponing eliminates all network-based risk. You can't have data intercepted on a network you don't use. The trade-off is convenience, but when you're uncertain about network authenticity, this is the safest approach.",
+        "safetyPointsChange": 10,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "completion"
     },
     {
       "id": "task_banking",

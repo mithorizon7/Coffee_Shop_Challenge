@@ -256,9 +256,49 @@
         { "id": "email_vpn", "type": "use_vpn", "label": "Enable VPN, then check" }
       ],
       "choices": [
-        { "actionId": "email_proceed", "nextSceneId": "hotel_task_presentation" },
-        { "actionId": "email_vpn", "nextSceneId": "hotel_task_presentation_vpn" }
+        { "actionId": "email_proceed", "nextSceneId": "hotel_consequence_email_open" },
+        { "actionId": "email_vpn", "nextSceneId": "hotel_consequence_email_vpn" }
       ]
+    },
+    {
+      "id": "hotel_consequence_email_open",
+      "type": "consequence",
+      "title": "Email on Open Network",
+      "description": "You checked your work email on the hotel's open network...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_email_open",
+        "type": "privacy_leaked",
+        "severity": "warning",
+        "title": "Unencrypted Network Exposure",
+        "whatHappened": "You accessed your work email on an open (no password) hotel network. While your email provider uses HTTPS to encrypt the contents, the network itself provides no encryption layer between your device and the router.",
+        "whyRisky": "Here's what you need to understand about open networks: The data traveling between your laptop and the hotel's router is like a postcard - anyone in range can read the envelope. They can see you're connecting to your email provider, how often you check it, and how much data you're sending. For business email, this metadata can reveal patterns about your work. More concerning: sophisticated attackers could attempt to intercept your connection, and without network encryption, your only protection is HTTPS - a single point of failure.",
+        "saferAlternative": "For business email on open networks, always enable a VPN first. The VPN adds a second encryption layer that protects you even if something goes wrong with HTTPS. Many companies require VPN use on public networks for exactly this reason.",
+        "technicalExplanation": "Open networks have no WPA2 encryption between your device and the access point. While HTTPS encrypts email content, DNS queries (revealing which servers you contact) travel unencrypted. A local attacker could potentially perform DNS spoofing or attempt SSL stripping attacks. VPN encryption prevents all local network attacks.",
+        "safetyPointsChange": 5,
+        "riskPointsChange": 10
+      },
+      "nextSceneId": "hotel_task_presentation"
+    },
+    {
+      "id": "hotel_consequence_email_vpn",
+      "type": "consequence",
+      "title": "VPN-Protected Email",
+      "description": "You enabled your VPN before checking work email...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_email_vpn",
+        "type": "vpn_protected",
+        "severity": "success",
+        "title": "Professional Security Practice",
+        "whatHappened": "You enabled your VPN before accessing your work email. This encrypts all traffic from your device through a secure tunnel, completely protecting your business communications from anyone on the hotel network.",
+        "whyRisky": "This is exactly the right approach for business travel. The VPN means that even on an open network where other guests could theoretically snoop, they see nothing but encrypted gibberish going to a VPN server. Your work email, the clients you're communicating with, and your company's cloud services remain completely private.",
+        "saferAlternative": "You made the right call. For additional security, ensure your VPN is from a reputable provider and is configured to prevent DNS leaks. Some corporate VPNs also require split tunneling configurations - check with your IT department.",
+        "technicalExplanation": "The VPN creates an encrypted tunnel before any data leaves your device. All traffic - including DNS queries that would normally reveal which services you're using - travels through this tunnel. The hotel network sees only encrypted packets destined for your VPN provider, with no visibility into your actual business communications.",
+        "safetyPointsChange": 20,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "hotel_task_presentation_vpn"
     },
     {
       "id": "hotel_task_email_vpn",
@@ -277,8 +317,28 @@
         { "id": "email_proceed_vpn", "type": "proceed", "label": "Check email (VPN protected)" }
       ],
       "choices": [
-        { "actionId": "email_proceed_vpn", "nextSceneId": "hotel_task_presentation_vpn" }
+        { "actionId": "email_proceed_vpn", "nextSceneId": "hotel_consequence_email_vpn_portal" }
       ]
+    },
+    {
+      "id": "hotel_consequence_email_vpn_portal",
+      "type": "consequence",
+      "title": "Secured from the Start",
+      "description": "You checked email with VPN protection you enabled at login...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_email_vpn_portal",
+        "type": "vpn_protected",
+        "severity": "success",
+        "title": "Proactive Security",
+        "whatHappened": "You enabled your VPN immediately after connecting - before doing anything else. This means your entire hotel network session has been protected, including this email check.",
+        "whyRisky": "This is the best practice for business travelers. By enabling VPN immediately at the captive portal, you ensured that every piece of traffic - from the very first moment - has been encrypted. You didn't leave a window of vulnerability between connecting and starting your VPN.",
+        "saferAlternative": "You did everything right. The only way to improve would be to use a VPN that auto-connects whenever you join an unknown network, eliminating the manual step entirely. Many VPN apps offer this 'always-on' feature.",
+        "technicalExplanation": "By enabling VPN at the portal stage, you protected yourself during the highest-risk moment: initial connection. The captive portal login itself traveled over an open network, but all subsequent traffic - including email credentials and content - traveled through your encrypted VPN tunnel.",
+        "safetyPointsChange": 20,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "hotel_task_presentation_vpn"
     },
     {
       "id": "hotel_task_presentation",
