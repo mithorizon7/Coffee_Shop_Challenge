@@ -9,6 +9,8 @@
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc && node scripts/validate-scenarios.js",
     "validate:scenarios": "node scripts/validate-scenarios.js",
+    "authoring:check": "node scripts/authoring-assist.js",
+    "authoring:fix": "node scripts/authoring-assist.js --write",
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
