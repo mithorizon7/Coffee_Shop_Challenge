@@ -286,7 +286,26 @@
     "howItWorks": "How scoring works:",
     "safetyExplain": "Earned by making secure choices like using VPN, avoiding suspicious networks, or postponing sensitive tasks.",
     "riskExplain": "Accumulated when taking risky actions like connecting to unsecured networks or entering sensitive data on public Wi-Fi.",
-    "lowerRiskBetter": "Lower risk points = better grade!"
+    "lowerRiskBetter": "Lower risk points = better grade!",
+    "rationale": {
+      "title": "Why these points",
+      "safety": "+{points} safety: {reason}",
+      "risk": "+{points} risk: {reason}",
+      "neutral": "No score change for this outcome.",
+      "type": {
+        "safe_browsing": "you chose a lower-risk path or added protection.",
+        "vpn_protected": "the VPN added a strong layer of encryption.",
+        "action_postponed": "you avoided exposure by delaying the task.",
+        "network_verified": "you verified the network before acting.",
+        "missed_verification": "verification was skipped, leaving extra uncertainty.",
+        "credential_harvested": "credentials were exposed on a risky network.",
+        "session_compromised": "a risky connection exposed your session to hijacking.",
+        "malware_installed": "the action increased the chance of malware or profiles.",
+        "account_locked": "the outcome triggered a security incident and disruption.",
+        "privacy_leaked": "network activity and metadata could be observed.",
+        "default": "this outcome reflects the risk level of the choice."
+      }
+    }
   },
   "threats": {
     "phishing": "Phishing",
@@ -349,6 +368,10 @@
           "title": "Quick Banking Task",
           "description": "Your VPN is active. You remember you need to transfer money to cover a bill due today."
         },
+        "autojoin_prompt": {
+          "title": "Network Settings",
+          "description": "Before you start browsing, consider a quick safety setting."
+        },
         "consequence_trap": {
           "title": "Network Trap Detected",
           "description": "You connected to what appeared to be the coffee shop's network..."
@@ -403,6 +426,14 @@
         },
         "proceed_banking_vpn": {
           "label": "Log into bank (VPN active)"
+        },
+        "autojoin_disable": {
+          "label": "Disable auto-join and forget after use",
+          "description": "Prevents automatic reconnection later"
+        },
+        "autojoin_leave": {
+          "label": "Leave auto-join enabled",
+          "description": "Convenient now, but may reconnect later"
         }
       },
       "tasks": {
@@ -415,6 +446,11 @@
           "title": "Transfer Funds",
           "description": "Log into your bank to transfer $200 to cover an upcoming bill payment.",
           "riskHint": "Banking involves your most sensitive financial credentials."
+        },
+        "task_autojoin": {
+          "title": "Auto-Join Settings",
+          "description": "Public networks can auto-join later without you noticing.",
+          "riskHint": "Auto-join can reconnect you to a public network in the future."
         }
       },
       "consequences": {
@@ -443,18 +479,234 @@
           "whatHappened": "You connected to 'Bookstore_Next_Door' - a legitimate network, but not the one for this coffee shop. While probably not malicious, this wasn't the intended network.",
           "whyRisky": "Connecting to unknown networks, even if they appear legitimate, means trusting an unknown administrator. You have no control over their security practices or logging policies.",
           "saferAlternative": "Always verify you're connecting to the correct network for your location. Ask staff for the official network name rather than guessing."
+        },
+        "cons_autojoin_safe": {
+          "title": "Auto-Join Disabled",
+          "whatHappened": "You turned off auto-join and set the network to forget after use.",
+          "whyRisky": "This reduces the chance your device will reconnect automatically to public Wi-Fi later without you noticing.",
+          "saferAlternative": "Keep auto-join off for public networks and forget them after you leave.",
+          "technicalExplanation": "Auto-join can connect to remembered SSIDs, including look-alike networks. Forgetting removes stored network details."
+        },
+        "cons_autojoin_risky": {
+          "title": "Auto-Join Left On",
+          "whatHappened": "You left auto-join enabled for this network.",
+          "whyRisky": "Your device may reconnect automatically later, possibly to a look-alike network with the same name.",
+          "saferAlternative": "Disable auto-join and forget public networks when you're done.",
+          "technicalExplanation": "Devices often reconnect to remembered SSIDs without prompting, which can be exploited by attackers who copy network names."
+        },
+        "cons_email_unverified": {
+          "title": "Missed a Safety Step",
+          "whatHappened": "You checked your email successfully. The network you chose appears legitimate, and your email provider's HTTPS encryption protected your login. However, you connected without verifying with staff that this was the official network.",
+          "whyRisky": "Here's the problem: You got lucky, but you didn't know you were safe. 'DailyGrind_Guest' looked right, but attackers specifically create convincing names. Without verification, you had no way to distinguish the real network from a well-crafted fake. The 30 seconds it takes to ask staff could prevent hours of dealing with compromised accounts. Building the habit of verification is more important than any single safe connection.",
+          "saferAlternative": "Before connecting to any public network, ask staff for the exact network name. It only takes a moment, and it turns guessing into a more informed choice. This habit greatly reduces the risk of evil-twin networks, but you should still stay alert for look-alike names and unexpected login pages.",
+          "technicalExplanation": "Even correctly named networks can be spoofed. Attackers can copy the SSID and use stronger signals to lure devices. Staff verification is the best practical first step, but also check for small spelling differences and be cautious of unexpected captive portals."
         }
       }
     },
     "hotel_intermediate": {
       "title": "Business Trip at The Grand Hotel",
       "description": "You've arrived at a hotel for a business trip and need to get online. Multiple networks are available, and the front desk is busy. How will you connect safely?",
-      "location": "The Grand Hotel Lobby"
+      "location": "The Grand Hotel Lobby",
+      "scenes": {
+        "hotel_update_prompt": {
+          "title": "Device Updates",
+          "description": "A system update is available before tomorrow's presentation."
+        }
+      },
+      "actions": {
+        "update_now": {
+          "label": "Update now",
+          "description": "Install updates before continuing"
+        },
+        "update_later": {
+          "label": "Remind me later",
+          "description": "Postpone updates for now"
+        }
+      },
+      "tasks": {
+        "task_update_device": {
+          "title": "Install Security Updates",
+          "description": "Updates often include fixes for security flaws.",
+          "riskHint": "Delaying updates can leave known vulnerabilities unpatched."
+        }
+      },
+      "consequences": {
+        "cons_premium": {
+          "title": "Secure Choice",
+          "whatHappened": "You chose the premium, password-protected network. This provides WPA2 encryption between your device and the access point, making it much harder for other hotel guests to eavesdrop on your traffic.",
+          "whyRisky": "This is a much safer choice than the open network. Here's why it matters: on the free open network, any guest with basic tools could capture your traffic. The premium network's password creates unique encryption keys for your session. The $15 investment is worthwhile when you're handling business data. Keep in mind that you're still on shared infrastructure, and network administrators could potentially see some metadata, so treat it as lower risk, not zero risk.",
+          "saferAlternative": "For maximum protection, use a VPN even on the premium network. But your choice was solid - you recognized that network security has real value, especially when doing business work.",
+          "technicalExplanation": "WPA2 uses the shared password to derive unique encryption keys for each connected device through a four-way handshake. Unlike open networks where packets can be read in the air, your data is encrypted in a way that is difficult for nearby users to decode without your session keys."
+        },
+        "cons_update_now": {
+          "title": "Updates Installed",
+          "whatHappened": "You installed security updates before continuing.",
+          "whyRisky": "Keeping your device updated reduces exposure to known vulnerabilities that attackers target on public networks.",
+          "saferAlternative": "Great choice. Enable automatic updates when possible to stay protected without extra steps.",
+          "technicalExplanation": "Security updates patch known flaws in the operating system and browser that could otherwise be exploited."
+        },
+        "cons_update_later": {
+          "title": "Updates Postponed",
+          "whatHappened": "You chose to delay the updates.",
+          "whyRisky": "Postponing updates can leave known security holes open, which is a bigger risk on shared networks.",
+          "saferAlternative": "Update before sensitive work whenever you can, especially while traveling.",
+          "technicalExplanation": "Attackers often target publicly known vulnerabilities that are already fixed by patches."
+        }
+      }
     },
     "airport_advanced": {
       "title": "Layover at Metro Airport",
       "description": "You have a 2-hour layover and need to finish some urgent work tasks. The airport is crowded and you see many available networks. Time is of the essence.",
-      "location": "Metro International Airport"
+      "location": "Metro International Airport",
+      "scenes": {
+        "airport_cert_warning": {
+          "title": "Certificate Warning",
+          "description": "A security warning appears when you open the contract portal."
+        }
+      },
+      "actions": {
+        "cert_abort": {
+          "label": "Go back and choose a safer option",
+          "description": "Return to the portal options"
+        },
+        "cert_proceed": {
+          "label": "Proceed anyway",
+          "description": "Ignore the warning and continue"
+        }
+      },
+      "tasks": {
+        "task_cert_warning": {
+          "title": "Certificate Warning",
+          "description": "The browser says the site's certificate can't be verified.",
+          "riskHint": "Certificate warnings can indicate interception or a fake site."
+        }
+      },
+      "consequences": {
+        "cons_mobile": {
+          "title": "Excellent Decision Under Pressure",
+          "whatHappened": "Despite the stress and time pressure, you chose to use your mobile data hotspot instead of any airport Wi-Fi. This is one of the most secure options available to you.",
+          "whyRisky": "This was a strong choice, and here's why it matters: Mobile data avoids the shared Wi-Fi segment that enables most local attacks. Intercepting cellular traffic is possible but typically requires specialized equipment and is far less common in normal settings. For urgent, high-stakes work like signing contracts, mobile data is often the safest practical choice.",
+          "saferAlternative": "You made a strong choice. The main trade-offs are battery use and data costs, but for critical work the reduced Wi-Fi risk is worth it.",
+          "technicalExplanation": "Cellular networks (LTE/5G) use mandatory encryption between your device and the cell tower. Interception generally requires specialized equipment and expertise, which makes it less likely than typical Wi-Fi attacks. For practical purposes, mobile data is generally safer than public Wi-Fi."
+        },
+        "cons_sign_mobile": {
+          "title": "Contract Signed Securely",
+          "whatHappened": "You signed the legally binding contract while connected through your mobile data. This avoided most of the Wi-Fi-specific risks present in the airport.",
+          "whyRisky": "Risk is low. Your cellular connection uses strong encryption between your phone and the carrier's cell tower, and nearby attackers have far fewer opportunities than on Wi-Fi. However, no network is risk-free, and the signing portal's HTTPS security still matters.",
+          "saferAlternative": "You made an excellent choice. For extremely sensitive contracts, some teams require hardware tokens or in-person signing. For routine business contracts, mobile data is one of the most practical high-security options on the go.",
+          "technicalExplanation": "Mobile data uses LTE/5G encryption that is far harder to intercept locally than Wi-Fi. Combined with the HTTPS encryption of the signing portal, your credentials and signed document were protected by multiple layers. Local attackers at the airport had little opportunity to interfere."
+        },
+        "cons_cert_abort": {
+          "title": "Heeded the Warning",
+          "whatHappened": "You stopped and did not proceed past the certificate warning.",
+          "whyRisky": "Certificate warnings can indicate interception or a fake portal. Stopping avoids handing credentials to the wrong site.",
+          "saferAlternative": "Use mobile data or try a verified network, then re-open the portal.",
+          "technicalExplanation": "Invalid or mismatched certificates are a common sign of man-in-the-middle attacks on public Wi-Fi."
+        },
+        "cons_cert_proceed": {
+          "title": "Warning Ignored",
+          "whatHappened": "You continued despite the certificate warning.",
+          "whyRisky": "If the warning was caused by interception, your login could be exposed or the page could be a fake.",
+          "saferAlternative": "Back out and use mobile data or a verified network before proceeding.",
+          "technicalExplanation": "Certificate warnings appear when the browser cannot verify the site's identity. On public Wi-Fi, attackers can exploit this to intercept credentials."
+        }
+      }
+    }
+  },
+  "briefing": {
+    "title": "Quick Briefing",
+    "description": "Take a moment to plan before you connect.",
+    "sections": {
+      "bestChoice": {
+        "title": "Best available choice under constraints"
+      },
+      "protect": {
+        "title": "What you're trying to protect"
+      },
+      "tradeoff": {
+        "title": "What you might trade off"
+      }
+    },
+    "coffee_shop_beginner": {
+      "bestChoice": {
+        "body": "Ask staff for the official network and use the password-protected option. If you cannot verify, avoid sensitive tasks or use a VPN."
+      },
+      "protect": {
+        "body": "Your work email, banking credentials, and personal data. These can be used to reset other accounts."
+      },
+      "tradeoff": {
+        "body": "Verification or waiting takes a minute, and postponing tasks can be inconvenient, but it lowers risk."
+      }
+    },
+    "hotel_intermediate": {
+      "bestChoice": {
+        "body": "Confirm the official SSID at the front desk. Prefer the premium network or use a VPN on the free network. Decline app installs."
+      },
+      "protect": {
+        "body": "Work email, presentation files, and hotel account details like room number and last name."
+      },
+      "tradeoff": {
+        "body": "Premium access costs money and VPN setup takes time, but both reduce exposure on shared hotel networks."
+      }
+    },
+    "airport_advanced": {
+      "bestChoice": {
+        "body": "Use your mobile hotspot for urgent work. If you must use Wi-Fi, verify the official network name and enable a VPN."
+      },
+      "protect": {
+        "body": "Contract credentials, corporate accounts, and the signed document."
+      },
+      "tradeoff": {
+        "body": "Mobile data uses battery and may cost data, and waiting in line reduces time, but both cut Wi-Fi risk."
+      }
+    }
+  },
+  "debrief": {
+    "title": "Quick Debrief",
+    "description": "Reflect on how your choices affected risk.",
+    "sections": {
+      "didWell": {
+        "title": "What you did well"
+      },
+      "doDifferently": {
+        "title": "What you'd do differently next time"
+      },
+      "habit": {
+        "title": "One habit to practice"
+      }
+    },
+    "coffee_shop_beginner": {
+      "didWell": {
+        "body": "If you verified the network, used a VPN, or postponed banking, you made strong safety choices."
+      },
+      "doDifferently": {
+        "body": "Next time, verify first before connecting and avoid open networks for email or banking. Some choices are good enough but not best; for high-stakes tasks, aim for a verified network plus VPN or mobile data."
+      },
+      "habit": {
+        "body": "Enable 2FA on work accounts, make \"verify the network name\" your default habit, and use a VPN on public Wi-Fi."
+      }
+    },
+    "hotel_intermediate": {
+      "didWell": {
+        "body": "If you verified the SSID, avoided installing apps, or used a VPN, you lowered risk."
+      },
+      "doDifferently": {
+        "body": "Treat open hotel Wi-Fi as risky; use VPN or mobile data for sensitive work. Some options are acceptable but not optimal when the stakes are high."
+      },
+      "habit": {
+        "body": "Enable 2FA on work accounts, never install captive portal apps, and always verify the network name on each stay."
+      }
+    },
+    "airport_advanced": {
+      "didWell": {
+        "body": "If you used mobile data or a VPN, you reduced risk under intense time pressure."
+      },
+      "doDifferently": {
+        "body": "Do not chase the strongest signal; verify names character by character when stakes are high. Premium or verified Wi-Fi can be good enough, but mobile data or VPN is the safer standard for critical tasks."
+      },
+      "habit": {
+        "body": "Enable 2FA on work accounts, default to mobile data for high-stakes tasks, and disable auto-join for public Wi-Fi."
+      }
     }
   }
 }

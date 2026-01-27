@@ -74,6 +74,15 @@ Game content is separated from code for easy editing by educators:
 - `content/badges.json` - Badge definitions and descriptions
 - Loaded at server startup via `server/scenarioLoader.ts`
 
+### Scenario Validation (New)
+To prevent broken links and ensure every network has a valid choice, run:
+`npm run validate:scenarios` or `npm run check` (now includes scenario validation).
+
+### Network Choice Mapping (New)
+Each network can explicitly define the action it maps to:
+- `actionId` (optional): the choice actionId used when that network is selected.
+- If omitted, the app falls back to `connect_<network.id>` for backward compatibility.
+
 ### Shared Code
 The `shared/` directory contains code used by both frontend and backend:
 - `schema.ts`: Database schema and Zod validation types

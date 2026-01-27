@@ -18,8 +18,26 @@ export function createGameSession(
     throw new Error(`Scenario not found: ${scenarioId}`);
   }
 
+  const uuid = (() => {
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+      return crypto.randomUUID();
+    }
+
+    if (typeof crypto !== "undefined" && "getRandomValues" in crypto) {
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0"));
+      return `${hex.slice(0, 4).join("")}-${hex.slice(4, 6).join("")}-${hex.slice(6, 8).join("")}-${hex.slice(8, 10).join("")}-${hex.slice(10, 16).join("")}`;
+    }
+
+    const randomHex = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).slice(1);
+    return `${randomHex()}${randomHex()}-${randomHex()}-${randomHex()}-${randomHex()}-${randomHex()}${randomHex()}${randomHex()}`;
+  })();
+
   return {
-    id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    id: `session_${uuid}`,
     scenarioId,
     currentSceneId: scenario.startSceneId,
     difficulty,
@@ -62,44 +80,47 @@ export function processNetworkSelection(
     throw new Error("Invalid game state");
   }
 
+  const alreadyCompleted = session.completedSceneIds.includes(session.currentSceneId);
   let safetyChange = 0;
   let riskChange = 0;
-  let nextSceneId = "";
+  const connectActionId = `connect_${network.id}`;
+  const expectedActionId = network.actionId ?? connectActionId;
+  const fallbackActionId = network.actionId ? connectActionId : undefined;
+  const choice =
+    currentScene.choices?.find(c => c.actionId === expectedActionId) ??
+    (fallbackActionId ? currentScene.choices?.find(c => c.actionId === fallbackActionId) : undefined);
+  const nextSceneId = choice?.nextSceneId || session.currentSceneId;
 
   if (network.isTrap) {
     riskChange = 25;
-    const trapScene = scenario.scenes.find(s => s.id.includes("trap") || s.id.includes("fake"));
-    nextSceneId = trapScene?.id || session.currentSceneId;
   } else if (network.riskLevel === "safe" && network.verifiedByStaff) {
     safetyChange = 15;
-    const safeScene = currentScene.choices?.find(c => 
-      c.actionId.includes("verified") || c.actionId.includes("official")
-    );
-    nextSceneId = safeScene?.nextSceneId || session.currentSceneId;
   } else if (network.riskLevel === "safe") {
     safetyChange = 10;
-    const choice = currentScene.choices?.find(c => c.actionId.includes("official"));
-    nextSceneId = choice?.nextSceneId || session.currentSceneId;
   } else {
     riskChange = 10;
-    const choice = currentScene.choices?.find(c => 
-      c.actionId.includes(network.id.split("_").pop() || "")
-    );
-    nextSceneId = choice?.nextSceneId || session.currentSceneId;
   }
 
-  return {
-    updatedSession: {
-      ...session,
-      selectedNetworkId: network.id,
-      score: {
+  const completedSceneIds = alreadyCompleted
+    ? session.completedSceneIds
+    : [...session.completedSceneIds, session.currentSceneId];
+
+  const score = alreadyCompleted
+    ? session.score
+    : {
         ...session.score,
         safetyPoints: session.score.safetyPoints + safetyChange,
         riskPoints: session.score.riskPoints + riskChange,
         decisionsCount: session.score.decisionsCount + 1,
         correctDecisions: session.score.correctDecisions + (safetyChange > 0 ? 1 : 0),
-      },
-      completedSceneIds: [...session.completedSceneIds, session.currentSceneId],
+      };
+
+  return {
+    updatedSession: {
+      ...session,
+      selectedNetworkId: network.id,
+      score,
+      completedSceneIds,
       currentSceneId: nextSceneId,
     },
     nextSceneId,
@@ -117,7 +138,9 @@ export function processAction(
     throw new Error("Invalid game state");
   }
 
+  const alreadyCompleted = session.completedSceneIds.includes(session.currentSceneId);
   const choice = currentScene.choices?.find(c => c.actionId === actionId);
+  const action = currentScene.actions?.find(a => a.id === actionId);
   const nextSceneId = choice?.nextSceneId || session.currentSceneId;
   const nextScene = scenario.scenes.find(s => s.id === nextSceneId);
 
@@ -129,7 +152,7 @@ export function processAction(
   // Get current badges from getter to ensure we have latest loaded from JSON
   const currentBadges = getAvailableBadges();
 
-  if (actionId.includes("vpn")) {
+  if (action?.type === "use_vpn") {
     vpnEnabled = true;
     safetyChange = 5;
     
@@ -141,7 +164,7 @@ export function processAction(
     }
   }
 
-  if (actionId.includes("verify") || actionId.includes("staff")) {
+  if (action?.type === "verify_staff") {
     safetyChange = 10;
     if (!newBadges.find(b => b.id === "network_detective")) {
       const detectiveBadge = currentBadges.find(b => b.id === "network_detective");
@@ -151,7 +174,7 @@ export function processAction(
     }
   }
 
-  if (actionId.includes("postpone")) {
+  if (action?.type === "postpone") {
     safetyChange = 8;
     if (!newBadges.find(b => b.id === "patient_professional")) {
       const patientBadge = currentBadges.find(b => b.id === "patient_professional");
@@ -161,31 +184,49 @@ export function processAction(
     }
   }
 
-  if (actionId.includes("install") || actionId.includes("profile")) {
+  if (action?.type === "install_profile") {
     riskChange = 30;
   }
 
-  if (actionId.includes("proceed") && !vpnEnabled && currentScene.task?.sensitivityLevel === "critical") {
-    riskChange = 20;
-  }
+  const selectedNetwork = session.selectedNetworkId
+    ? scenario.scenes.flatMap(s => s.networks ?? []).find(n => n.id === session.selectedNetworkId)
+    : undefined;
+
+  const isCriticalProceed =
+    action?.type === "proceed" && currentScene.task?.sensitivityLevel === "critical";
+  const hasStrongProtection = vpnEnabled || selectedNetwork?.isMobileData;
 
   if (nextScene?.consequence) {
     safetyChange += nextScene.consequence.safetyPointsChange;
     riskChange += nextScene.consequence.riskPointsChange;
+  } else if (isCriticalProceed && !hasStrongProtection) {
+    // Fall back to a modest penalty if there's no consequence to score this decision.
+    riskChange = Math.max(riskChange, 10);
   }
+
+  const isCorrectDecision =
+    safetyChange > riskChange && (!isCriticalProceed || hasStrongProtection);
+
+  const completedSceneIds = alreadyCompleted
+    ? session.completedSceneIds
+    : [...session.completedSceneIds, session.currentSceneId];
+
+  const score = alreadyCompleted
+    ? session.score
+    : {
+        ...session.score,
+        safetyPoints: session.score.safetyPoints + safetyChange,
+        riskPoints: session.score.riskPoints + riskChange,
+        decisionsCount: session.score.decisionsCount + 1,
+        correctDecisions: session.score.correctDecisions + (isCorrectDecision ? 1 : 0),
+      };
 
   return {
     updatedSession: {
       ...session,
       vpnEnabled,
-      score: {
-        ...session.score,
-        safetyPoints: session.score.safetyPoints + safetyChange,
-        riskPoints: session.score.riskPoints + riskChange,
-        decisionsCount: session.score.decisionsCount + 1,
-        correctDecisions: session.score.correctDecisions + (safetyChange > riskChange ? 1 : 0),
-      },
-      completedSceneIds: [...session.completedSceneIds, session.currentSceneId],
+      score,
+      completedSceneIds,
       currentSceneId: nextSceneId,
       badges: newBadges,
     },

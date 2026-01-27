@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { MapPin, Wifi, ArrowLeft, Shield, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ export function GameContainer({
   const [sessionSnapshots, setSessionSnapshots] = useState<GameSession[]>([]);
   const { isAuthenticated } = useAuth();
   const progressSavedRef = useRef(false);
+  const completionHandledRef = useRef(false);
 
   const updateSessionMutation = useMutation({
     mutationFn: async (updates: Partial<GameSession>) => {
@@ -64,7 +65,7 @@ export function GameContainer({
         difficulty: completedSession.difficulty,
         score: completedSession.score,
         badges: completedSession.badges,
-        grade,
+        grade: grade.grade,
       });
       return await response.json();
     },
@@ -76,23 +77,15 @@ export function GameContainer({
   const currentScene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
   const showWarnings = session.difficulty === "beginner";
   const isAdvanced = session.difficulty === "advanced";
+
+  const sceneTitle = currentScene?.titleKey ? t(currentScene.titleKey) : currentScene?.title;
+  const sceneDescription = currentScene?.descriptionKey ? t(currentScene.descriptionKey) : currentScene?.description;
   
   const isDecisionScene = useMemo(() => {
     return currentScene?.type === "network_selection" || 
            currentScene?.type === "task_prompt" || 
            currentScene?.type === "captive_portal";
   }, [currentScene?.type]);
-
-  const handleTimeUp = useCallback(() => {
-    const updatedSession = {
-      ...session,
-      score: {
-        ...session.score,
-        riskPoints: session.score.riskPoints + 15,
-      }
-    };
-    setSession(updatedSession);
-  }, [session]);
 
   const syncSession = useCallback((updatedSession: GameSession) => {
     setSession(updatedSession);
@@ -106,6 +99,37 @@ export function GameContainer({
       completedAt: updatedSession.completedAt,
     });
   }, [updateSessionMutation]);
+
+  useEffect(() => {
+    if (currentScene?.type !== "completion") return;
+    if (session.completedAt || completionHandledRef.current) return;
+
+    completionHandledRef.current = true;
+    const completedSession = completeSession(session);
+    syncSession(completedSession);
+
+    if (isAuthenticated && !progressSavedRef.current) {
+      progressSavedRef.current = true;
+      saveProgressMutation.mutate(completedSession);
+    }
+  }, [
+    currentScene?.type,
+    session,
+    isAuthenticated,
+    syncSession,
+    saveProgressMutation,
+  ]);
+
+  const handleTimeUp = useCallback(() => {
+    const updatedSession = {
+      ...session,
+      score: {
+        ...session.score,
+        riskPoints: session.score.riskPoints + 15,
+      },
+    };
+    syncSession(updatedSession);
+  }, [session, syncSession]);
 
   const handleNetworkSelect = useCallback((network: Network) => {
     if (isTransitioning) return;
@@ -164,9 +188,12 @@ export function GameContainer({
     
     if (scene?.nextSceneId) {
       setTimeout(() => {
+        const completedSceneIds = session.completedSceneIds.includes(session.currentSceneId)
+          ? session.completedSceneIds
+          : [...session.completedSceneIds, session.currentSceneId];
         const updatedSession = {
           ...session,
-          completedSceneIds: [...session.completedSceneIds, session.currentSceneId],
+          completedSceneIds,
           currentSceneId: scene.nextSceneId!,
         };
         syncSession(updatedSession);
@@ -269,10 +296,10 @@ export function GameContainer({
                 <span>{currentScene.location}</span>
               </div>
               <h1 className="font-display text-2xl font-bold text-foreground mb-2">
-                {currentScene.title}
+                {sceneTitle}
               </h1>
               <p className="text-muted-foreground leading-relaxed" data-testid="scene-description">
-                {currentScene.description}
+                {sceneDescription}
               </p>
             </div>
 
@@ -285,6 +312,32 @@ export function GameContainer({
                 <Button onClick={handleContinue} data-testid="button-start-scenario">
                   {t('game.findNetworks')}
                 </Button>
+              </Card>
+            )}
+
+            {(currentScene.type === "briefing" || currentScene.type === "debrief") && (
+              <Card className="p-6 space-y-5">
+                <div className="space-y-4">
+                  {currentScene.sections?.map((section, index) => {
+                    const sectionTitle = section.titleKey ? t(section.titleKey) : section.title;
+                    const sectionBody = section.bodyKey ? t(section.bodyKey) : section.body;
+                    return (
+                      <div key={index} className="space-y-1">
+                        <h3 className="font-medium text-foreground">
+                          {sectionTitle}
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {sectionBody}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="pt-2 border-t border-border">
+                  <Button onClick={handleContinue} data-testid="button-briefing-continue">
+                    {t('common.continue')}
+                  </Button>
+                </div>
               </Card>
             )}
 
@@ -308,21 +361,26 @@ export function GameContainer({
                 
                 {currentScene.actions && currentScene.actions.length > 0 && (
                   <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
-                    {currentScene.actions.map((action) => (
-                      <Button
-                        key={action.id}
-                        variant="outline"
-                        onClick={() => handleAction(action.id)}
-                        data-testid={`action-${action.id}`}
-                      >
-                        {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
-                        {action.label}
-                      </Button>
-                    ))}
-                  </div>
-                )}
+                {currentScene.actions.map((action) => {
+                  const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
+                  const actionDescription = action.descriptionKey ? t(action.descriptionKey) : action.description;
+                  return (
+                  <Button
+                    key={action.id}
+                    variant="outline"
+                    onClick={() => handleAction(action.id)}
+                    data-testid={`action-${action.id}`}
+                    title={actionDescription}
+                  >
+                    {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
+                    {actionLabel}
+                  </Button>
+                  );
+                })}
               </div>
             )}
+          </div>
+        )}
 
             {currentScene.type === "captive_portal" && !currentScene.networks && currentScene.actions && (
               <div className="space-y-6">
@@ -352,16 +410,21 @@ export function GameContainer({
                 <Card className="p-6">
                   <h3 className="font-medium text-foreground mb-4">{t('game.portalOptions')}</h3>
                   <div className="flex flex-wrap gap-3">
-                    {currentScene.actions.map((action) => (
+                    {currentScene.actions.map((action) => {
+                      const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
+                      const actionDescription = action.descriptionKey ? t(action.descriptionKey) : action.description;
+                      return (
                       <Button
                         key={action.id}
                         variant="outline"
                         onClick={() => handleAction(action.id)}
                         data-testid={`action-${action.id}`}
+                        title={actionDescription}
                       >
-                        {action.label}
+                        {actionLabel}
                       </Button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </Card>
               </div>

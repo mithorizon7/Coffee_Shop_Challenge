@@ -52,6 +52,28 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
   const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
+  const title = consequence.titleKey ? t(consequence.titleKey) : consequence.title;
+  const whatHappened = consequence.whatHappenedKey ? t(consequence.whatHappenedKey) : consequence.whatHappened;
+  const whyRisky = consequence.whyRiskyKey ? t(consequence.whyRiskyKey) : consequence.whyRisky;
+  const saferAlternative = consequence.saferAlternativeKey ? t(consequence.saferAlternativeKey) : consequence.saferAlternative;
+  const technicalExplanation = consequence.technicalExplanationKey
+    ? t(consequence.technicalExplanationKey)
+    : consequence.technicalExplanation;
+  const rationaleTypeKeys: Record<string, string> = {
+    credential_harvested: "scoring.rationale.type.credential_harvested",
+    session_compromised: "scoring.rationale.type.session_compromised",
+    malware_installed: "scoring.rationale.type.malware_installed",
+    account_locked: "scoring.rationale.type.account_locked",
+    privacy_leaked: "scoring.rationale.type.privacy_leaked",
+    safe_browsing: "scoring.rationale.type.safe_browsing",
+    vpn_protected: "scoring.rationale.type.vpn_protected",
+    action_postponed: "scoring.rationale.type.action_postponed",
+    network_verified: "scoring.rationale.type.network_verified",
+    missed_verification: "scoring.rationale.type.missed_verification",
+  };
+  const rationaleKey = rationaleTypeKeys[consequence.type] ?? "scoring.rationale.type.default";
+  const safetyPoints = consequence.safetyPointsChange;
+  const riskPoints = consequence.riskPointsChange;
 
   return (
     <motion.div
@@ -67,7 +89,7 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
           </div>
           <div>
             <h2 className="font-display text-xl font-semibold text-foreground">
-              {consequence.title}
+              {title}
             </h2>
           </div>
         </div>
@@ -81,7 +103,7 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
                   {t('consequence.whatHappened')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-what-happened">
-                  {consequence.whatHappened}
+                  {whatHappened}
                 </p>
               </div>
               
@@ -91,7 +113,7 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
                   {consequence.severity === "success" ? t('consequence.whySafe') : t('consequence.whyRisky')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-why-risky">
-                  {consequence.whyRisky}
+                  {whyRisky}
                 </p>
               </div>
             </div>
@@ -103,18 +125,18 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
                   {consequence.severity === "success" ? t('consequence.whyWorked') : t('consequence.saferAlternative')}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  {consequence.saferAlternative}
+                  {saferAlternative}
                 </p>
               </div>
               
-              {consequence.technicalExplanation && (
+              {technicalExplanation && (
                 <div className="p-4 rounded-lg bg-muted/50">
                   <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     {t('consequence.technicalDetails')}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    {consequence.technicalExplanation}
+                    {technicalExplanation}
                   </p>
                 </div>
               )}
@@ -149,6 +171,33 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
               </div>
             </div>
           )}
+
+          <div className="border-t border-border pt-6">
+            <h3 className="font-medium text-foreground mb-3">
+              {t('scoring.rationale.title')}
+            </h3>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              {safetyPoints !== 0 && (
+                <p>
+                  {t('scoring.rationale.safety', {
+                    points: safetyPoints,
+                    reason: t(rationaleKey),
+                  })}
+                </p>
+              )}
+              {riskPoints !== 0 && (
+                <p>
+                  {t('scoring.rationale.risk', {
+                    points: riskPoints,
+                    reason: t(rationaleKey),
+                  })}
+                </p>
+              )}
+              {safetyPoints === 0 && riskPoints === 0 && (
+                <p>{t('scoring.rationale.neutral')}</p>
+              )}
+            </div>
+          </div>
         </div>
       </Card>
 

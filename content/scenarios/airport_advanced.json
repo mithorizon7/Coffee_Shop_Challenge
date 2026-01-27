@@ -15,6 +15,30 @@
       "title": "Flight Delayed",
       "description": "Your flight has been delayed by 2 hours. You're exhausted, stressed, and your phone is at 15% battery. Your boss just messaged that the client contract needs your signature TODAY, and there's a deadline in 45 minutes. You find a seat near an outlet.",
       "location": "Metropolitan International Airport - Gate B7",
+      "nextSceneId": "briefing_airport"
+    },
+    {
+      "id": "briefing_airport",
+      "type": "briefing",
+      "title": "Briefing",
+      "titleKey": "briefing.title",
+      "description": "Briefing",
+      "descriptionKey": "briefing.description",
+      "location": "Metropolitan International Airport - Gate B7",
+      "sections": [
+        {
+          "titleKey": "briefing.sections.bestChoice.title",
+          "bodyKey": "briefing.airport_advanced.bestChoice.body"
+        },
+        {
+          "titleKey": "briefing.sections.protect.title",
+          "bodyKey": "briefing.airport_advanced.protect.body"
+        },
+        {
+          "titleKey": "briefing.sections.tradeoff.title",
+          "bodyKey": "briefing.airport_advanced.tradeoff.body"
+        }
+      ],
       "nextSceneId": "airport_network_select"
     },
     {
@@ -26,6 +50,7 @@
       "networks": [
         {
           "id": "airport_official",
+          "actionId": "connect_airport_official",
           "ssid": "MetroAirport_Free",
           "signalStrength": 4,
           "isSecured": false,
@@ -37,6 +62,7 @@
         },
         {
           "id": "airport_lounge",
+          "actionId": "connect_airport_lounge",
           "ssid": "SkyLounge_Premium",
           "signalStrength": 5,
           "isSecured": true,
@@ -48,6 +74,7 @@
         },
         {
           "id": "airport_fake_1",
+          "actionId": "connect_airport_fake_1",
           "ssid": "Airport_Free_WiFi",
           "signalStrength": 5,
           "isSecured": false,
@@ -59,6 +86,7 @@
         },
         {
           "id": "airport_fake_2",
+          "actionId": "connect_airport_fake_2",
           "ssid": "MetroAirport-Guest",
           "signalStrength": 4,
           "isSecured": false,
@@ -70,12 +98,14 @@
         },
         {
           "id": "mobile_hotspot",
+          "actionId": "connect_mobile_hotspot",
           "ssid": "Use your mobile data",
           "signalStrength": 3,
           "isSecured": true,
           "securityType": "wpa2",
           "isLegitimate": true,
           "isTrap": false,
+          "isMobileData": true,
           "riskLevel": "safe",
           "description": "Your phone's personal hotspot - uses cellular data"
         }
@@ -86,8 +116,10 @@
       ],
       "choices": [
         { "actionId": "connect_airport_official", "nextSceneId": "airport_portal" },
-        { "actionId": "connect_fake_1", "nextSceneId": "airport_consequence_trap" },
-        { "actionId": "connect_fake_2", "nextSceneId": "airport_consequence_trap_subtle" },
+        { "actionId": "connect_airport_lounge", "nextSceneId": "airport_task_contract_premium" },
+        { "actionId": "connect_airport_fake_1", "nextSceneId": "airport_consequence_trap" },
+        { "actionId": "connect_airport_fake_2", "nextSceneId": "airport_consequence_trap_subtle" },
+        { "actionId": "connect_mobile_hotspot", "nextSceneId": "airport_mobile_connected" },
         { "actionId": "wait_kiosk", "nextSceneId": "airport_verified" },
         { "actionId": "use_mobile", "nextSceneId": "airport_mobile_connected" }
       ]
@@ -103,10 +135,15 @@
         "type": "safe_browsing",
         "severity": "success",
         "title": "Excellent Decision Under Pressure",
-        "whatHappened": "Despite the stress and time pressure, you chose to use your mobile data hotspot instead of any airport Wi-Fi. This is the most secure option available to you.",
-        "whyRisky": "This was the ideal choice, and here's why it matters so much: Your mobile data connection goes directly from your phone to your carrier's cell tower using encrypted cellular protocols. There is no shared local network for attackers to exploit. No evil twins, no man-in-the-middle attacks, no packet sniffing - the attack surface that exists on Wi-Fi simply doesn't exist on cellular. For urgent, high-stakes work like signing contracts, mobile data is almost always the right answer.",
-        "saferAlternative": "You made the optimal choice. The only consideration is data usage if you're on a limited plan, but for signing a critical contract, the peace of mind is worth any potential overage charges. Security over convenience, always.",
-        "technicalExplanation": "Cellular networks (LTE/5G) use mandatory encryption between your device and the cell tower. Unlike Wi-Fi where anyone nearby can set up a fake access point with cheap equipment, intercepting cellular traffic requires specialized equipment costing tens of thousands of dollars and significant technical expertise. For practical purposes, mobile data is vastly more secure than any public Wi-Fi.",
+        "titleKey": "scenarios.airport_advanced.consequences.cons_mobile.title",
+        "whatHappened": "Despite the stress and time pressure, you chose to use your mobile data hotspot instead of any airport Wi-Fi. This is one of the most secure options available to you.",
+        "whatHappenedKey": "scenarios.airport_advanced.consequences.cons_mobile.whatHappened",
+        "whyRisky": "This was a strong choice, and here's why it matters: Mobile data avoids the shared Wi-Fi segment that enables most local attacks. Intercepting cellular traffic is possible but typically requires specialized equipment and is far less common in normal settings. For urgent, high-stakes work like signing contracts, mobile data is often the safest practical choice.",
+        "whyRiskyKey": "scenarios.airport_advanced.consequences.cons_mobile.whyRisky",
+        "saferAlternative": "You made a strong choice. The main trade-offs are battery use and data costs, but for critical work the reduced Wi-Fi risk is worth it.",
+        "saferAlternativeKey": "scenarios.airport_advanced.consequences.cons_mobile.saferAlternative",
+        "technicalExplanation": "Cellular networks (LTE/5G) use mandatory encryption between your device and the cell tower. Interception generally requires specialized equipment and expertise, which makes it less likely than typical Wi-Fi attacks. For practical purposes, mobile data is generally safer than public Wi-Fi.",
+        "technicalExplanationKey": "scenarios.airport_advanced.consequences.cons_mobile.technicalExplanation",
         "safetyPointsChange": 30,
         "riskPointsChange": 0
       },
@@ -146,14 +183,19 @@
         "type": "safe_browsing",
         "severity": "success",
         "title": "Contract Signed Securely",
-        "whatHappened": "You signed the legally binding contract while connected through your mobile data. This bypassed all the risks associated with airport Wi-Fi networks entirely.",
-        "whyRisky": "There's minimal risk here. Your cellular connection uses strong encryption between your phone and the carrier's cell tower - and critically, no one at the airport can intercept your traffic because you're not using any local network they could compromise. The signing portal's HTTPS encryption adds another layer of protection. You've done this the right way.",
-        "saferAlternative": "You made an excellent choice. For truly paranoid security on extremely high-value contracts, some professionals use dedicated hardware tokens or require in-person signing. But for routine business contracts, mobile data is the gold standard for security on the go.",
-        "technicalExplanation": "Mobile data uses LTE/5G encryption that requires expensive specialized equipment to intercept, unlike Wi-Fi which can be attacked with a laptop. Combined with the HTTPS encryption of the signing portal, your credentials and signed document were protected by multiple layers of security. Local attackers at the airport had no opportunity to intercept your transaction.",
+        "titleKey": "scenarios.airport_advanced.consequences.cons_sign_mobile.title",
+        "whatHappened": "You signed the legally binding contract while connected through your mobile data. This avoided most of the Wi-Fi-specific risks present in the airport.",
+        "whatHappenedKey": "scenarios.airport_advanced.consequences.cons_sign_mobile.whatHappened",
+        "whyRisky": "Risk is low. Your cellular connection uses strong encryption between your phone and the carrier's cell tower, and nearby attackers have far fewer opportunities than on Wi-Fi. However, no network is risk-free, and the signing portal's HTTPS security still matters.",
+        "whyRiskyKey": "scenarios.airport_advanced.consequences.cons_sign_mobile.whyRisky",
+        "saferAlternative": "You made an excellent choice. For extremely sensitive contracts, some teams require hardware tokens or in-person signing. For routine business contracts, mobile data is one of the most practical high-security options on the go.",
+        "saferAlternativeKey": "scenarios.airport_advanced.consequences.cons_sign_mobile.saferAlternative",
+        "technicalExplanation": "Mobile data uses LTE/5G encryption that is far harder to intercept locally than Wi-Fi. Combined with the HTTPS encryption of the signing portal, your credentials and signed document were protected by multiple layers. Local attackers at the airport had little opportunity to interfere.",
+        "technicalExplanationKey": "scenarios.airport_advanced.consequences.cons_sign_mobile.technicalExplanation",
         "safetyPointsChange": 35,
         "riskPointsChange": 0
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_portal",
@@ -168,11 +210,173 @@
         { "id": "use_mobile_instead", "type": "switch_network", "label": "Switch to mobile data instead" }
       ],
       "choices": [
-        { "actionId": "accept_terms", "nextSceneId": "airport_task_contract_risky" },
+        { "actionId": "accept_terms", "nextSceneId": "airport_cert_warning_free" },
         { "actionId": "download_app", "nextSceneId": "airport_consequence_app" },
-        { "actionId": "pay_premium", "nextSceneId": "airport_task_contract_premium" },
+        { "actionId": "pay_premium", "nextSceneId": "airport_cert_warning_premium" },
         { "actionId": "use_mobile_instead", "nextSceneId": "airport_mobile_connected" }
       ]
+    },
+    {
+      "id": "airport_cert_warning_free",
+      "type": "task_prompt",
+      "title": "Certificate Warning",
+      "titleKey": "scenarios.airport_advanced.scenes.airport_cert_warning.title",
+      "description": "A security warning appears when you open the contract portal.",
+      "descriptionKey": "scenarios.airport_advanced.scenes.airport_cert_warning.description",
+      "location": "Metropolitan International Airport - Gate B7",
+      "task": {
+        "id": "task_cert_warning",
+        "type": "browse",
+        "title": "Certificate Warning",
+        "titleKey": "scenarios.airport_advanced.tasks.task_cert_warning.title",
+        "description": "The browser says the site's certificate can't be verified.",
+        "descriptionKey": "scenarios.airport_advanced.tasks.task_cert_warning.description",
+        "sensitivityLevel": "high",
+        "riskHint": "Certificate warnings can indicate interception or a fake site.",
+        "riskHintKey": "scenarios.airport_advanced.tasks.task_cert_warning.riskHint"
+      },
+      "actions": [
+        {
+          "id": "cert_abort",
+          "type": "decline",
+          "label": "Go back and choose a safer option",
+          "labelKey": "scenarios.airport_advanced.actions.cert_abort.label",
+          "description": "Return to the portal options",
+          "descriptionKey": "scenarios.airport_advanced.actions.cert_abort.description"
+        },
+        {
+          "id": "cert_proceed",
+          "type": "override_warning",
+          "label": "Proceed anyway",
+          "labelKey": "scenarios.airport_advanced.actions.cert_proceed.label",
+          "description": "Ignore the warning and continue",
+          "descriptionKey": "scenarios.airport_advanced.actions.cert_proceed.description"
+        }
+      ],
+      "choices": [
+        { "actionId": "cert_abort", "nextSceneId": "airport_cert_abort" },
+        { "actionId": "cert_proceed", "nextSceneId": "airport_cert_proceed_free" }
+      ]
+    },
+    {
+      "id": "airport_cert_warning_premium",
+      "type": "task_prompt",
+      "title": "Certificate Warning",
+      "titleKey": "scenarios.airport_advanced.scenes.airport_cert_warning.title",
+      "description": "A security warning appears when you open the contract portal.",
+      "descriptionKey": "scenarios.airport_advanced.scenes.airport_cert_warning.description",
+      "location": "Metropolitan International Airport - Gate B7",
+      "task": {
+        "id": "task_cert_warning",
+        "type": "browse",
+        "title": "Certificate Warning",
+        "titleKey": "scenarios.airport_advanced.tasks.task_cert_warning.title",
+        "description": "The browser says the site's certificate can't be verified.",
+        "descriptionKey": "scenarios.airport_advanced.tasks.task_cert_warning.description",
+        "sensitivityLevel": "high",
+        "riskHint": "Certificate warnings can indicate interception or a fake site.",
+        "riskHintKey": "scenarios.airport_advanced.tasks.task_cert_warning.riskHint"
+      },
+      "actions": [
+        {
+          "id": "cert_abort",
+          "type": "decline",
+          "label": "Go back and choose a safer option",
+          "labelKey": "scenarios.airport_advanced.actions.cert_abort.label",
+          "description": "Return to the portal options",
+          "descriptionKey": "scenarios.airport_advanced.actions.cert_abort.description"
+        },
+        {
+          "id": "cert_proceed",
+          "type": "override_warning",
+          "label": "Proceed anyway",
+          "labelKey": "scenarios.airport_advanced.actions.cert_proceed.label",
+          "description": "Ignore the warning and continue",
+          "descriptionKey": "scenarios.airport_advanced.actions.cert_proceed.description"
+        }
+      ],
+      "choices": [
+        { "actionId": "cert_abort", "nextSceneId": "airport_cert_abort" },
+        { "actionId": "cert_proceed", "nextSceneId": "airport_cert_proceed_premium" }
+      ]
+    },
+    {
+      "id": "airport_cert_abort",
+      "type": "consequence",
+      "title": "Heeded the Warning",
+      "titleKey": "scenarios.airport_advanced.consequences.cons_cert_abort.title",
+      "description": "You chose not to proceed...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_cert_abort",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Heeded the Warning",
+        "titleKey": "scenarios.airport_advanced.consequences.cons_cert_abort.title",
+        "whatHappened": "You stopped and did not proceed past the certificate warning.",
+        "whatHappenedKey": "scenarios.airport_advanced.consequences.cons_cert_abort.whatHappened",
+        "whyRisky": "Certificate warnings can indicate interception or a fake portal. Stopping avoids handing credentials to the wrong site.",
+        "whyRiskyKey": "scenarios.airport_advanced.consequences.cons_cert_abort.whyRisky",
+        "saferAlternative": "Use mobile data or try a verified network, then re-open the portal.",
+        "saferAlternativeKey": "scenarios.airport_advanced.consequences.cons_cert_abort.saferAlternative",
+        "technicalExplanation": "Invalid or mismatched certificates are a common sign of man-in-the-middle attacks on public Wi-Fi.",
+        "technicalExplanationKey": "scenarios.airport_advanced.consequences.cons_cert_abort.technicalExplanation",
+        "safetyPointsChange": 10,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "airport_portal"
+    },
+    {
+      "id": "airport_cert_proceed_free",
+      "type": "consequence",
+      "title": "Warning Ignored",
+      "titleKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.title",
+      "description": "You proceeded past the warning...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_cert_proceed_free",
+        "type": "session_compromised",
+        "severity": "warning",
+        "title": "Warning Ignored",
+        "titleKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.title",
+        "whatHappened": "You continued despite the certificate warning.",
+        "whatHappenedKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.whatHappened",
+        "whyRisky": "If the warning was caused by interception, your login could be exposed or the page could be a fake.",
+        "whyRiskyKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.whyRisky",
+        "saferAlternative": "Back out and use mobile data or a verified network before proceeding.",
+        "saferAlternativeKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.saferAlternative",
+        "technicalExplanation": "Certificate warnings appear when the browser cannot verify the site's identity. On public Wi-Fi, attackers can exploit this to intercept credentials.",
+        "technicalExplanationKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.technicalExplanation",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 10
+      },
+      "nextSceneId": "airport_task_contract_risky"
+    },
+    {
+      "id": "airport_cert_proceed_premium",
+      "type": "consequence",
+      "title": "Warning Ignored",
+      "titleKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.title",
+      "description": "You proceeded past the warning...",
+      "location": "Metropolitan International Airport - Gate B7",
+      "consequence": {
+        "id": "cons_cert_proceed_premium",
+        "type": "session_compromised",
+        "severity": "warning",
+        "title": "Warning Ignored",
+        "titleKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.title",
+        "whatHappened": "You continued despite the certificate warning.",
+        "whatHappenedKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.whatHappened",
+        "whyRisky": "If the warning was caused by interception, your login could be exposed or the page could be a fake.",
+        "whyRiskyKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.whyRisky",
+        "saferAlternative": "Back out and use mobile data or a verified network before proceeding.",
+        "saferAlternativeKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.saferAlternative",
+        "technicalExplanation": "Certificate warnings appear when the browser cannot verify the site's identity. On public Wi-Fi, attackers can exploit this to intercept credentials.",
+        "technicalExplanationKey": "scenarios.airport_advanced.consequences.cons_cert_proceed.technicalExplanation",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 10
+      },
+      "nextSceneId": "airport_task_contract_premium"
     },
     {
       "id": "airport_verified",
@@ -183,6 +387,7 @@
       "networks": [
         {
           "id": "airport_official_v",
+          "actionId": "connect_airport_official_v",
           "ssid": "MetroAirport_Free",
           "signalStrength": 4,
           "isSecured": false,
@@ -195,7 +400,7 @@
         }
       ],
       "choices": [
-        { "actionId": "connect_verified_airport", "nextSceneId": "airport_portal" }
+        { "actionId": "connect_airport_official_v", "nextSceneId": "airport_portal" }
       ]
     },
     {
@@ -222,7 +427,7 @@
           { "order": 4, "effect": "Sensitive business data exposed to competitors", "icon": "identity" }
         ]
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_consequence_trap_subtle",
@@ -248,7 +453,7 @@
           { "order": 4, "effect": "You missed the contract deadline while locked out", "icon": "money" }
         ]
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_consequence_app",
@@ -268,7 +473,7 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 45
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_task_contract_premium",
@@ -313,7 +518,7 @@
         "safetyPointsChange": 20,
         "riskPointsChange": 5
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_task_contract_risky",
@@ -358,7 +563,7 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 40
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_consequence_sign_vpn",
@@ -378,7 +583,7 @@
         "safetyPointsChange": 30,
         "riskPointsChange": 0
       },
-      "nextSceneId": "airport_completion"
+      "nextSceneId": "debrief_airport"
     },
     {
       "id": "airport_consequence_sign_delayed",
@@ -398,6 +603,30 @@
         "safetyPointsChange": 35,
         "riskPointsChange": 0
       },
+      "nextSceneId": "debrief_airport"
+    },
+    {
+      "id": "debrief_airport",
+      "type": "debrief",
+      "title": "Debrief",
+      "titleKey": "debrief.title",
+      "description": "Debrief",
+      "descriptionKey": "debrief.description",
+      "location": "Metropolitan International Airport - Gate B7",
+      "sections": [
+        {
+          "titleKey": "debrief.sections.didWell.title",
+          "bodyKey": "debrief.airport_advanced.didWell.body"
+        },
+        {
+          "titleKey": "debrief.sections.doDifferently.title",
+          "bodyKey": "debrief.airport_advanced.doDifferently.body"
+        },
+        {
+          "titleKey": "debrief.sections.habit.title",
+          "bodyKey": "debrief.airport_advanced.habit.body"
+        }
+      ],
       "nextSceneId": "airport_completion"
     },
     {

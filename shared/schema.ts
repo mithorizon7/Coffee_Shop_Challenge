@@ -69,8 +69,10 @@ export const networkSchema = z.object({
   isLegitimate: z.boolean(),
   isTrap: z.boolean(),
   verifiedByStaff: z.boolean().optional(),
+  isMobileData: z.boolean().optional(),
   riskLevel: z.enum(["safe", "suspicious", "dangerous"]),
   description: z.string().optional(),
+  actionId: z.string().optional(),
 });
 
 export type Network = z.infer<typeof networkSchema>;
@@ -83,9 +85,12 @@ export const taskSchema = z.object({
   id: z.string(),
   type: z.enum(["email", "banking", "download", "payment", "browse", "social"]),
   title: z.string(),
+  titleKey: z.string().optional(),
   description: z.string(),
+  descriptionKey: z.string().optional(),
   sensitivityLevel: z.enum(["low", "medium", "high", "critical"]),
   riskHint: z.string().optional(),
+  riskHintKey: z.string().optional(),
 });
 
 export type Task = z.infer<typeof taskSchema>;
@@ -98,7 +103,9 @@ export const actionSchema = z.object({
   id: z.string(),
   type: z.enum(["connect", "proceed", "use_vpn", "postpone", "switch_network", "verify_staff", "install_profile", "override_warning", "decline"]),
   label: z.string(),
+  labelKey: z.string().optional(),
   description: z.string().optional(),
+  descriptionKey: z.string().optional(),
   isPrimary: z.boolean().optional(),
   isDanger: z.boolean().optional(),
 });
@@ -129,14 +136,20 @@ export const consequenceSchema = z.object({
     "safe_browsing",
     "vpn_protected",
     "action_postponed",
-    "network_verified"
+    "network_verified",
+    "missed_verification"
   ]),
   severity: z.enum(["success", "warning", "danger"]),
   title: z.string(),
+  titleKey: z.string().optional(),
   whatHappened: z.string(),
+  whatHappenedKey: z.string().optional(),
   whyRisky: z.string(),
+  whyRiskyKey: z.string().optional(),
   saferAlternative: z.string(),
+  saferAlternativeKey: z.string().optional(),
   technicalExplanation: z.string().optional(),
+  technicalExplanationKey: z.string().optional(),
   safetyPointsChange: z.number(),
   riskPointsChange: z.number(),
   cascadingEffects: z.array(z.object({
@@ -151,14 +164,22 @@ export type Consequence = z.infer<typeof consequenceSchema>;
 // Scene in the branching narrative
 export const sceneSchema = z.object({
   id: z.string(),
-  type: z.enum(["arrival", "network_selection", "captive_portal", "task_prompt", "consequence", "debrief", "completion"]),
+  type: z.enum(["arrival", "briefing", "network_selection", "captive_portal", "task_prompt", "consequence", "debrief", "completion"]),
   title: z.string(),
+  titleKey: z.string().optional(),
   description: z.string(),
+  descriptionKey: z.string().optional(),
   location: z.string(),
   networks: z.array(networkSchema).optional(),
   task: taskSchema.optional(),
   actions: z.array(actionSchema).optional(),
   consequence: consequenceSchema.optional(),
+  sections: z.array(z.object({
+    title: z.string().optional(),
+    titleKey: z.string().optional(),
+    body: z.string().optional(),
+    bodyKey: z.string().optional(),
+  })).optional(),
   nextSceneId: z.string().optional(),
   choices: z.array(z.object({
     actionId: z.string(),

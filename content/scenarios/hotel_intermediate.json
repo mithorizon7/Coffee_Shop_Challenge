@@ -13,6 +13,30 @@
       "title": "Checking In",
       "description": "You've just arrived at the Grand Metropolitan Hotel after a long flight. Tomorrow's presentation is crucial, and you need to review some documents and respond to emails tonight. The room has a desk and you're ready to work.",
       "location": "Grand Metropolitan Hotel - Room 412",
+      "nextSceneId": "briefing_hotel"
+    },
+    {
+      "id": "briefing_hotel",
+      "type": "briefing",
+      "title": "Briefing",
+      "titleKey": "briefing.title",
+      "description": "Briefing",
+      "descriptionKey": "briefing.description",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "sections": [
+        {
+          "titleKey": "briefing.sections.bestChoice.title",
+          "bodyKey": "briefing.hotel_intermediate.bestChoice.body"
+        },
+        {
+          "titleKey": "briefing.sections.protect.title",
+          "bodyKey": "briefing.hotel_intermediate.protect.body"
+        },
+        {
+          "titleKey": "briefing.sections.tradeoff.title",
+          "bodyKey": "briefing.hotel_intermediate.tradeoff.body"
+        }
+      ],
       "nextSceneId": "hotel_network_select"
     },
     {
@@ -24,6 +48,7 @@
       "networks": [
         {
           "id": "hotel_official",
+          "actionId": "connect_hotel_official",
           "ssid": "GrandMetro_Guest",
           "signalStrength": 5,
           "isSecured": false,
@@ -35,6 +60,7 @@
         },
         {
           "id": "hotel_premium",
+          "actionId": "connect_hotel_premium",
           "ssid": "GrandMetro_Premium",
           "signalStrength": 5,
           "isSecured": true,
@@ -46,6 +72,7 @@
         },
         {
           "id": "hotel_fake",
+          "actionId": "connect_hotel_fake",
           "ssid": "GrandMetro-Guest",
           "signalStrength": 4,
           "isSecured": false,
@@ -57,6 +84,7 @@
         },
         {
           "id": "hotel_conference",
+          "actionId": "connect_hotel_conference",
           "ssid": "Conference_Center",
           "signalStrength": 3,
           "isSecured": true,
@@ -68,6 +96,7 @@
         },
         {
           "id": "personal_hotspot",
+          "actionId": "connect_personal_hotspot",
           "ssid": "iPhone-John",
           "signalStrength": 2,
           "isSecured": true,
@@ -85,6 +114,8 @@
         { "actionId": "connect_hotel_official", "nextSceneId": "hotel_portal" },
         { "actionId": "connect_hotel_premium", "nextSceneId": "hotel_premium_login" },
         { "actionId": "connect_hotel_fake", "nextSceneId": "hotel_consequence_trap" },
+        { "actionId": "connect_hotel_conference", "nextSceneId": "hotel_premium_login" },
+        { "actionId": "connect_personal_hotspot", "nextSceneId": "hotel_portal" },
         { "actionId": "call_desk", "nextSceneId": "hotel_verified" }
       ]
     },
@@ -116,6 +147,7 @@
       "networks": [
         {
           "id": "hotel_official_v",
+          "actionId": "connect_hotel_official_v",
           "ssid": "GrandMetro_Guest",
           "signalStrength": 5,
           "isSecured": false,
@@ -128,6 +160,7 @@
         },
         {
           "id": "hotel_premium_v",
+          "actionId": "connect_hotel_premium_v",
           "ssid": "GrandMetro_Premium",
           "signalStrength": 5,
           "isSecured": true,
@@ -140,8 +173,8 @@
         }
       ],
       "choices": [
-        { "actionId": "connect_verified_guest", "nextSceneId": "hotel_portal" },
-        { "actionId": "connect_verified_premium", "nextSceneId": "hotel_premium_connected" }
+        { "actionId": "connect_hotel_official_v", "nextSceneId": "hotel_portal" },
+        { "actionId": "connect_hotel_premium_v", "nextSceneId": "hotel_premium_connected" }
       ]
     },
     {
@@ -177,10 +210,15 @@
         "type": "safe_browsing",
         "severity": "success",
         "title": "Secure Choice",
-        "whatHappened": "You chose the premium, password-protected network. This provides WPA2 encryption between your device and the access point, meaning other hotel guests cannot eavesdrop on your traffic.",
-        "whyRisky": "This is a much safer choice than the open network. Here's why it matters: on the free open network, any guest with basic tools could capture your traffic. The premium network's password creates unique encryption keys for your session. The $15 investment is worthwhile when you're handling business data. The only remaining risk is that the hotel's network administrators could theoretically see your traffic, but reputable hotels don't monitor guest activity.",
+        "titleKey": "scenarios.hotel_intermediate.consequences.cons_premium.title",
+        "whatHappened": "You chose the premium, password-protected network. This provides WPA2 encryption between your device and the access point, making it much harder for other hotel guests to eavesdrop on your traffic.",
+        "whatHappenedKey": "scenarios.hotel_intermediate.consequences.cons_premium.whatHappened",
+        "whyRisky": "This is a much safer choice than the open network. Here's why it matters: on the free open network, any guest with basic tools could capture your traffic. The premium network's password creates unique encryption keys for your session. The $15 investment is worthwhile when you're handling business data. Keep in mind that you're still on shared infrastructure, and network administrators could potentially see some metadata, so treat it as lower risk, not zero risk.",
+        "whyRiskyKey": "scenarios.hotel_intermediate.consequences.cons_premium.whyRisky",
         "saferAlternative": "For maximum protection, use a VPN even on the premium network. But your choice was solid - you recognized that network security has real value, especially when doing business work.",
-        "technicalExplanation": "WPA2 uses the shared password to derive unique encryption keys for each connected device through a four-way handshake. Unlike open networks where packets fly through the air in readable form, your data is scrambled in a way that other guests cannot decode, even though they know the same password.",
+        "saferAlternativeKey": "scenarios.hotel_intermediate.consequences.cons_premium.saferAlternative",
+        "technicalExplanation": "WPA2 uses the shared password to derive unique encryption keys for each connected device through a four-way handshake. Unlike open networks where packets can be read in the air, your data is encrypted in a way that is difficult for nearby users to decode without your session keys.",
+        "technicalExplanationKey": "scenarios.hotel_intermediate.consequences.cons_premium.technicalExplanation",
         "safetyPointsChange": 20,
         "riskPointsChange": 0
       },
@@ -210,7 +248,7 @@
           { "order": 4, "effect": "Business secrets or client info may be compromised", "icon": "identity" }
         ]
       },
-      "nextSceneId": "hotel_completion"
+      "nextSceneId": "hotel_update_prompt"
     },
     {
       "id": "hotel_consequence_app",
@@ -236,7 +274,7 @@
           { "order": 4, "effect": "Credentials are captured and sold or used", "icon": "money" }
         ]
       },
-      "nextSceneId": "hotel_completion"
+      "nextSceneId": "hotel_update_prompt"
     },
     {
       "id": "hotel_task_email",
@@ -403,7 +441,101 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 20
       },
-      "nextSceneId": "hotel_completion"
+      "nextSceneId": "hotel_update_prompt"
+    },
+    {
+      "id": "hotel_update_prompt",
+      "type": "task_prompt",
+      "title": "Device Updates",
+      "titleKey": "scenarios.hotel_intermediate.scenes.hotel_update_prompt.title",
+      "description": "A system update is available before tomorrow's presentation.",
+      "descriptionKey": "scenarios.hotel_intermediate.scenes.hotel_update_prompt.description",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "task": {
+        "id": "task_update_device",
+        "type": "browse",
+        "title": "Install Security Updates",
+        "titleKey": "scenarios.hotel_intermediate.tasks.task_update_device.title",
+        "description": "Updates often include fixes for security flaws.",
+        "descriptionKey": "scenarios.hotel_intermediate.tasks.task_update_device.description",
+        "sensitivityLevel": "low",
+        "riskHint": "Delaying updates can leave known vulnerabilities unpatched.",
+        "riskHintKey": "scenarios.hotel_intermediate.tasks.task_update_device.riskHint"
+      },
+      "actions": [
+        {
+          "id": "update_now",
+          "type": "proceed",
+          "label": "Update now",
+          "labelKey": "scenarios.hotel_intermediate.actions.update_now.label",
+          "description": "Install updates before continuing",
+          "descriptionKey": "scenarios.hotel_intermediate.actions.update_now.description"
+        },
+        {
+          "id": "update_later",
+          "type": "decline",
+          "label": "Remind me later",
+          "labelKey": "scenarios.hotel_intermediate.actions.update_later.label",
+          "description": "Postpone updates for now",
+          "descriptionKey": "scenarios.hotel_intermediate.actions.update_later.description"
+        }
+      ],
+      "choices": [
+        { "actionId": "update_now", "nextSceneId": "hotel_consequence_update_now" },
+        { "actionId": "update_later", "nextSceneId": "hotel_consequence_update_later" }
+      ]
+    },
+    {
+      "id": "hotel_consequence_update_now",
+      "type": "consequence",
+      "title": "Updates Installed",
+      "titleKey": "scenarios.hotel_intermediate.consequences.cons_update_now.title",
+      "description": "You installed the updates...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_update_now",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Updates Installed",
+        "titleKey": "scenarios.hotel_intermediate.consequences.cons_update_now.title",
+        "whatHappened": "You installed security updates before continuing.",
+        "whatHappenedKey": "scenarios.hotel_intermediate.consequences.cons_update_now.whatHappened",
+        "whyRisky": "Keeping your device updated reduces exposure to known vulnerabilities that attackers target on public networks.",
+        "whyRiskyKey": "scenarios.hotel_intermediate.consequences.cons_update_now.whyRisky",
+        "saferAlternative": "Great choice. Enable automatic updates when possible to stay protected without extra steps.",
+        "saferAlternativeKey": "scenarios.hotel_intermediate.consequences.cons_update_now.saferAlternative",
+        "technicalExplanation": "Security updates patch known flaws in the operating system and browser that could otherwise be exploited.",
+        "technicalExplanationKey": "scenarios.hotel_intermediate.consequences.cons_update_now.technicalExplanation",
+        "safetyPointsChange": 5,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "debrief_hotel"
+    },
+    {
+      "id": "hotel_consequence_update_later",
+      "type": "consequence",
+      "title": "Updates Postponed",
+      "titleKey": "scenarios.hotel_intermediate.consequences.cons_update_later.title",
+      "description": "You postponed the updates...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_update_later",
+        "type": "privacy_leaked",
+        "severity": "warning",
+        "title": "Updates Postponed",
+        "titleKey": "scenarios.hotel_intermediate.consequences.cons_update_later.title",
+        "whatHappened": "You chose to delay the updates.",
+        "whatHappenedKey": "scenarios.hotel_intermediate.consequences.cons_update_later.whatHappened",
+        "whyRisky": "Postponing updates can leave known security holes open, which is a bigger risk on shared networks.",
+        "whyRiskyKey": "scenarios.hotel_intermediate.consequences.cons_update_later.whyRisky",
+        "saferAlternative": "Update before sensitive work whenever you can, especially while traveling.",
+        "saferAlternativeKey": "scenarios.hotel_intermediate.consequences.cons_update_later.saferAlternative",
+        "technicalExplanation": "Attackers often target publicly known vulnerabilities that are already fixed by patches.",
+        "technicalExplanationKey": "scenarios.hotel_intermediate.consequences.cons_update_later.technicalExplanation",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 5
+      },
+      "nextSceneId": "debrief_hotel"
     },
     {
       "id": "hotel_consequence_download_vpn",
@@ -423,7 +555,7 @@
         "safetyPointsChange": 25,
         "riskPointsChange": 0
       },
-      "nextSceneId": "hotel_completion"
+      "nextSceneId": "hotel_update_prompt"
     },
     {
       "id": "hotel_consequence_download_postponed",
@@ -443,6 +575,30 @@
         "safetyPointsChange": 15,
         "riskPointsChange": 0
       },
+      "nextSceneId": "hotel_update_prompt"
+    },
+    {
+      "id": "debrief_hotel",
+      "type": "debrief",
+      "title": "Debrief",
+      "titleKey": "debrief.title",
+      "description": "Debrief",
+      "descriptionKey": "debrief.description",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "sections": [
+        {
+          "titleKey": "debrief.sections.didWell.title",
+          "bodyKey": "debrief.hotel_intermediate.didWell.body"
+        },
+        {
+          "titleKey": "debrief.sections.doDifferently.title",
+          "bodyKey": "debrief.hotel_intermediate.doDifferently.body"
+        },
+        {
+          "titleKey": "debrief.sections.habit.title",
+          "bodyKey": "debrief.hotel_intermediate.habit.body"
+        }
+      ],
       "nextSceneId": "hotel_completion"
     },
     {

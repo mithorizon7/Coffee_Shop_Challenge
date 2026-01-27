@@ -57,8 +57,8 @@ const completeSessionSchema = z.object({
   scenarioId: z.string(),
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
   score: z.object({
-    safetyPoints: z.number().min(0).max(100),
-    riskPoints: z.number().min(0).max(100),
+    safetyPoints: z.number().min(0).max(1000),
+    riskPoints: z.number().min(0).max(1000),
     decisionsCount: z.number().min(0).max(50),
     correctDecisions: z.number().min(0).max(50),
   }).refine(data => data.correctDecisions <= data.decisionsCount, {

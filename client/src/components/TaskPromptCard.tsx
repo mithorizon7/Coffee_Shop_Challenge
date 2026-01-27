@@ -51,6 +51,9 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
   const IconComponent = taskIcons[task.type] || Globe;
   const sensitivity = sensitivityColors[task.sensitivityLevel];
   const sensitivityLabel = task.sensitivityLevel.charAt(0).toUpperCase() + task.sensitivityLevel.slice(1);
+  const title = task.titleKey ? t(task.titleKey) : task.title;
+  const description = task.descriptionKey ? t(task.descriptionKey) : task.description;
+  const riskHint = task.riskHintKey ? t(task.riskHintKey) : task.riskHint;
 
   return (
     <Card className="p-6">
@@ -65,7 +68,7 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-2">
             <h3 className="font-display text-lg font-semibold text-foreground">
-              {task.title}
+              {title}
             </h3>
             <Badge 
               variant="outline" 
@@ -77,37 +80,41 @@ export function TaskPromptCard({ task, actions, onAction, showHints = false }: T
           </div>
           
           <p className="text-muted-foreground mb-4" data-testid="task-description">
-            {task.description}
+            {description}
           </p>
           
-          {showHints && task.riskHint && (
+          {showHints && riskHint && (
             <div className="flex items-start gap-2 p-3 rounded-md bg-amber-50 dark:bg-amber-950 mb-4">
               <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-700 dark:text-amber-300">
-                {task.riskHint}
+                {riskHint}
               </p>
             </div>
           )}
           
           <div className="flex flex-wrap gap-3">
-            {actions.map((action) => (
-              <Tooltip key={action.id}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => onAction(action.id)}
-                    data-testid={`action-${action.id}`}
-                  >
-                    {action.label}
-                  </Button>
-                </TooltipTrigger>
-                {action.description && (
-                  <TooltipContent>
-                    <p>{action.description}</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            ))}
+            {actions.map((action) => {
+              const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
+              const actionDescription = action.descriptionKey ? t(action.descriptionKey) : action.description;
+              return (
+                <Tooltip key={action.id}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => onAction(action.id)}
+                      data-testid={`action-${action.id}`}
+                    >
+                      {actionLabel}
+                    </Button>
+                  </TooltipTrigger>
+                  {actionDescription && (
+                    <TooltipContent>
+                      <p>{actionDescription}</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              );
+            })}
           </div>
         </div>
       </div>

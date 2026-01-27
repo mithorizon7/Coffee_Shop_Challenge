@@ -286,7 +286,26 @@
     "howItWorks": "Kā darbojas punktu skaitīšana:",
     "safetyExplain": "Tiek nopelnīti par drošiem lēmumiem, piemēram, VPN izmantošanu, aizdomīgu tīklu izvairīšanos vai sensitīvu uzdevumu atlikšanu.",
     "riskExplain": "Tiek uzkrāti par riskantām darbībām, piemēram, pieslēgšanos neaizsargātiem tīkliem vai sensitīvu datu ievadīšanu publiskajā Wi-Fi.",
-    "lowerRiskBetter": "Mazāk riska punktu = labāks vērtējums!"
+    "lowerRiskBetter": "Mazāk riska punktu = labāks vērtējums!",
+    "rationale": {
+      "title": "Kāpēc šie punkti",
+      "safety": "Drošības punkti +{points}: {reason}",
+      "risk": "Riska punkti +{points}: {reason}",
+      "neutral": "Šim iznākumam punkti nemainījās.",
+      "type": {
+        "safe_browsing": "tu izvēlējies mazāka riska ceļu vai pievienoji aizsardzību.",
+        "vpn_protected": "VPN pievienoja spēcīgu šifrēšanas slāni.",
+        "action_postponed": "tu izvairījies no riska, atliekot uzdevumu.",
+        "network_verified": "tu pārbaudīji tīklu pirms rīcības.",
+        "missed_verification": "pārbaude tika izlaista, tāpēc saglabājās papildu nenoteiktība.",
+        "credential_harvested": "piekļuves dati tika atklāti riskantā tīklā.",
+        "session_compromised": "riskants savienojums pakļāva sesiju pārņemšanai.",
+        "malware_installed": "darbība palielināja ļaunatūras vai profilu risku.",
+        "account_locked": "iznākums izraisīja drošības incidentu un traucējumus.",
+        "privacy_leaked": "tīkla aktivitāte un metadati varēja būt redzami.",
+        "default": "šis iznākums atspoguļo izvēles riska līmeni."
+      }
+    }
   },
   "threats": {
     "phishing": "Pikšķerēšana",
@@ -349,6 +368,10 @@
           "title": "Ātrs Bankas Uzdevums",
           "description": "Tavs VPN ir aktīvs. Tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien."
         },
+        "autojoin_prompt": {
+          "title": "Tīkla Iestatījumi",
+          "description": "Pirms pārlūkošanas apsver īsu drošības iestatījumu."
+        },
         "consequence_trap": {
           "title": "Tīkla Slazds Atklāts",
           "description": "Tu pieslēdzies tam, kas izskatījās kā kafejnīcas tīkls..."
@@ -403,6 +426,14 @@
         },
         "proceed_banking_vpn": {
           "label": "Pieslēgties bankai (VPN aktīvs)"
+        },
+        "autojoin_disable": {
+          "label": "Izslēgt automātisko pievienošanos un aizmirst pēc lietošanas",
+          "description": "Novērš automātisku pieslēgšanos vēlāk"
+        },
+        "autojoin_leave": {
+          "label": "Atstāt automātisko pievienošanos ieslēgtu",
+          "description": "Ērti tagad, bet var pieslēgties vēlāk"
         }
       },
       "tasks": {
@@ -415,6 +446,11 @@
           "title": "Pārskaitīt Līdzekļus",
           "description": "Pieslēgties bankai, lai pārskaitītu €200 gaidāmā rēķina segšanai.",
           "riskHint": "Banku darījumi ietver tavus visjutīgākos finanšu akreditācijas datus."
+        },
+        "task_autojoin": {
+          "title": "Automātiskās Pievienošanās Iestatījumi",
+          "description": "Publiskie tīkli vēlāk var pieslēgties automātiski bez tavas ziņas.",
+          "riskHint": "Auto-pievienošanās var nākotnē atkārtoti pieslēgt publiskam tīklam."
         }
       },
       "consequences": {
@@ -443,18 +479,234 @@
           "whatHappened": "Tu pieslēdzies 'Bookstore_Next_Door' - likumīgam tīklam, bet ne šīs kafejnīcas tīklam. Lai gan, iespējams, nav ļaunprātīgs, tas nebija paredzētais tīkls.",
           "whyRisky": "Pieslēgšanās nezināmiem tīkliem, pat ja tie izskatās likumīgi, nozīmē uzticēšanos nezināmam administratoram. Tev nav kontroles pār viņu drošības praksi vai žurnalizēšanas politikām.",
           "saferAlternative": "Vienmēr pārbaudi, vai pieslēdzies pareizam tīklam savai atrašanās vietai. Jautā personālam oficiālo tīkla nosaukumu, nevis mini."
+        },
+        "cons_autojoin_safe": {
+          "title": "Automātiskā Pievienošanās Izslēgta",
+          "whatHappened": "Tu izslēdzi automātisko pievienošanos un iestatīji tīklu aizmirst pēc lietošanas.",
+          "whyRisky": "Tas samazina iespēju, ka ierīce vēlāk automātiski pieslēgsies publiskam Wi-Fi bez tavas ziņas.",
+          "saferAlternative": "Atstāj auto-pievienošanos izslēgtu publiskajiem tīkliem un aizmirsti tos pēc aiziešanas.",
+          "technicalExplanation": "Auto-pievienošanās var pieslēgties atcerētiem SSID, arī līdzīgiem nosaukumiem. Aizmirstot tiek dzēsti saglabātie tīkla dati."
+        },
+        "cons_autojoin_risky": {
+          "title": "Automātiskā Pievienošanās Atstāta Ieslēgta",
+          "whatHappened": "Tu atstāji automātisko pievienošanos ieslēgtu šim tīklam.",
+          "whyRisky": "Ierīce vēlāk var pieslēgties automātiski, iespējams, arī līdzīgai tīkla kopijai ar tādu pašu nosaukumu.",
+          "saferAlternative": "Izslēdz auto-pievienošanos un aizmirsti publiskos tīklus, kad esi pabeidzis.",
+          "technicalExplanation": "Ierīces bieži pieslēdzas atcerētiem SSID bez pieprasījuma, ko uzbrucēji var izmantot, kopējot tīkla nosaukumus."
+        },
+        "cons_email_unverified": {
+          "title": "Izlaists Drošības Solis",
+          "whatHappened": "Tu veiksmīgi pārbaudīji e-pastu. Izvēlētais tīkls izskatījās uzticams, un e-pasta pakalpojuma HTTPS aizsargāja tavu pieteikšanos. Taču tu pieslēdzies, neapstiprinot pie personāla, ka šis ir oficiālais tīkls.",
+          "whyRisky": "Te ir problēma: tev paveicās, bet tu nezināji, ka esi drošībā. 'DailyGrind_Guest' izskatījās pareizi, taču uzbrucēji veido ļoti pārliecinošus nosaukumus. Bez pārbaudes tu nevarēji atšķirt īsto tīklu no viltota. 30 sekundes, lai pajautātu personālam, var ietaupīt stundas, risinot kompromitētus kontus. Verifikācijas ieradums ir svarīgāks par vienu veiksmīgu pieslēgumu.",
+          "saferAlternative": "Pirms pieslēgšanās jebkuram publiskam tīklam pajautā personālam precīzu tīkla nosaukumu. Tas aizņem mirkli un pārvērš minēšanu par informētu izvēli. Šis ieradums būtiski samazina \"evil twin\" risku, taču joprojām uzmanies no līdzīgiem nosaukumiem un negaidītām pieteikšanās lapām.",
+          "technicalExplanation": "Pat pareizi nosauktus tīklus var viltot. Uzbrucēji var nokopēt SSID un izmantot spēcīgāku signālu, lai pievilinātu ierīces. Personāla apstiprinājums ir labākais praktiskais pirmais solis, bet pārbaudi arī nelielas pareizrakstības atšķirības un esi piesardzīgs pret negaidītiem captive portal ekrāniem."
         }
       }
     },
     "hotel_intermediate": {
       "title": "Komandējums The Grand Hotel",
       "description": "Tu esi ieradies viesnīcā komandējumā un tev jāpiekļūst internetam. Pieejami vairāki tīkli, un reģistratūra ir aizņemta. Kā tu droši pieslēgsies?",
-      "location": "The Grand Hotel Vestibils"
+      "location": "The Grand Hotel Vestibils",
+      "scenes": {
+        "hotel_update_prompt": {
+          "title": "Ierīces Atjauninājumi",
+          "description": "Pirms rītdienas prezentācijas ir pieejams sistēmas atjauninājums."
+        }
+      },
+      "actions": {
+        "update_now": {
+          "label": "Atjaunināt tagad",
+          "description": "Instalēt atjauninājumus pirms turpināšanas"
+        },
+        "update_later": {
+          "label": "Atgādināt vēlāk",
+          "description": "Atlikt atjauninājumus pagaidām"
+        }
+      },
+      "tasks": {
+        "task_update_device": {
+          "title": "Instalēt Drošības Atjauninājumus",
+          "description": "Atjauninājumi bieži labo drošības ievainojamības.",
+          "riskHint": "Atlikti atjauninājumi var atstāt zināmas ievainojamības neaizlāpītas."
+        }
+      },
+      "consequences": {
+        "cons_premium": {
+          "title": "Droša Izvēle",
+          "whatHappened": "Tu izvēlējies premium, ar paroli aizsargātu tīklu. Tas nodrošina WPA2 šifrēšanu starp ierīci un piekļuves punktu, padarot citiem viesnīcas viesiem daudz grūtāk noklausīties tavu trafiku.",
+          "whyRisky": "Tā ir daudz drošāka izvēle nekā atvērts tīkls. Lūk, kāpēc tas ir svarīgi: bezmaksas atvērtajā tīklā jebkurš viesis ar vienkāršiem rīkiem varētu pārtvert tavu trafiku. Premium tīkla parole rada unikālas šifrēšanas atslēgas tavai sesijai. $15 ieguldījums ir tā vērts, ja tu strādā ar biznesa datiem. Atceries, ka tā joprojām ir koplietota infrastruktūra, un tīkla administratori varētu redzēt daļu metadatu, tāpēc uztver to kā zemāku, nevis nulles risku.",
+          "saferAlternative": "Maksimālai aizsardzībai izmanto VPN pat premium tīklā. Taču tava izvēle bija pamatota - tu saprati, ka tīkla drošībai ir reāla vērtība, īpaši biznesa darbā.",
+          "technicalExplanation": "WPA2 izmanto kopīgo paroli, lai izveidotu unikālas šifrēšanas atslēgas katrai ierīcei, izmantojot četru soļu rokasspiedienu. Atšķirībā no atvērtiem tīkliem, kur paketes var nolasīt gaisā, tavi dati ir šifrēti tā, ka tuvumā esošiem lietotājiem tos ir grūti atšifrēt bez tavas sesijas atslēgām."
+        },
+        "cons_update_now": {
+          "title": "Atjauninājumi Instalēti",
+          "whatHappened": "Tu instalēji drošības atjauninājumus pirms turpināšanas.",
+          "whyRisky": "Atjaunināta ierīce samazina pakļautību zināmām ievainojamībām, ko uzbrucēji mēdz izmantot publiskos tīklos.",
+          "saferAlternative": "Lieliska izvēle. Ja iespējams, ieslēdz automātiskos atjauninājumus.",
+          "technicalExplanation": "Drošības atjauninājumi aizlāpa zināmas operētājsistēmas un pārlūka nepilnības."
+        },
+        "cons_update_later": {
+          "title": "Atjauninājumi Atlikti",
+          "whatHappened": "Tu nolēmi atlikt atjauninājumus.",
+          "whyRisky": "Atlikšana atstāj zināmus drošības caurumus atvērtus, kas koplietotos tīklos ir riskantāk.",
+          "saferAlternative": "Atjaunini pirms sensitīva darba, īpaši ceļojot.",
+          "technicalExplanation": "Uzbrucēji bieži izmanto publiski zināmas ievainojamības, kurām jau ir ielāpi."
+        }
+      }
     },
     "airport_advanced": {
       "title": "Pārsēšanās Metro Lidostā",
       "description": "Tev ir 2 stundu pārsēšanās un jāpabeidz steidzami darba uzdevumi. Lidosta ir pārpildīta un tu redzi daudzus pieejamus tīklus. Laiks ir būtisks.",
-      "location": "Metro Starptautiskā Lidosta"
+      "location": "Metro Starptautiskā Lidosta",
+      "scenes": {
+        "airport_cert_warning": {
+          "title": "Sertifikāta Brīdinājums",
+          "description": "Atverot līguma portālu, parādās drošības brīdinājums."
+        }
+      },
+      "actions": {
+        "cert_abort": {
+          "label": "Atgriezties un izvēlēties drošāku variantu",
+          "description": "Atgriezties pie portāla izvēlnes"
+        },
+        "cert_proceed": {
+          "label": "Turpināt jebkurā gadījumā",
+          "description": "Ignorēt brīdinājumu un turpināt"
+        }
+      },
+      "tasks": {
+        "task_cert_warning": {
+          "title": "Sertifikāta Brīdinājums",
+          "description": "Pārlūks norāda, ka vietnes sertifikātu nevar pārbaudīt.",
+          "riskHint": "Sertifikāta brīdinājumi var nozīmēt pārtveršanu vai viltotu vietni."
+        }
+      },
+      "consequences": {
+        "cons_mobile": {
+          "title": "Lieliska Izvēle Stresa Apstākļos",
+          "whatHappened": "Neraugoties uz stresu un laika spiedienu, tu izvēlējies mobilo tīklāju, nevis lidostas Wi-Fi. Tā ir viena no drošākajām pieejamajām iespējām.",
+          "whyRisky": "Šī ir laba izvēle, un lūk, kāpēc: mobilie dati izvairās no koplietotā Wi-Fi segmenta, kas ļauj lielāko daļu lokālo uzbrukumu. Pārtveršana ir iespējama, taču parasti tai vajadzīgs specializēts aprīkojums un tā ir daudz retāka parasti sastopamās situācijās. Steidzamiem, augsta riska uzdevumiem mobilie dati bieži ir praktiski drošākais variants.",
+          "saferAlternative": "Tu pieņēmi labu lēmumu. Galvenie kompromisi ir baterijas patēriņš un datu izmaksas, taču kritiskam darbam samazinātais Wi-Fi risks ir tā vērts.",
+          "technicalExplanation": "Mobilie tīkli (LTE/5G) izmanto obligātu šifrēšanu starp ierīci un bāzes staciju. Pārtveršana parasti prasa specializētu aprīkojumu un zināšanas, tāpēc tā ir mazāk ticama nekā tipiski Wi-Fi uzbrukumi. Praktiski mobilie dati parasti ir drošāki par publisko Wi-Fi."
+        },
+        "cons_sign_mobile": {
+          "title": "Līgums Parakstīts Droši",
+          "whatHappened": "Tu parakstīji juridiski saistošo līgumu, izmantojot mobilo internetu. Tas ļāva izvairīties no lielākās daļas lidostas Wi-Fi specifisko risku.",
+          "whyRisky": "Risks ir zems. Tavs mobilais savienojums izmanto spēcīgu šifrēšanu starp tālruni un bāzes staciju, un tuvumā esošiem uzbrucējiem ir daudz mazāk iespēju nekā Wi-Fi tīklā. Tomēr neviens tīkls nav bezriska, un parakstīšanas portāla HTTPS drošība joprojām ir svarīga.",
+          "saferAlternative": "Tu pieņēmi lielisku lēmumu. Īpaši sensitīviem līgumiem dažas komandas pieprasa aparatūras tokenus vai parakstīšanu klātienē. Ikdienas biznesa līgumiem mobilie dati ir viena no praktiskākajām augstas drošības iespējām ceļā.",
+          "technicalExplanation": "Mobilie dati izmanto LTE/5G šifrēšanu, ko lokāli ir daudz grūtāk pārtvert nekā Wi-Fi. Kopā ar parakstīšanas portāla HTTPS šifrēšanu tavi dati bija aizsargāti ar vairākiem slāņiem. Vietējiem uzbrucējiem lidostā bija maz iespēju iejaukties."
+        },
+        "cons_cert_abort": {
+          "title": "Ievēroji Brīdinājumu",
+          "whatHappened": "Tu apstājies un neturpināji pēc sertifikāta brīdinājuma.",
+          "whyRisky": "Sertifikāta brīdinājumi var norādīt uz pārtveršanu vai viltotu portālu. Apstāšanās novērš akreditācijas datu nodošanu nepareizai vietnei.",
+          "saferAlternative": "Izmanto mobilos datus vai pārbaudi tīklu un mēģini vēlreiz.",
+          "technicalExplanation": "Nederīgi vai neatbilstoši sertifikāti ir bieža pazīme \"man-in-the-middle\" uzbrukumiem publiskā Wi-Fi."
+        },
+        "cons_cert_proceed": {
+          "title": "Brīdinājums Ignorēts",
+          "whatHappened": "Tu turpināji, neskatoties uz sertifikāta brīdinājumu.",
+          "whyRisky": "Ja brīdinājumu izraisīja pārtveršana, tavi pieteikšanās dati var tikt atklāti vai lapa var būt viltota.",
+          "saferAlternative": "Atgriezies un izmanto mobilos datus vai verificētu tīklu pirms turpināšanas.",
+          "technicalExplanation": "Brīdinājumi parādās, kad pārlūks nevar pārbaudīt vietnes identitāti. Publiskā Wi-Fi uzbrucēji to var izmantot, lai pārtvertu datus."
+        }
+      }
+    }
+  },
+  "briefing": {
+    "title": "Īss ievads",
+    "description": "Pirms savienojuma izveides īsi saplāno rīcību.",
+    "sections": {
+      "bestChoice": {
+        "title": "Labākā pieejamā izvēle dotajos apstākļos"
+      },
+      "protect": {
+        "title": "Ko tu mēģini aizsargāt"
+      },
+      "tradeoff": {
+        "title": "Kādi kompromisi var būt jāpieņem"
+      }
+    },
+    "coffee_shop_beginner": {
+      "bestChoice": {
+        "body": "Pajautā personālam oficiālo tīkla nosaukumu un izmanto ar paroli aizsargāto variantu. Ja nevari verificēt, izvairies no sensitīviem uzdevumiem vai izmanto VPN."
+      },
+      "protect": {
+        "body": "Tavu darba e-pastu, bankas piekļuves datus un personisko informāciju. Tos var izmantot citu kontu atiestatīšanai."
+      },
+      "tradeoff": {
+        "body": "Pārbaude vai gaidīšana aizņem minūti, un uzdevumu atlikšana ir neērta, bet tas samazina risku."
+      }
+    },
+    "hotel_intermediate": {
+      "bestChoice": {
+        "body": "Apstiprini oficiālo SSID pie reģistratūras. Dod priekšroku premium tīklam vai izmanto VPN bezmaksas tīklā. Neinstalē lietotnes."
+      },
+      "protect": {
+        "body": "Darba e-pastu, prezentācijas failus un viesnīcas konta datus, piemēram, numuru un uzvārdu."
+      },
+      "tradeoff": {
+        "body": "Premium piekļuve maksā naudu un VPN iestatīšana aizņem laiku, taču tas samazina risku koplietotā tīklā."
+      }
+    },
+    "airport_advanced": {
+      "bestChoice": {
+        "body": "Steidzamiem darbiem izmanto mobilo tīklāju. Ja tomēr jālieto Wi-Fi, pārbaudi oficiālo tīkla nosaukumu un ieslēdz VPN."
+      },
+      "protect": {
+        "body": "Līguma piekļuves datus, uzņēmuma kontus un parakstīto dokumentu."
+      },
+      "tradeoff": {
+        "body": "Mobilie dati patērē bateriju un var maksāt dārgāk, bet gaidīšana rindā samazina laiku; abi soļi mazina Wi-Fi risku."
+      }
+    }
+  },
+  "debrief": {
+    "title": "Īss izvērtējums",
+    "description": "Apsver, kā tavi lēmumi ietekmēja risku.",
+    "sections": {
+      "didWell": {
+        "title": "Ko tu izdarīji labi"
+      },
+      "doDifferently": {
+        "title": "Ko nākamreiz darītu citādi"
+      },
+      "habit": {
+        "title": "Viens ieradums, ko vingrināt"
+      }
+    },
+    "coffee_shop_beginner": {
+      "didWell": {
+        "body": "Ja tu pārbaudīji tīklu, izmantoji VPN vai atliki bankas darbības, tu pieņēmi drošus lēmumus."
+      },
+      "doDifferently": {
+        "body": "Nākamreiz vispirms pārbaudi tīklu un izvairies no atvērtajiem tīkliem e-pastam vai bankai. Dažas izvēles ir pietiekami labas, bet ne labākās; augstu likmju uzdevumos mērķē uz verificētu tīklu un VPN vai mobilajiem datiem."
+      },
+      "habit": {
+        "body": "Ieslēdz 2FA darba kontiem, izveido ieradumu vienmēr pārbaudīt tīkla nosaukumu un izmantot VPN publiskā Wi-Fi."
+      }
+    },
+    "hotel_intermediate": {
+      "didWell": {
+        "body": "Ja tu pārbaudīji SSID, neinstalēji lietotnes vai izmantoji VPN, tu samazināji risku."
+      },
+      "doDifferently": {
+        "body": "Uzskati atvērto viesnīcas Wi-Fi par riskantu; sensitīvam darbam izmanto VPN vai mobilo internetu. Dažas izvēles ir pieņemamas, bet ne optimālas, ja likmes ir augstas."
+      },
+      "habit": {
+        "body": "Ieslēdz 2FA darba kontiem, nekad neinstalē captive portal lietotnes un vienmēr pārbaudi tīkla nosaukumu katrā viesnīcā."
+      }
+    },
+    "airport_advanced": {
+      "didWell": {
+        "body": "Ja izmantoji mobilo internetu vai VPN, tu samazināji risku spiedīgā situācijā."
+      },
+      "doDifferently": {
+        "body": "Nedzenies pēc spēcīgākā signāla; augstu likmju situācijās pārbaudi nosaukumu pa burtiem. Premium vai verificēts Wi-Fi var būt pietiekami labs, taču kritiskām darbībām drošāks standarts ir mobilie dati vai VPN."
+      },
+      "habit": {
+        "body": "Ieslēdz 2FA darba kontiem, augsta riska uzdevumiem pēc noklusējuma izvēlies mobilo internetu un izslēdz auto-pievienošanos publiskam Wi-Fi."
+      }
     }
   }
 }

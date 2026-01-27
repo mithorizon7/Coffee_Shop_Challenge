@@ -13,6 +13,30 @@
       "title": "Welcome to The Daily Grind",
       "description": "You settle into a comfortable corner seat with your latte. Your laptop is open and you see several Wi-Fi networks available. You have 30 minutes before your meeting.",
       "location": "The Daily Grind Coffee Shop",
+      "nextSceneId": "briefing_coffee_shop"
+    },
+    {
+      "id": "briefing_coffee_shop",
+      "type": "briefing",
+      "title": "Briefing",
+      "titleKey": "briefing.title",
+      "description": "Briefing",
+      "descriptionKey": "briefing.description",
+      "location": "The Daily Grind Coffee Shop",
+      "sections": [
+        {
+          "titleKey": "briefing.sections.bestChoice.title",
+          "bodyKey": "briefing.coffee_shop_beginner.bestChoice.body"
+        },
+        {
+          "titleKey": "briefing.sections.protect.title",
+          "bodyKey": "briefing.coffee_shop_beginner.protect.body"
+        },
+        {
+          "titleKey": "briefing.sections.tradeoff.title",
+          "bodyKey": "briefing.coffee_shop_beginner.tradeoff.body"
+        }
+      ],
       "nextSceneId": "network_select_1"
     },
     {
@@ -24,6 +48,7 @@
       "networks": [
         {
           "id": "net_official",
+          "actionId": "connect_net_official",
           "ssid": "DailyGrind_Guest",
           "signalStrength": 5,
           "isSecured": true,
@@ -36,6 +61,7 @@
         },
         {
           "id": "net_fake",
+          "actionId": "connect_net_fake",
           "ssid": "FREE_Daily_Grind_WiFi",
           "signalStrength": 4,
           "isSecured": false,
@@ -47,6 +73,7 @@
         },
         {
           "id": "net_open",
+          "actionId": "connect_net_open",
           "ssid": "DailyGrind_Open",
           "signalStrength": 4,
           "isSecured": false,
@@ -58,6 +85,7 @@
         },
         {
           "id": "net_neighbor",
+          "actionId": "connect_net_neighbor",
           "ssid": "Bookstore_Next_Door",
           "signalStrength": 2,
           "isSecured": true,
@@ -77,10 +105,10 @@
         }
       ],
       "choices": [
-        { "actionId": "connect_official", "nextSceneId": "task_email" },
-        { "actionId": "connect_fake", "nextSceneId": "consequence_trap" },
-        { "actionId": "connect_open", "nextSceneId": "consequence_open" },
-        { "actionId": "connect_neighbor", "nextSceneId": "consequence_neighbor" },
+        { "actionId": "connect_net_official", "nextSceneId": "autojoin_prompt" },
+        { "actionId": "connect_net_fake", "nextSceneId": "consequence_trap" },
+        { "actionId": "connect_net_open", "nextSceneId": "consequence_open" },
+        { "actionId": "connect_net_neighbor", "nextSceneId": "consequence_neighbor" },
         { "actionId": "verify", "nextSceneId": "verified_network" }
       ]
     },
@@ -93,6 +121,7 @@
       "networks": [
         {
           "id": "net_official",
+          "actionId": "connect_net_official",
           "ssid": "DailyGrind_Guest",
           "signalStrength": 5,
           "isSecured": true,
@@ -105,6 +134,7 @@
         },
         {
           "id": "net_fake",
+          "actionId": "connect_net_fake",
           "ssid": "FREE_Daily_Grind_WiFi",
           "signalStrength": 4,
           "isSecured": false,
@@ -116,8 +146,197 @@
         }
       ],
       "choices": [
-        { "actionId": "connect_official_verified", "nextSceneId": "task_email_verified" }
+        { "actionId": "connect_net_official", "nextSceneId": "autojoin_prompt_verified" },
+        { "actionId": "connect_net_fake", "nextSceneId": "consequence_trap" }
       ]
+    },
+    {
+      "id": "autojoin_prompt",
+      "type": "task_prompt",
+      "title": "Network Settings",
+      "titleKey": "scenarios.coffee_shop_beginner.scenes.autojoin_prompt.title",
+      "description": "Before you start browsing, consider a quick safety setting.",
+      "descriptionKey": "scenarios.coffee_shop_beginner.scenes.autojoin_prompt.description",
+      "location": "The Daily Grind Coffee Shop",
+      "task": {
+        "id": "task_autojoin",
+        "type": "browse",
+        "title": "Auto-Join Settings",
+        "titleKey": "scenarios.coffee_shop_beginner.tasks.task_autojoin.title",
+        "description": "Public networks can auto-join later without you noticing.",
+        "descriptionKey": "scenarios.coffee_shop_beginner.tasks.task_autojoin.description",
+        "sensitivityLevel": "low",
+        "riskHint": "Auto-join can reconnect you to a public network in the future.",
+        "riskHintKey": "scenarios.coffee_shop_beginner.tasks.task_autojoin.riskHint"
+      },
+      "actions": [
+        {
+          "id": "autojoin_disable",
+          "type": "proceed",
+          "label": "Disable auto-join and forget after use",
+          "labelKey": "scenarios.coffee_shop_beginner.actions.autojoin_disable.label",
+          "description": "Prevents automatic reconnection later",
+          "descriptionKey": "scenarios.coffee_shop_beginner.actions.autojoin_disable.description"
+        },
+        {
+          "id": "autojoin_leave",
+          "type": "decline",
+          "label": "Leave auto-join enabled",
+          "labelKey": "scenarios.coffee_shop_beginner.actions.autojoin_leave.label",
+          "description": "Convenient now, but may reconnect later",
+          "descriptionKey": "scenarios.coffee_shop_beginner.actions.autojoin_leave.description"
+        }
+      ],
+      "choices": [
+        { "actionId": "autojoin_disable", "nextSceneId": "consequence_autojoin_safe" },
+        { "actionId": "autojoin_leave", "nextSceneId": "consequence_autojoin_risky" }
+      ]
+    },
+    {
+      "id": "autojoin_prompt_verified",
+      "type": "task_prompt",
+      "title": "Network Settings",
+      "titleKey": "scenarios.coffee_shop_beginner.scenes.autojoin_prompt.title",
+      "description": "Before you start browsing, consider a quick safety setting.",
+      "descriptionKey": "scenarios.coffee_shop_beginner.scenes.autojoin_prompt.description",
+      "location": "The Daily Grind Coffee Shop",
+      "task": {
+        "id": "task_autojoin",
+        "type": "browse",
+        "title": "Auto-Join Settings",
+        "titleKey": "scenarios.coffee_shop_beginner.tasks.task_autojoin.title",
+        "description": "Public networks can auto-join later without you noticing.",
+        "descriptionKey": "scenarios.coffee_shop_beginner.tasks.task_autojoin.description",
+        "sensitivityLevel": "low",
+        "riskHint": "Auto-join can reconnect you to a public network in the future.",
+        "riskHintKey": "scenarios.coffee_shop_beginner.tasks.task_autojoin.riskHint"
+      },
+      "actions": [
+        {
+          "id": "autojoin_disable",
+          "type": "proceed",
+          "label": "Disable auto-join and forget after use",
+          "labelKey": "scenarios.coffee_shop_beginner.actions.autojoin_disable.label",
+          "description": "Prevents automatic reconnection later",
+          "descriptionKey": "scenarios.coffee_shop_beginner.actions.autojoin_disable.description"
+        },
+        {
+          "id": "autojoin_leave",
+          "type": "decline",
+          "label": "Leave auto-join enabled",
+          "labelKey": "scenarios.coffee_shop_beginner.actions.autojoin_leave.label",
+          "description": "Convenient now, but may reconnect later",
+          "descriptionKey": "scenarios.coffee_shop_beginner.actions.autojoin_leave.description"
+        }
+      ],
+      "choices": [
+        { "actionId": "autojoin_disable", "nextSceneId": "consequence_autojoin_safe_verified" },
+        { "actionId": "autojoin_leave", "nextSceneId": "consequence_autojoin_risky_verified" }
+      ]
+    },
+    {
+      "id": "consequence_autojoin_safe",
+      "type": "consequence",
+      "title": "Auto-Join Disabled",
+      "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.title",
+      "description": "You updated your network settings...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_autojoin_safe",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Auto-Join Disabled",
+        "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.title",
+        "whatHappened": "You turned off auto-join and set the network to forget after use.",
+        "whatHappenedKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.whatHappened",
+        "whyRisky": "This reduces the chance your device will reconnect automatically to public Wi-Fi later without you noticing.",
+        "whyRiskyKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.whyRisky",
+        "saferAlternative": "Keep auto-join off for public networks and forget them after you leave.",
+        "saferAlternativeKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.saferAlternative",
+        "technicalExplanation": "Auto-join can connect to remembered SSIDs, including look-alike networks. Forgetting removes stored network details.",
+        "technicalExplanationKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.technicalExplanation",
+        "safetyPointsChange": 5,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "task_email"
+    },
+    {
+      "id": "consequence_autojoin_risky",
+      "type": "consequence",
+      "title": "Auto-Join Left On",
+      "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.title",
+      "description": "You kept the default setting...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_autojoin_risky",
+        "type": "privacy_leaked",
+        "severity": "warning",
+        "title": "Auto-Join Left On",
+        "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.title",
+        "whatHappened": "You left auto-join enabled for this network.",
+        "whatHappenedKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.whatHappened",
+        "whyRisky": "Your device may reconnect automatically later, possibly to a look-alike network with the same name.",
+        "whyRiskyKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.whyRisky",
+        "saferAlternative": "Disable auto-join and forget public networks when you're done.",
+        "saferAlternativeKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.saferAlternative",
+        "technicalExplanation": "Devices often reconnect to remembered SSIDs without prompting, which can be exploited by attackers who copy network names.",
+        "technicalExplanationKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.technicalExplanation",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 5
+      },
+      "nextSceneId": "task_email"
+    },
+    {
+      "id": "consequence_autojoin_safe_verified",
+      "type": "consequence",
+      "title": "Auto-Join Disabled",
+      "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.title",
+      "description": "You updated your network settings...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_autojoin_safe_verified",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Auto-Join Disabled",
+        "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.title",
+        "whatHappened": "You turned off auto-join and set the network to forget after use.",
+        "whatHappenedKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.whatHappened",
+        "whyRisky": "This reduces the chance your device will reconnect automatically to public Wi-Fi later without you noticing.",
+        "whyRiskyKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.whyRisky",
+        "saferAlternative": "Keep auto-join off for public networks and forget them after you leave.",
+        "saferAlternativeKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.saferAlternative",
+        "technicalExplanation": "Auto-join can connect to remembered SSIDs, including look-alike networks. Forgetting removes stored network details.",
+        "technicalExplanationKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_safe.technicalExplanation",
+        "safetyPointsChange": 5,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "task_email_verified"
+    },
+    {
+      "id": "consequence_autojoin_risky_verified",
+      "type": "consequence",
+      "title": "Auto-Join Left On",
+      "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.title",
+      "description": "You kept the default setting...",
+      "location": "The Daily Grind Coffee Shop",
+      "consequence": {
+        "id": "cons_autojoin_risky_verified",
+        "type": "privacy_leaked",
+        "severity": "warning",
+        "title": "Auto-Join Left On",
+        "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.title",
+        "whatHappened": "You left auto-join enabled for this network.",
+        "whatHappenedKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.whatHappened",
+        "whyRisky": "Your device may reconnect automatically later, possibly to a look-alike network with the same name.",
+        "whyRiskyKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.whyRisky",
+        "saferAlternative": "Disable auto-join and forget public networks when you're done.",
+        "saferAlternativeKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.saferAlternative",
+        "technicalExplanation": "Devices often reconnect to remembered SSIDs without prompting, which can be exploited by attackers who copy network names.",
+        "technicalExplanationKey": "scenarios.coffee_shop_beginner.consequences.cons_autojoin_risky.technicalExplanation",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 5
+      },
+      "nextSceneId": "task_email_verified"
     },
     {
       "id": "task_email_verified",
@@ -180,10 +399,15 @@
         "type": "missed_verification",
         "severity": "warning",
         "title": "Missed a Safety Step",
+        "titleKey": "scenarios.coffee_shop_beginner.consequences.cons_email_unverified.title",
         "whatHappened": "You checked your email successfully. The network you chose appears legitimate, and your email provider's HTTPS encryption protected your login. However, you connected without verifying with staff that this was the official network.",
+        "whatHappenedKey": "scenarios.coffee_shop_beginner.consequences.cons_email_unverified.whatHappened",
         "whyRisky": "Here's the problem: You got lucky, but you didn't know you were safe. 'DailyGrind_Guest' looked right, but attackers specifically create convincing names. Without verification, you had no way to distinguish the real network from a well-crafted fake. The 30 seconds it takes to ask staff could prevent hours of dealing with compromised accounts. Building the habit of verification is more important than any single safe connection.",
-        "saferAlternative": "Before connecting to any public network, ask staff for the exact network name. It only takes a moment, and it transforms guessing into knowing. This one habit blocks the most common coffee shop attack: the evil twin network.",
-        "technicalExplanation": "Even correctly-named networks can be spoofed. Attackers use the exact same SSID as legitimate networks, often with stronger signals to lure devices. The only reliable way to know you're on the right network is human verification - the barista knows which network is real.",
+        "whyRiskyKey": "scenarios.coffee_shop_beginner.consequences.cons_email_unverified.whyRisky",
+        "saferAlternative": "Before connecting to any public network, ask staff for the exact network name. It only takes a moment, and it turns guessing into a more informed choice. This habit greatly reduces the risk of evil-twin networks, but you should still stay alert for look-alike names and unexpected login pages.",
+        "saferAlternativeKey": "scenarios.coffee_shop_beginner.consequences.cons_email_unverified.saferAlternative",
+        "technicalExplanation": "Even correctly named networks can be spoofed. Attackers can copy the SSID and use stronger signals to lure devices. Staff verification is the best practical first step, but also check for small spelling differences and be cautious of unexpected captive portals.",
+        "technicalExplanationKey": "scenarios.coffee_shop_beginner.consequences.cons_email_unverified.technicalExplanation",
         "safetyPointsChange": 5,
         "riskPointsChange": 5
       },
@@ -301,7 +525,7 @@
           { "order": 4, "effect": "Personal data from these accounts enables identity theft", "icon": "identity" }
         ]
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "debrief_coffee_shop"
     },
     {
       "id": "consequence_open",
@@ -341,7 +565,7 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 10
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "debrief_coffee_shop"
     },
     {
       "id": "consequence_email_safe",
@@ -401,7 +625,7 @@
         "safetyPointsChange": 10,
         "riskPointsChange": 0
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "debrief_coffee_shop"
     },
     {
       "id": "consequence_banking_risky",
@@ -426,7 +650,7 @@
           { "order": 3, "effect": "Unauthorized transfers drain your account before you notice", "icon": "money" }
         ]
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "debrief_coffee_shop"
     },
     {
       "id": "consequence_banking_vpn",
@@ -446,7 +670,7 @@
         "safetyPointsChange": 25,
         "riskPointsChange": 0
       },
-      "nextSceneId": "completion"
+      "nextSceneId": "debrief_coffee_shop"
     },
     {
       "id": "consequence_banking_smart",
@@ -466,6 +690,30 @@
         "safetyPointsChange": 30,
         "riskPointsChange": 0
       },
+      "nextSceneId": "debrief_coffee_shop"
+    },
+    {
+      "id": "debrief_coffee_shop",
+      "type": "debrief",
+      "title": "Debrief",
+      "titleKey": "debrief.title",
+      "description": "Debrief",
+      "descriptionKey": "debrief.description",
+      "location": "The Daily Grind Coffee Shop",
+      "sections": [
+        {
+          "titleKey": "debrief.sections.didWell.title",
+          "bodyKey": "debrief.coffee_shop_beginner.didWell.body"
+        },
+        {
+          "titleKey": "debrief.sections.doDifferently.title",
+          "bodyKey": "debrief.coffee_shop_beginner.doDifferently.body"
+        },
+        {
+          "titleKey": "debrief.sections.habit.title",
+          "bodyKey": "debrief.coffee_shop_beginner.habit.body"
+        }
+      ],
       "nextSceneId": "completion"
     },
     {
