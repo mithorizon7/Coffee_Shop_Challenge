@@ -10,7 +10,10 @@ import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 const createSessionSchema = z.object({
-  scenarioId: z.string().max(100).regex(/^[a-z0-9_-]+$/i, "Invalid scenario ID format"),
+  scenarioId: z
+    .string()
+    .max(100)
+    .regex(/^[a-z0-9_-]+$/i, "Invalid scenario ID format"),
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
 });
 
@@ -28,49 +31,59 @@ const RATE_LIMIT_MAX_REQUESTS = 10; // max 10 sessions per minute per IP
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
   const record = sessionCreationLimiter.get(ip);
-  
+
   if (!record || now > record.resetAt) {
     sessionCreationLimiter.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return true;
   }
-  
+
   if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
     return false;
   }
-  
+
   record.count++;
   return true;
 }
 
 // Clean up old rate limit entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, record] of sessionCreationLimiter.entries()) {
-    if (now > record.resetAt) {
-      sessionCreationLimiter.delete(ip);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [ip, record] of sessionCreationLimiter.entries()) {
+      if (now > record.resetAt) {
+        sessionCreationLimiter.delete(ip);
+      }
     }
-  }
-}, 5 * 60 * 1000); // Every 5 minutes
+  },
+  5 * 60 * 1000
+); // Every 5 minutes
 
 const completeSessionSchema = z.object({
   sessionId: z.string(),
   scenarioId: z.string(),
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
-  score: z.object({
-    safetyPoints: z.number().min(0).max(1000),
-    riskPoints: z.number().min(0).max(1000),
-    decisionsCount: z.number().min(0).max(50),
-    correctDecisions: z.number().min(0).max(50),
-  }).refine(data => data.correctDecisions <= data.decisionsCount, {
-    message: "correctDecisions cannot exceed decisionsCount",
-  }),
-  badges: z.array(z.object({
-    id: z.string(),
-    name: z.string().optional(),
-    description: z.string().optional(),
-    icon: z.string().optional(),
-    earnedAt: z.string().optional(),
-  })).max(10).optional(),
+  score: z
+    .object({
+      safetyPoints: z.number().min(0).max(1000),
+      riskPoints: z.number().min(0).max(1000),
+      decisionsCount: z.number().min(0).max(50),
+      correctDecisions: z.number().min(0).max(50),
+    })
+    .refine((data) => data.correctDecisions <= data.decisionsCount, {
+      message: "correctDecisions cannot exceed decisionsCount",
+    }),
+  badges: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        icon: z.string().optional(),
+        earnedAt: z.string().optional(),
+      })
+    )
+    .max(10)
+    .optional(),
   grade: z.enum(["A", "B", "C", "D", "F"]),
 });
 
@@ -78,31 +91,33 @@ const updateSessionSchema = z.object({
   currentSceneId: z.string().optional(),
   selectedNetworkId: z.string().optional(),
   vpnEnabled: z.boolean().optional(),
-  score: z.object({
-    safetyPoints: z.number(),
-    riskPoints: z.number(),
-    decisionsCount: z.number(),
-    correctDecisions: z.number(),
-  }).optional(),
+  score: z
+    .object({
+      safetyPoints: z.number(),
+      riskPoints: z.number(),
+      decisionsCount: z.number(),
+      correctDecisions: z.number(),
+    })
+    .optional(),
   completedSceneIds: z.array(z.string()).optional(),
-  badges: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string(),
-    icon: z.string(),
-    earnedAt: z.string().optional(),
-  })).optional(),
+  badges: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        description: z.string(),
+        icon: z.string(),
+        earnedAt: z.string().optional(),
+      })
+    )
+    .optional(),
   completedAt: z.string().optional(),
 });
 
-export async function registerRoutes(
-  httpServer: Server,
-  app: Express
-): Promise<Server> {
-  
+export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   app.get("/api/scenarios", (req, res) => {
     const scenarios = getAllScenarios();
-    const scenarioList = scenarios.map(s => ({
+    const scenarioList = scenarios.map((s) => ({
       id: s.id,
       title: s.title,
       description: s.description,
@@ -115,7 +130,7 @@ export async function registerRoutes(
 
   app.get("/api/scenarios/:id", (req, res) => {
     const scenarios = getAllScenarios();
-    const scenario = scenarios.find(s => s.id === req.params.id);
+    const scenario = scenarios.find((s) => s.id === req.params.id);
     if (!scenario) {
       return res.status(404).json({ error: "Scenario not found" });
     }
@@ -135,18 +150,18 @@ export async function registerRoutes(
       }
 
       const parseResult = createSessionSchema.safeParse(req.body);
-      
+
       if (!parseResult.success) {
-        return res.status(400).json({ 
-          error: "Invalid session data", 
-          details: parseResult.error.flatten() 
+        return res.status(400).json({
+          error: "Invalid session data",
+          details: parseResult.error.flatten(),
         });
       }
 
       const { scenarioId, difficulty } = parseResult.data;
-      
+
       const scenarios = getAllScenarios();
-      const scenario = scenarios.find(s => s.id === scenarioId);
+      const scenario = scenarios.find((s) => s.id === scenarioId);
       if (!scenario) {
         return res.status(400).json({ error: "Invalid scenario ID" });
       }
@@ -184,7 +199,7 @@ export async function registerRoutes(
       if (!isValidSessionId(sessionId)) {
         return res.status(400).json({ error: "Invalid session ID format" });
       }
-      
+
       const session = await storage.getGameSession(sessionId);
       if (!session) {
         return res.status(404).json({ error: "Session not found" });
@@ -202,22 +217,22 @@ export async function registerRoutes(
       if (!isValidSessionId(sessionId)) {
         return res.status(400).json({ error: "Invalid session ID format" });
       }
-      
+
       const parseResult = updateSessionSchema.safeParse(req.body);
-      
+
       if (!parseResult.success) {
-        return res.status(400).json({ 
-          error: "Invalid update data", 
-          details: parseResult.error.flatten() 
+        return res.status(400).json({
+          error: "Invalid update data",
+          details: parseResult.error.flatten(),
         });
       }
 
       const session = await storage.updateGameSession(sessionId, parseResult.data);
-      
+
       if (!session) {
         return res.status(404).json({ error: "Session not found" });
       }
-      
+
       res.json(session);
     } catch (error) {
       console.error("Error updating session:", error);
@@ -242,23 +257,23 @@ export async function registerRoutes(
 
       const parseResult = completeSessionSchema.safeParse(req.body);
       if (!parseResult.success) {
-        return res.status(400).json({ 
-          error: "Invalid session data", 
-          details: parseResult.error.flatten() 
+        return res.status(400).json({
+          error: "Invalid session data",
+          details: parseResult.error.flatten(),
         });
       }
 
       const { scenarioId, difficulty, score, badges, grade } = parseResult.data;
 
       const scenarios = getAllScenarios();
-      const scenario = scenarios.find(s => s.id === scenarioId);
+      const scenario = scenarios.find((s) => s.id === scenarioId);
       if (!scenario) {
         return res.status(400).json({ error: "Invalid scenario ID" });
       }
 
       if (badges && badges.length > 0) {
-        const validBadgeIds = getAvailableBadges().map(b => b.id);
-        const invalidBadges = badges.filter(b => !validBadgeIds.includes(b.id));
+        const validBadgeIds = getAvailableBadges().map((b) => b.id);
+        const invalidBadges = badges.filter((b) => !validBadgeIds.includes(b.id));
         if (invalidBadges.length > 0) {
           return res.status(400).json({ error: "Invalid badge IDs provided" });
         }

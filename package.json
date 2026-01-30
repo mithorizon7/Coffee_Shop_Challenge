@@ -11,7 +11,14 @@
     "validate:scenarios": "node scripts/validate-scenarios.js",
     "authoring:check": "node scripts/authoring-assist.js",
     "authoring:fix": "node scripts/authoring-assist.js --write",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "i18n:check": "node scripts/i18n-validate.js",
+    "test": "node scripts/smoke-test.js",
+    "prepare": "husky",
+    "lint:i18n": "node scripts/i18n-validate.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -60,7 +67,7 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-icu": "^2.4.1",
     "input-otp": "^1.4.2",
-    "intl-messageformat": "^11.0.1",
+    "intl-messageformat": "^10.7.18",
     "lucide-react": "^0.453.0",
     "memoizee": "^0.4.17",
     "memorystore": "^1.6.7",
@@ -109,9 +116,28 @@
     "tailwindcss": "^3.4.17",
     "tsx": "^4.20.5",
     "typescript": "5.6.3",
-    "vite": "^5.4.20"
+    "vite": "^5.4.20",
+    "eslint": "^9.18.0",
+    "@eslint/js": "^9.18.0",
+    "typescript-eslint": "^8.21.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.11.0",
+    "prettier": "^3.4.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.11"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix"
+    ],
+    "*.{ts,tsx,js,jsx,json,css,md}": [
+      "prettier --write"
+    ]
   }
 }

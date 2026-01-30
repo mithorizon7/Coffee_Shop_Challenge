@@ -1,6 +1,6 @@
-import { 
-  type GameSession, 
-  type CompletedSession, 
+import {
+  type GameSession,
+  type CompletedSession,
   type InsertCompletedSession,
   type UserProgress,
   type EducatorAnalytics,
@@ -8,10 +8,10 @@ import {
   type ScenarioStats,
   type CommonMistake,
   completedSessions,
-  users 
+  users,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { scenarios } from "@shared/scenarios";
 
 // Constants for analytics
@@ -23,11 +23,11 @@ export interface IStorage {
   getGameSession(id: string): Promise<GameSession | undefined>;
   createGameSession(session: GameSession): Promise<GameSession>;
   updateGameSession(id: string, updates: Partial<GameSession>): Promise<GameSession | undefined>;
-  
+
   saveCompletedSession(session: InsertCompletedSession): Promise<CompletedSession>;
   getCompletedSessionsByUser(userId: string): Promise<CompletedSession[]>;
   getUserProgress(userId: string): Promise<UserProgress>;
-  
+
   getEducatorAnalytics(): Promise<EducatorAnalytics>;
   setUserEducatorStatus(userId: string, isEducator: boolean): Promise<void>;
 }
@@ -54,18 +54,18 @@ export class HybridStorage implements IStorage {
     const now = Date.now();
     let cleaned = 0;
     const entries = Array.from(this.gameSessions.entries());
-    
+
     for (const [id, session] of entries) {
       const sessionAge = now - new Date(session.startedAt).getTime();
       const isCompleted = !!session.completedAt;
       const isStale = sessionAge > SESSION_TTL_MS;
-      
+
       if (isCompleted || isStale) {
         this.gameSessions.delete(id);
         cleaned++;
       }
     }
-    
+
     if (cleaned > 0) {
       console.log(`[Storage] Cleaned up ${cleaned} stale game sessions`);
     }
@@ -87,10 +87,13 @@ export class HybridStorage implements IStorage {
     return session;
   }
 
-  async updateGameSession(id: string, updates: Partial<GameSession>): Promise<GameSession | undefined> {
+  async updateGameSession(
+    id: string,
+    updates: Partial<GameSession>
+  ): Promise<GameSession | undefined> {
     const existing = this.gameSessions.get(id);
     if (!existing) return undefined;
-    
+
     const updated = { ...existing, ...updates };
     this.gameSessions.set(id, updated);
     return updated;
@@ -109,10 +112,7 @@ export class HybridStorage implements IStorage {
       badges: (session.badges ?? []) as string[],
       startedAt: session.startedAt,
     };
-    const [result] = await db
-      .insert(completedSessions)
-      .values(insertData)
-      .returning();
+    const [result] = await db.insert(completedSessions).values(insertData).returning();
     return result;
   }
 
@@ -126,7 +126,7 @@ export class HybridStorage implements IStorage {
 
   async getUserProgress(userId: string): Promise<UserProgress> {
     const sessions = await this.getCompletedSessionsByUser(userId);
-    
+
     if (sessions.length === 0) {
       return {
         totalSessions: 0,
@@ -148,15 +148,21 @@ export class HybridStorage implements IStorage {
     const totalCorrectDecisions = sessions.reduce((sum, s) => sum + s.correctDecisions, 0);
     const totalDecisions = sessions.reduce((sum, s) => sum + s.decisionsCount, 0);
 
-    const allBadges = sessions.flatMap(s => (s.badges as string[]) || []);
+    const allBadges = sessions.flatMap((s) => (s.badges as string[]) || []);
     const uniqueBadges = Array.from(new Set(allBadges));
-    const completedScenarios = Array.from(new Set(sessions.map(s => s.scenarioId)));
+    const completedScenarios = Array.from(new Set(sessions.map((s) => s.scenarioId)));
 
     let improvementTrend: "improving" | "stable" | "declining" = "stable";
     if (sessions.length >= 3) {
-      const recentAvg = sessions.slice(0, 3).reduce((sum, s) => sum + s.correctDecisions / Math.max(1, s.decisionsCount), 0) / 3;
-      const olderAvg = sessions.slice(-3).reduce((sum, s) => sum + s.correctDecisions / Math.max(1, s.decisionsCount), 0) / 3;
-      
+      const recentAvg =
+        sessions
+          .slice(0, 3)
+          .reduce((sum, s) => sum + s.correctDecisions / Math.max(1, s.decisionsCount), 0) / 3;
+      const olderAvg =
+        sessions
+          .slice(-3)
+          .reduce((sum, s) => sum + s.correctDecisions / Math.max(1, s.decisionsCount), 0) / 3;
+
       if (recentAvg > olderAvg + IMPROVEMENT_THRESHOLD) {
         improvementTrend = "improving";
       } else if (recentAvg < olderAvg - IMPROVEMENT_THRESHOLD) {
@@ -170,7 +176,8 @@ export class HybridStorage implements IStorage {
       averageRiskScore: Math.round(totalRiskPoints / totalSessions),
       totalCorrectDecisions,
       totalDecisions,
-      accuracyRate: totalDecisions > 0 ? Math.round((totalCorrectDecisions / totalDecisions) * 100) : 0,
+      accuracyRate:
+        totalDecisions > 0 ? Math.round((totalCorrectDecisions / totalDecisions) * 100) : 0,
       badgesEarned: uniqueBadges,
       completedScenarios,
       recentSessions: sessions.slice(0, 10),
@@ -201,13 +208,14 @@ export class HybridStorage implements IStorage {
       };
     }
 
-    const totalLearners = new Set(allSessions.map(s => s.userId)).size;
+    const totalLearners = new Set(allSessions.map((s) => s.userId)).size;
     const totalSessionCount = allSessions.length;
-    
+
     const totalCorrect = allSessions.reduce((sum, s) => sum + s.correctDecisions, 0);
     const totalDecisions = allSessions.reduce((sum, s) => sum + s.decisionsCount, 0);
-    const overallAccuracyRate = totalDecisions > 0 ? Math.round((totalCorrect / totalDecisions) * 100) : 0;
-    
+    const overallAccuracyRate =
+      totalDecisions > 0 ? Math.round((totalCorrect / totalDecisions) * 100) : 0;
+
     const totalSafety = allSessions.reduce((sum, s) => sum + s.safetyPoints, 0);
     const totalRisk = allSessions.reduce((sum, s) => sum + s.riskPoints, 0);
 
@@ -218,23 +226,25 @@ export class HybridStorage implements IStorage {
       scenarioGroups.set(session.scenarioId, existing);
     }
 
-    const scenarioStats: ScenarioStats[] = Array.from(scenarioGroups.entries()).map(([scenarioId, sessions]) => {
-      const scenario = scenarios.find(s => s.id === scenarioId);
-      const correct = sessions.reduce((sum, s) => sum + s.correctDecisions, 0);
-      const decisions = sessions.reduce((sum, s) => sum + s.decisionsCount, 0);
-      const safety = sessions.reduce((sum, s) => sum + s.safetyPoints, 0);
-      const risk = sessions.reduce((sum, s) => sum + s.riskPoints, 0);
-      
-      return {
-        scenarioId,
-        title: scenario?.title || scenarioId,
-        difficulty: scenario?.difficulty || "unknown",
-        completionCount: sessions.length,
-        averageAccuracy: decisions > 0 ? Math.round((correct / decisions) * 100) : 0,
-        averageSafetyScore: Math.round(safety / sessions.length),
-        averageRiskScore: Math.round(risk / sessions.length),
-      };
-    });
+    const scenarioStats: ScenarioStats[] = Array.from(scenarioGroups.entries()).map(
+      ([scenarioId, sessions]) => {
+        const scenario = scenarios.find((s) => s.id === scenarioId);
+        const correct = sessions.reduce((sum, s) => sum + s.correctDecisions, 0);
+        const decisions = sessions.reduce((sum, s) => sum + s.decisionsCount, 0);
+        const safety = sessions.reduce((sum, s) => sum + s.safetyPoints, 0);
+        const risk = sessions.reduce((sum, s) => sum + s.riskPoints, 0);
+
+        return {
+          scenarioId,
+          title: scenario?.title || scenarioId,
+          difficulty: scenario?.difficulty || "unknown",
+          completionCount: sessions.length,
+          averageAccuracy: decisions > 0 ? Math.round((correct / decisions) * 100) : 0,
+          averageSafetyScore: Math.round(safety / sessions.length),
+          averageRiskScore: Math.round(risk / sessions.length),
+        };
+      }
+    );
 
     const userSessionMap = new Map<string, CompletedSession[]>();
     for (const session of allSessions) {
@@ -245,11 +255,11 @@ export class HybridStorage implements IStorage {
 
     const recentLearners: LearnerStats[] = Array.from(userSessionMap.entries())
       .map(([userId, sessions]) => {
-        const user = allUsers.find(u => u.id === userId);
+        const user = allUsers.find((u) => u.id === userId);
         const correct = sessions.reduce((sum, s) => sum + s.correctDecisions, 0);
         const decisions = sessions.reduce((sum, s) => sum + s.decisionsCount, 0);
         const lastSession = sessions[0];
-        
+
         return {
           id: userId,
           email: user?.email || null,
@@ -268,8 +278,8 @@ export class HybridStorage implements IStorage {
       .slice(0, 20);
 
     const commonMistakes: CommonMistake[] = scenarioStats
-      .filter(s => s.averageRiskScore > RISK_THRESHOLD)
-      .map(s => ({
+      .filter((s) => s.averageRiskScore > RISK_THRESHOLD)
+      .map((s) => ({
         scenarioId: s.scenarioId,
         badDecisionRate: 100 - s.averageAccuracy,
         averageRiskPoints: s.averageRiskScore,
@@ -289,10 +299,7 @@ export class HybridStorage implements IStorage {
   }
 
   async setUserEducatorStatus(userId: string, isEducator: boolean): Promise<void> {
-    await db
-      .update(users)
-      .set({ isEducator, updatedAt: new Date() })
-      .where(eq(users.id, userId));
+    await db.update(users).set({ isEducator, updatedAt: new Date() }).where(eq(users.id, userId));
   }
 }
 

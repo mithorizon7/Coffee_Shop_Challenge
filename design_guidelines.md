@@ -29,6 +29,7 @@
 **Container Strategy:** max-w-4xl centered for game area, full-width for immersive scenario headers
 
 **Screen Structure:**
+
 - Fixed header (scenario context + current score)
 - Main game area (network selection OR task prompt OR consequence screen)
 - Persistent progress indicator footer
@@ -36,6 +37,7 @@
 ## Component Library
 
 ### Wi-Fi Network Selection Interface
+
 - Card-based network list (each network as interactive card)
 - Signal strength indicator (bars or dots - 1-5 strength)
 - Network name (SSID) prominently displayed
@@ -44,24 +46,28 @@
 - Hover state reveals additional details (encryption type, "Verified by staff" badge)
 
 ### Task Prompt Cards
+
 - Icon representing task type (email, banking, download, payment)
 - Clear description of what user needs to accomplish
 - Action buttons (proceed, postpone, use VPN, switch network)
 - Risk hint indicator (visible in beginner, hidden in advanced)
 
 ### Consequence Screens
+
 - Two-column layout: left shows what happened (narrative), right shows technical explanation
 - Color-coded severity (amber for warnings, red for serious consequences, green for safe choices)
 - "What you did" → "Why risky/safe" → "Better alternative" progression
 - Continue button to proceed
 
 ### Debrief/Scoring Display
+
 - Real-time score tracker: Safety Points (green) vs Risk Points (amber)
 - Badge visualization for achievements
 - "What to do next time" quick tips sidebar
 - Progress through difficulty levels shown as milestone markers
 
 ### Difficulty Level Selector
+
 - Three clearly labeled options: Beginner, Intermediate, Advanced
 - Visual differentiation: Beginner (shield icon), Intermediate (balance scale), Advanced (target/crosshair)
 - Description of what changes at each level
@@ -69,20 +75,24 @@
 ## Visual Patterns
 
 **Network List Presentation:**
+
 - Vertical stack of network cards with 4-unit spacing
 - Each card: p-6, rounded corners, subtle shadow
 - Selected/hovered network: elevated shadow, border accent
 
 **Choice Buttons:**
+
 - Primary actions: filled buttons (Connect, Proceed, Confirm)
 - Secondary actions: outlined buttons (Postpone, Ask Staff, Switch Network)
 - Danger actions: outlined red buttons (Install Profile, Override Warning)
 
 **Branching Narrative Visualization:**
+
 - Breadcrumb trail showing scenario progress (Scene 1 → Choice → Consequence → Scene 2)
 - Positioned at top of game area
 
 **Feedback Mechanisms:**
+
 - Immediate visual feedback on choice selection (brief animation, score change)
 - Color-coded consequence banners (green success, amber warning, red danger)
 - Progressive score bars (horizontal bars showing safety vs risk accumulation)
@@ -92,6 +102,7 @@
 **No hero image needed.** This is an application interface, not a marketing page.
 
 **Contextual Images:**
+
 - Coffee shop/hotel lobby background image (subtle, low opacity behind game cards) for scene-setting
 - Icon set for tasks (email, banking, download, payment) - use Heroicons
 - Badge/achievement graphics (simple SVG illustrations - coffee cup, shield, padlock themes)
@@ -99,6 +110,7 @@
 ## Animation Guidelines
 
 **Minimal and purposeful only:**
+
 - Card selection: subtle scale and shadow change (100ms)
 - Score updates: brief number count-up animation
 - Consequence reveal: gentle fade-in of debrief content

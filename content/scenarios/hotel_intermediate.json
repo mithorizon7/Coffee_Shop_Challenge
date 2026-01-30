@@ -127,9 +127,21 @@
       "location": "Grand Metropolitan Hotel - Room 412",
       "actions": [
         { "id": "login_only", "type": "proceed", "label": "Enter room info and login" },
-        { "id": "login_and_install", "type": "install_profile", "label": "Login AND install the app" },
-        { "id": "use_vpn_portal", "type": "use_vpn", "label": "Login, then immediately enable VPN" },
-        { "id": "switch_network", "type": "switch_network", "label": "Go back and try a different network" }
+        {
+          "id": "login_and_install",
+          "type": "install_profile",
+          "label": "Login AND install the app"
+        },
+        {
+          "id": "use_vpn_portal",
+          "type": "use_vpn",
+          "label": "Login, then immediately enable VPN"
+        },
+        {
+          "id": "switch_network",
+          "type": "switch_network",
+          "label": "Go back and try a different network"
+        }
       ],
       "choices": [
         { "actionId": "login_only", "nextSceneId": "hotel_task_email" },
@@ -191,7 +203,11 @@
         "sensitivityLevel": "low"
       },
       "actions": [
-        { "id": "pay_premium", "type": "proceed", "label": "Pay $15 for premium (call front desk)" },
+        {
+          "id": "pay_premium",
+          "type": "proceed",
+          "label": "Pay $15 for premium (call front desk)"
+        },
         { "id": "use_free", "type": "switch_network", "label": "Use the free network instead" }
       ],
       "choices": [
@@ -242,10 +258,26 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 35,
         "cascadingEffects": [
-          { "order": 1, "effect": "Fake portal captured your name and room number", "icon": "credential" },
-          { "order": 2, "effect": "Attacker links your identity to browsing activity", "icon": "privacy" },
-          { "order": 3, "effect": "Corporate data from email becomes accessible", "icon": "account" },
-          { "order": 4, "effect": "Business secrets or client info may be compromised", "icon": "identity" }
+          {
+            "order": 1,
+            "effect": "Fake portal captured your name and room number",
+            "icon": "credential"
+          },
+          {
+            "order": 2,
+            "effect": "Attacker links your identity to browsing activity",
+            "icon": "privacy"
+          },
+          {
+            "order": 3,
+            "effect": "Corporate data from email becomes accessible",
+            "icon": "account"
+          },
+          {
+            "order": 4,
+            "effect": "Business secrets or client info may be compromised",
+            "icon": "identity"
+          }
         ]
       },
       "nextSceneId": "hotel_update_prompt"
@@ -395,7 +427,11 @@
       "actions": [
         { "id": "download_now", "type": "proceed", "label": "Download the file" },
         { "id": "download_vpn", "type": "use_vpn", "label": "Enable VPN first" },
-        { "id": "download_postpone", "type": "postpone", "label": "Use hotel business center instead" }
+        {
+          "id": "download_postpone",
+          "type": "postpone",
+          "label": "Use hotel business center instead"
+        }
       ],
       "choices": [
         { "actionId": "download_now", "nextSceneId": "hotel_consequence_download_risky" },

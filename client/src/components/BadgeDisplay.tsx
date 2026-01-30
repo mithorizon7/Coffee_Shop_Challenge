@@ -4,6 +4,7 @@ import type { Badge } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { translateBadgeDescription, translateBadgeName } from "@/lib/translateContent";
 
 interface BadgeDisplayProps {
   badges: Badge[];
@@ -53,7 +54,7 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
     return (
       <div className="text-center py-4 text-muted-foreground text-sm">
         <Award className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p>{t('game.noBadgesYet')}</p>
+        <p>{t("game.noBadgesYet")}</p>
       </div>
     );
   }
@@ -64,26 +65,33 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
         {badges.map((badge, index) => {
           const IconComponent = badgeIcons[badge.icon] || Shield;
           const colors = badgeColors[badge.id] || badgeColors.security_aware;
-          
+          const badgeName = translateBadgeName(t, badge.id, badge.name);
+          const badgeDescription = translateBadgeDescription(t, badge.id, badge.description);
+
           return (
             <Tooltip key={badge.id}>
               <TooltipTrigger asChild>
-                <motion.div
+                <motion.button
+                  type="button"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: index * 0.1, type: "spring", stiffness: 500 }}
+                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full"
+                  aria-label={`${badgeName}. ${badgeDescription}`}
                 >
-                  <div className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center",
-                    colors.bg
-                  )}>
+                  <div
+                    className={cn(
+                      "w-7 h-7 rounded-full flex items-center justify-center",
+                      colors.bg
+                    )}
+                  >
                     <IconComponent className={cn("w-4 h-4", colors.text)} />
                   </div>
-                </motion.div>
+                </motion.button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="font-medium">{badge.name}</p>
-                <p className="text-xs text-muted-foreground">{badge.description}</p>
+                <p className="font-medium">{badgeName}</p>
+                <p className="text-xs text-muted-foreground">{badgeDescription}</p>
               </TooltipContent>
             </Tooltip>
           );
@@ -96,13 +104,15 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
     <div className="space-y-3">
       <h3 className="font-medium text-foreground flex items-center gap-2">
         <Award className="w-4 h-4" />
-        {t('game.badgesEarned')}
+        {t("game.badgesEarned")}
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {badges.map((badge, index) => {
           const IconComponent = badgeIcons[badge.icon] || Shield;
           const colors = badgeColors[badge.id] || badgeColors.security_aware;
-          
+          const badgeName = translateBadgeName(t, badge.id, badge.name);
+          const badgeDescription = translateBadgeDescription(t, badge.id, badge.description);
+
           return (
             <motion.div
               key={badge.id}
@@ -116,18 +126,16 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
               )}
               data-testid={`badge-${badge.id}`}
             >
-              <div className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center bg-background/50"
-              )}>
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center bg-background/50"
+                )}
+              >
                 <IconComponent className={cn("w-5 h-5", colors.text)} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-foreground truncate">
-                  {badge.name}
-                </p>
-                <p className="text-xs text-muted-foreground line-clamp-1">
-                  {badge.description}
-                </p>
+                <p className="font-medium text-sm text-foreground truncate">{badgeName}</p>
+                <p className="text-xs text-muted-foreground line-clamp-1">{badgeDescription}</p>
               </div>
             </motion.div>
           );

@@ -71,11 +71,11 @@ export function getAllScenarios(): Scenario[] {
 }
 
 export function getScenarioById(id: string): Scenario | undefined {
-  return scenarios.find(s => s.id === id);
+  return scenarios.find((s) => s.id === id);
 }
 
 export function getScenariosByDifficulty(difficulty: string): Scenario[] {
-  return scenarios.filter(s => s.difficulty === difficulty);
+  return scenarios.filter((s) => s.difficulty === difficulty);
 }
 
 // For backward compatibility - returns the scenarios array directly

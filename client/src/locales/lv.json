@@ -1,7 +1,7 @@
 {
   "captivePortal": {
-    "whatIs": "Kas ir Captive Portal?",
-    "explanation": "Captive portal ir pieslēgšanās lapa, kas parādās, kad pieslēdzaties publiskajam Wi-Fi. Viesnīcas, lidostas un kafejnīcas tās izmanto, lai verificētu viesus, pieņemtu lietošanas noteikumus vai iekasētu maksu. Kaut arī likumīgi portāli ir izplatīti, uzbrucēji var izveidot viltus portālus, lai nozagtu jūsu akreditācijas datus. Esiet piesardzīgi: nekad neinstalējiet lietotnes un neievadiet sensitīvu informāciju, izņemot to, kas ir absolūti nepieciešams.",
+    "whatIs": "Captive portāli",
+    "explanation": "Captive portāls ir tīmekļa lapa, kas jāaizpilda, pirms publiskais Wi-Fi piešķir piekļuvi internetam. Iestādes to izmanto, lai apstiprinātu viesi, iekasētu maksu vai panāktu piekrišanu noteikumiem. Uzbrucēji reizēm kopē šīs lapas, lai iegūtu piekļuves datus vai uzspiestu ļaunprātīgas instalācijas. Ievadi tikai minimāli nepieciešamo informāciju un nekad neinstalē lietotnes, profilus vai sertifikātus no portāla.",
     "imageAlt": "Viesnīcas Wi-Fi captive portal pieslēgšanās lapas piemērs",
     "imageCaption": "Piemērs: Tipisks viesnīcas captive portal, kas lūdz piekrist noteikumiem pirms pieslēgšanās"
   },
@@ -23,6 +23,9 @@
     "confirm": "Apstiprināt",
     "yes": "Jā",
     "no": "Nē",
+    "previous": "Iepriekšējais",
+    "next": "Nākamais",
+    "more": "Vairāk",
     "switchToLight": "Pārslēgt uz gaišo režīmu",
     "switchToDark": "Pārslēgt uz tumšo režīmu"
   },
@@ -101,7 +104,108 @@
     "startScenario": "Sākt Scenāriju",
     "tryAgain": "Mēģināt Vēlreiz",
     "selectNewScenario": "Izvēlēties Jaunu Scenāriju",
-    "playAgain": "Spēlēt Vēlreiz"
+    "playAgain": "Spēlēt Vēlreiz",
+    "startScenarioWithTime": "Sākt scenāriju: {title}. Aptuvenais laiks: {time}."
+  },
+  "time": {
+    "minutes": "{count, plural, one {# minūte} other {# minūtes}}"
+  },
+  "timer": {
+    "penaltyTitle": "Laika spiediens",
+    "penaltyBody": "Laiks beidzās, pievienojot {points} riska punktus."
+  },
+  "pagination": {
+    "ariaLabel": "Lapošana",
+    "goToPrevious": "Doties uz iepriekšējo lapu",
+    "goToNext": "Doties uz nākamo lapu",
+    "morePages": "Vairāk lapu"
+  },
+  "breadcrumb": {
+    "ariaLabel": "Ceļa rādītājs",
+    "more": "Vairāk"
+  },
+  "carousel": {
+    "previous": "Iepriekšējais slaids",
+    "next": "Nākamais slaids"
+  },
+  "sidebar": {
+    "title": "Sānjosla",
+    "description": "Rāda mobilo sānjoslu."
+  },
+  "progress": {
+    "loading": "Notiek progresa ielāde...",
+    "signInTitle": "Piesakies, lai sekotu progresam",
+    "signInBody": "Izveido kontu, lai saglabātu spēļu sesijas un sekotu uzlabojumiem laika gaitā.",
+    "signInCta": "Pieslēgties",
+    "backToHome": "Atpakaļ uz sākumu",
+    "backToGame": "Atpakaļ uz spēli",
+    "title": "Tavs progress",
+    "subtitle": "Seko savam Wi‑Fi drošības apguves ceļam",
+    "noSessionsTitle": "Vēl nav sesiju",
+    "noSessionsBody": "Pabeidz pirmo izaicinājumu, lai sāktu sekot progresam.",
+    "startFirstChallenge": "Sāc pirmo izaicinājumu",
+    "metrics": {
+      "sessions": "Sesijas",
+      "accuracy": "Precizitāte",
+      "badges": "Nozīmītes",
+      "trend": "Tendence"
+    },
+    "trend": {
+      "improving": "Tavs drošības spriedums uzlabojas",
+      "declining": "Ieteicams atkārtot pamatus",
+      "stable": "Turpini praktizēt, lai redzētu tendences"
+    },
+    "trendLabel": {
+      "improving": "Uzlabojas",
+      "declining": "Pasliktinās",
+      "stable": "Stabila"
+    },
+    "learningTrendTitle": "Mācību tendence",
+    "correctDecisionsLabel": "Pareizie lēmumi",
+    "badgesEarnedTitle": "Iegūtās nozīmītes",
+    "recentSessionsTitle": "Nesenās sesijas",
+    "sessionMeta": "{date} • {correct}/{total} pareizi"
+  },
+  "educator": {
+    "loading": "Notiek ielāde...",
+    "loadingAnalytics": "Notiek analītikas ielāde...",
+    "accessRequiredTitle": "Nepieciešama pedagoga piekļuve",
+    "accessRequiredBody": "Piesakies, lai piekļūtu pedagoga panelim un skatītu mācīšanās analītiku.",
+    "signInCta": "Pieslēgties",
+    "backToHome": "Atpakaļ uz sākumu",
+    "accessRestrictedTitle": "Piekļuve ierobežota",
+    "accessRestrictedBody": "Pedagoga panelis ir pieejams tikai lietotājiem ar pedagoga tiesībām. Sazinies ar administratoru, ja uzskati, ka tev jābūt piekļuvei.",
+    "backToGame": "Atpakaļ uz spēli",
+    "badge": "Pedagogs",
+    "title": "Pedagoga panelis",
+    "subtitle": "Uzraugi dalībnieku rezultātus un atklāj biežākās kļūdas",
+    "noDataTitle": "Vēl nav datu",
+    "noDataBody": "Dalībniekiem jāaizpilda sesijas, lai šeit parādītos analītika.",
+    "goToGame": "Doties uz spēli",
+    "metrics": {
+      "learners": "Dalībnieki",
+      "sessions": "Sesijas",
+      "accuracy": "Precizitāte",
+      "avgSafety": "Vid. drošība",
+      "avgRisk": "Vid. risks"
+    },
+    "scenarioPerformanceTitle": "Scenāriju sniegums",
+    "scenarioPerformanceEmpty": "Pagaidām nav scenāriju datu.",
+    "plays": "{count, plural, one {# spēle} other {# spēles}}",
+    "commonMistakesTitle": "Biežākās kļūdas",
+    "commonMistakesEmpty": "Pagaidām nav būtisku kļūdu rakstu.",
+    "badDecisionsLabel": "{rate}% slikti lēmumi",
+    "riskPointsLabel": "{points} riska punkti",
+    "recentLearnerActivityTitle": "Nesenā dalībnieku aktivitāte",
+    "recentLearnerActivityEmpty": "Vēl nav dalībnieku aktivitātes.",
+    "table": {
+      "learner": "Dalībnieks",
+      "sessions": "Sesijas",
+      "accuracy": "Precizitāte",
+      "lastActive": "Pēdējā aktivitāte"
+    },
+    "anonymous": "Anonīms",
+    "never": "Nekad"
   },
   "network": {
     "network": "Tīkls",
@@ -124,6 +228,7 @@
     "connect": "Pieslēgties",
     "disconnect": "Atslēgties",
     "ssid": "Tīkla nosaukums (SSID)",
+    "cardAriaLabel": "Tīkls {ssid}, {security}, signāla stiprums {strength} no 5{details}",
     "publicNetwork": "Publiskais tīkls",
     "privateNetwork": "Privātais tīkls",
     "guestNetwork": "Viesu tīkls",
@@ -154,7 +259,7 @@
     "exit": "Iziet",
     "returnToMenu": "Atgriezties uz Izvēlni",
     "sceneNotFound": "Skats nav atrasts",
-    "readyToStart": "Gatavs sākt scenāriju?",
+    "readyToStart": "Scenārijs ir gatavs. Sāciet, kad esat gatavs.",
     "findNetworks": "Atrast Tīklus",
     "portalOptions": "Portāla Opcijas",
     "sensitivity": "{level} Jutīgums",
@@ -172,13 +277,14 @@
     "moreSteps": "+{count} vairāk",
     "chooseNetwork": "Izvēlies Tīklu",
     "availableNetworks": "Pieejamie Tīkli",
-    "chooseTask": "Ko vēlies darīt?",
+    "chooseTask": "Izvēlieties uzdevumu",
     "selectTask": "Izvēlies uzdevumu",
     "taskSensitivity": "Jutīgums: {level}",
     "sensitivityLevels": {
       "low": "Zems",
       "medium": "Vidējs",
-      "high": "Augsts"
+      "high": "Augsts",
+      "critical": "Kritisks"
     }
   },
   "actions": {
@@ -224,13 +330,13 @@
       "step3Title": "Ieslēdz VPN",
       "step3Desc": "Pirms jebkādas sensitīvas darbības ieslēdz VPN, lai šifrētu visu trafiku.",
       "step4Title": "Novērtē Uzdevumu",
-      "step4Desc": "Bankas darījumi vai paroles? Gaidi drošāku tīklu. Tikai pārlūkošana? Turpini ar piesardzību.",
+      "step4Desc": "Ja uzdevums saistīts ar banku darbībām, parolēm vai konta izmaiņām, gaidiet drošu tīklu. Zema riska pārlūkošanai rīkojieties piesardzīgi.",
       "step5Title": "Nekad Neinstalē",
       "step5Desc": "Noraidi jebkurus lūgumus instalēt lietotnes, profilus vai sertifikātus no portāliem."
     },
     "rogueHotspot": {
-      "title": "Kas ir Viltus Hotspots?",
-      "description": "Viltus hotspots (saukts arī par 'ļauno dvīni') ir viltots Wi-Fi tīkls, ko uzstāda uzbrucējs, lai tas izskatītos kā likumīgs. Kad pieslēdzies, viņi var redzēt tavu trafiku, nozagt paroles vai novirzīt tevi uz viltotām vietnēm.",
+      "title": "Viltus piekļuves punkti",
+      "description": "Viltus piekļuves punkts (\"ļaunais dvīnis\") ir viltots Wi-Fi tīkls, kas imitē īsto. Pieslēdzoties, operators var novērot trafiku, pārtvert pieteikšanās datus vai novirzīt uz viltotām vietnēm.",
       "howToSpotTitle": "Kā to atpazīt:",
       "spot1": "Nosaukumi, kas izskatās gandrīz pareizi, bet ar mazām atšķirībām (defises, pasvītrojumi, papildu vārdi)",
       "spot2": "Tīkli, kas apgalvo, ka ir 'BEZMAKSAS' versijas biznesa tīkliem",
@@ -269,13 +375,13 @@
     "step3Title": "Ieslēdz Savu VPN",
     "step3Desc": "Pirms sensitīvu darbību veikšanas, ieslēdz VPN, lai šifrētu visu trafiku.",
     "step4Title": "Novērtē Uzdevumu",
-    "step4Desc": "Banku darījumi vai paroles? Gaidi drošu tīklu. Tikai pārlūko? Turpini ar piesardzību.",
+    "step4Desc": "Ja uzdevums saistīts ar banku darbībām, parolēm vai konta izmaiņām, gaidiet drošu tīklu. Zema riska pārlūkošanai rīkojieties piesardzīgi.",
     "step5Title": "Nekad Neinstalē",
     "step5Desc": "Atsakies no jebkādiem aicinājumiem instalēt lietotnes, profilus vai sertifikātus no portāliem."
   },
   "rogueHotspot": {
-    "title": "Kas ir Viltus Hotspots?",
-    "description": "Viltus hotspots (saukts arī par \"ļauno dvīni\") ir viltus Wi-Fi tīkls, ko uzbrucējs izveidojis, lai izskatītos kā likumīgs. Kad pieslēdzies, viņi var redzēt tavu trafiku, nozagt paroles vai novirzīt uz viltus vietnēm.",
+    "title": "Viltus piekļuves punkti",
+    "description": "Viltus piekļuves punkts (\"ļaunais dvīnis\") ir viltots Wi-Fi tīkls, kas imitē īsto. Pieslēdzoties, operators var novērot trafiku, pārtvert pieteikšanās datus vai novirzīt uz viltotām vietnēm.",
     "howToSpot": "Kā atpazīt:",
     "spot1": "Nosaukumi, kas izskatās gandrīz pareizi, bet ar nelielām atšķirībām (defises, pasvītrojumi, papildu vārdi)",
     "spot2": "Tīkli, kas apgalvo, ka ir \"BEZMAKSAS\" biznesa tīklu versijas",
@@ -320,7 +426,11 @@
     "scenarioNotFound": "Scenārijs nav atrasts",
     "loadingFailed": "Neizdevās ielādēt. Lūdzu, mēģini vēlreiz.",
     "networkError": "Tīkla kļūda. Lūdzu, pārbaudi savienojumu.",
-    "sessionExpired": "Sesija beigusies. Sāk jaunu spēli."
+    "sessionExpired": "Sesija beigusies. Sāk jaunu spēli.",
+    "unauthorizedTitle": "Nav autorizēts",
+    "unauthorizedBody": "Jūs esat atteicies. Notiek atkārtota pieteikšanās...",
+    "notFoundTitle": "404 Lapa nav atrasta",
+    "notFoundBody": "Lapa, kuru meklē, neeksistē."
   },
   "aria": {
     "languageSelector": "Izvēlēties valodu",
@@ -332,57 +442,145 @@
     "networkCard": "Tīkla opcija",
     "scoreTracker": "Pašreizējie punkti",
     "timer": "Atlikušais laiks",
-    "vpnToggle": "Pārslēgt VPN aizsardzību"
+    "vpnToggle": "Pārslēgt VPN aizsardzību",
+    "profileImageAlt": "Lietotāja profila attēls",
+    "timerWithValue": "Atlikušais laiks: {time}"
   },
   "scenarios": {
     "coffee_shop_beginner": {
       "title": "Rīts kafejnīcā The Daily Grind",
-      "description": "Tu esi apstājies savā mīļākajā kafejnīcā pirms svarīgas tikšanās. Tev jāpārbauda dažas lietas tiešsaistē, bet kuram tīklam uzticēties?",
+      "description": "Jūs iegriežaties savā ierastajā kafejnīcā pirms svarīgas tikšanās. Jums jāapskata dažas lietas tiešsaistē un jāizlemj, kuram tīklam pietiekami droši pieslēgties.",
       "location": "The Daily Grind Kafejnīca",
       "scenes": {
         "arrival_1": {
           "title": "Laipni lūgti The Daily Grind",
-          "description": "Tu ērti iekārties stūra sēdvietā ar savu latte. Tavs dators ir atvērts un tu redzi vairākus pieejamus Wi-Fi tīklus. Tev ir 30 minūtes pirms tikšanās."
+          "description": "Tu ērti iekārties stūra sēdvietā ar savu latte. Tavs dators ir atvērts un tu redzi vairākus pieejamus Wi-Fi tīklus. Tev ir 30 minūtes pirms tikšanās.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "network_select_1": {
           "title": "Izvēlies Tīklu",
-          "description": "Tavā ekrānā parādās vairāki tīkli. Kafejnīcai ir zīme pie letes, bet tu to nevari pilnībā izlasīt no šejienes."
+          "description": "Tavā ekrānā parādās vairāki tīkli. Kafejnīcai ir zīme pie letes, bet tu to nevari pilnībā izlasīt no šejienes.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "verified_network": {
           "title": "Personāla Apstiprinājums",
-          "description": "Barista apstiprina: 'Mūsu oficiālais tīkls ir DailyGrind_Guest. Parole ir uz tavas kvīts!' Viņi arī piemin, ka pēdējā laikā ir pamanījuši dažus viltus tīklus."
+          "description": "Barista apstiprina: 'Mūsu oficiālais tīkls ir DailyGrind_Guest. Parole ir uz tavas kvīts!' Viņi arī piemin, ka pēdējā laikā ir pamanījuši dažus viltus tīklus.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "task_email_verified": {
           "title": "Pārbaudi Savu E-pastu",
-          "description": "Tu esi pieslēdzies pārbaudītajam oficiālajam tīklam. Tagad tev jāpārbauda e-pasts, lai redzētu tikšanās darba kārtību."
+          "description": "Tu esi pieslēdzies pārbaudītajam oficiālajam tīklam. Tagad tev jāpārbauda e-pasts, lai redzētu tikšanās darba kārtību.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "task_email": {
           "title": "Pārbaudi Savu E-pastu",
-          "description": "Tu esi pieslēdzies. Tagad tev jāpārbauda e-pasts, lai redzētu tikšanās darba kārtību."
+          "description": "Tu esi pieslēdzies. Tagad tev jāpārbauda e-pasts, lai redzētu tikšanās darba kārtību.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "task_banking": {
           "title": "Ātrs Bankas Uzdevums",
-          "description": "Pārbaudot e-pastu, tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien."
+          "description": "Pārbaudot e-pastu, tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "task_banking_vpn": {
           "title": "Ātrs Bankas Uzdevums",
-          "description": "Tavs VPN ir aktīvs. Tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien."
+          "description": "Tavs VPN ir aktīvs. Tu atceries, ka tev jāpārskaita nauda, lai segtu rēķinu, kas jāmaksā šodien.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "autojoin_prompt": {
           "title": "Tīkla Iestatījumi",
-          "description": "Pirms pārlūkošanas apsver īsu drošības iestatījumu."
+          "description": "Pirms pārlūkošanas apsver īsu drošības iestatījumu.",
+          "location": "Kafejnīca The Daily Grind"
         },
         "consequence_trap": {
           "title": "Tīkla Slazds Atklāts",
-          "description": "Tu pieslēdzies tam, kas izskatījās kā kafejnīcas tīkls..."
+          "description": "Tu pieslēdzies tam, kas izskatījās kā kafejnīcas tīkls...",
+          "location": "Kafejnīca The Daily Grind"
         },
         "consequence_open": {
           "title": "Riskants Savienojums",
-          "description": "Tu pieslēdzies atvērtam tīklam ar vispārīgu nosaukumu..."
+          "description": "Tu pieslēdzies atvērtam tīklam ar vispārīgu nosaukumu...",
+          "location": "Kafejnīca The Daily Grind"
         },
         "consequence_neighbor": {
           "title": "Nepareizs Tīkls",
-          "description": "Tu pieslēdzies blakus esošā uzņēmuma tīklam..."
+          "description": "Tu pieslēdzies blakus esošā uzņēmuma tīklam...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "briefing_coffee_shop": {
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "autojoin_prompt_verified": {
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_autojoin_safe": {
+          "description": "Tu atjaunināji tīkla iestatījumus...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_autojoin_risky": {
+          "description": "Tu atstāji noklusējuma iestatījumu...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_autojoin_safe_verified": {
+          "description": "Tu atjaunināji tīkla iestatījumus...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_autojoin_risky_verified": {
+          "description": "Tu atstāji noklusējuma iestatījumu...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_email_unverified": {
+          "title": "E-pasts pārbaudīts — vai tu pārbaudīji tīklu?",
+          "description": "Tu pārbaudīji e-pastu šajā tīklā...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_email_vpn_unverified": {
+          "title": "VPN ieslēgts — laba intuīcija",
+          "description": "Tu ieslēdzi VPN pirms e‑pasta pārbaudes...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_email_postponed_unverified": {
+          "title": "Piesardzīga pieeja",
+          "description": "Tu nolēmi pagaidīt ar e‑pasta pārbaudi...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_email_safe": {
+          "title": "E-pasts pārbaudīts",
+          "description": "Tu pārbaudīji e‑pastu pārbaudītā tīklā...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_email_vpn": {
+          "title": "Aizsargāts ar VPN",
+          "description": "Tu ieslēdzi VPN pirms e‑pasta pārbaudes...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_email_postponed": {
+          "title": "Uzdevums atlikts",
+          "description": "Tu nolēmi atlikt e‑pasta pārbaudi...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_banking_risky": {
+          "title": "Banku darījumi publiskajā Wi‑Fi",
+          "description": "Tu pieslēdzies bankai publiskajā tīklā...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_banking_vpn": {
+          "title": "Aizsargāti bankas darījumi",
+          "description": "Tu pieslēdzies bankai ar VPN aizsardzību...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "consequence_banking_smart": {
+          "title": "Banku darījumi atlikti",
+          "description": "Tu nolēmi atlikt bankas darījumus...",
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "debrief_coffee_shop": {
+          "location": "Kafejnīca The Daily Grind"
+        },
+        "completion": {
+          "title": "Scenārijs pabeigts",
+          "description": "Tu pabeidzi kafejnīcas izaicinājumu. Apskatīsim, kā tev veicās.",
+          "location": "Kafejnīca The Daily Grind"
         }
       },
       "networks": {
@@ -478,7 +676,8 @@
           "title": "Pieslēgts Nepareizam Tīklam",
           "whatHappened": "Tu pieslēdzies 'Bookstore_Next_Door' - likumīgam tīklam, bet ne šīs kafejnīcas tīklam. Lai gan, iespējams, nav ļaunprātīgs, tas nebija paredzētais tīkls.",
           "whyRisky": "Pieslēgšanās nezināmiem tīkliem, pat ja tie izskatās likumīgi, nozīmē uzticēšanos nezināmam administratoram. Tev nav kontroles pār viņu drošības praksi vai žurnalizēšanas politikām.",
-          "saferAlternative": "Vienmēr pārbaudi, vai pieslēdzies pareizam tīklam savai atrašanās vietai. Jautā personālam oficiālo tīkla nosaukumu, nevis mini."
+          "saferAlternative": "Vienmēr pārbaudi, vai pieslēdzies pareizam tīklam savai atrašanās vietai. Jautā personālam oficiālo tīkla nosaukumu, nevis mini.",
+          "technicalExplanation": "Tīkla administratori var reģistrēt MAC adreses, pieslēgšanās laikus, apmeklētās vietnes (caur DNS pieprasījumiem) un pārsūtīto datu apjomu. Tīklos bez pienācīgas aizsardzības viņi varētu pārskatīt nešifrētu trafiku vai būt ievainojami pret tiem pašiem uzbrukumiem kā jebkurš cits tīkls."
         },
         "cons_autojoin_safe": {
           "title": "Automātiskā Pievienošanās Izslēgta",
@@ -500,17 +699,211 @@
           "whyRisky": "Te ir problēma: tev paveicās, bet tu nezināji, ka esi drošībā. 'DailyGrind_Guest' izskatījās pareizi, taču uzbrucēji veido ļoti pārliecinošus nosaukumus. Bez pārbaudes tu nevarēji atšķirt īsto tīklu no viltota. 30 sekundes, lai pajautātu personālam, var ietaupīt stundas, risinot kompromitētus kontus. Verifikācijas ieradums ir svarīgāks par vienu veiksmīgu pieslēgumu.",
           "saferAlternative": "Pirms pieslēgšanās jebkuram publiskam tīklam pajautā personālam precīzu tīkla nosaukumu. Tas aizņem mirkli un pārvērš minēšanu par informētu izvēli. Šis ieradums būtiski samazina \"evil twin\" risku, taču joprojām uzmanies no līdzīgiem nosaukumiem un negaidītām pieteikšanās lapām.",
           "technicalExplanation": "Pat pareizi nosauktus tīklus var viltot. Uzbrucēji var nokopēt SSID un izmantot spēcīgāku signālu, lai pievilinātu ierīces. Personāla apstiprinājums ir labākais praktiskais pirmais solis, bet pārbaudi arī nelielas pareizrakstības atšķirības un esi piesardzīgs pret negaidītiem captive portal ekrāniem."
+        },
+        "cons_email_vpn_unverified": {
+          "title": "Gudrs aizsardzības slānis",
+          "whatHappened": "Tu ieslēdzi VPN pirms e‑pasta pārbaudes. Tas bija gudrs solis — VPN šifrē visu trafiku un padara to nelasāmu ikvienam lokālajā tīklā, pat ja tīkls ir kompromitēts.",
+          "whyRisky": "Tā ir laba drošības prakse. VPN aizsargā tevi pat tad, ja tīkls nav tas, par ko uzdodas. Tomēr ir viena neliela plaisa: tu nepārbaudīji tīklu ar personālu. VPN šifrē datus, taču ieradums pārbaudīt tīklu joprojām ir svarīgs. VPN var negaidīti atslēgties, un dažas lietotnes var nopludināt datus pirms savienojuma izveides.",
+          "saferAlternative": "Tīkla pārbaude kopā ar VPN dod aizsardzību vairākos slāņos. Vispirms pārliecinies, ka tīkls ir oficiāls, pēc tam ieslēdz VPN šifrētai privātumam. Ja viens slānis neizdodas, otrs joprojām darbojas.",
+          "technicalExplanation": "VPN izveido šifrētu tuneli, kas pasargā datus no lokālā tīkla novērotājiem. Tomēr sākotnējais savienojums ar VPN serveri notiek lokālajā tīklā. Sarežģīts uzbrucējs teorētiski var iejaukties šajā rokasspiedienā, lai gan tas notiek reti. Pārbaude + VPN novērš šo robežsituāciju."
+        },
+        "cons_email_postponed_unverified": {
+          "title": "Droša izvēle",
+          "whatHappened": "Tu nolēmi nepārbaudīt e‑pastu šajā tīklā. Ņemot vērā, ka tīkls netika pārbaudīts ar personālu, šī piesardzība ir pamatota.",
+          "whyRisky": "Tava piesardzība ir vērtīga. Tu atpazini nenoteiktību un izvēlējies drošību, nevis ērtumu. Ikdienas e‑pastam šāds piesardzības līmenis pārbaudītā tīklā ne vienmēr ir nepieciešams, bet bez pārbaudes atlikšana bija saprātīga.",
+          "saferAlternative": "Nākotnē: ja tu vispirms būtu pārbaudījis tīklu ar personālu, e‑pasta pārbaude būtu pietiekami droša (īpaši ar VPN). Tieši pārbaude pārvērš nezināmu risku par zināmu apstākli.",
+          "technicalExplanation": "Atliekot darbību, tu pilnībā novērsi tīkla risku. Datus nevar pārtvert tīklā, kuru tu neizmanto. Kompromiss ir ērtums, bet, ja tīkla autentiskums nav skaidrs, tas ir drošākais risinājums."
+        },
+        "cons_email_safe": {
+          "title": "Pietiekami droši",
+          "whatHappened": "Tu pārbaudīji e‑pastu oficiālajā pārbaudītajā tīklā. Tā kā tava e‑pasta pakalpojuma sniedzējs izmanto HTTPS, tavi pieteikšanās dati un e‑pasta saturs tika šifrēti starp pārlūkprogrammu un serveri.",
+          "whyRisky": "Tā bija saprātīga izvēle. WPA2 šifrēšana pasargā datus no citiem kafejnīcas apmeklētājiem, un HTTPS pasargā tos no pašas kafejnīcas tīkla. Paliek neliels risks: tīkla operators (kafejnīca) var redzēt, ka tu pieslēdzies gmail.com vai outlook.com, bet neredz, ko tu lasi vai sūti. Šie metadati parasti nav sensitīvi personīgajam e‑pastam.",
+          "saferAlternative": "Papildu drošībai, īpaši darba e‑pastam ar sensitīvu informāciju, VPN paslēpj pat metadatus par to, kādus pakalpojumus izmanto. Tas ir svarīgāk biznesa kontekstā, kur konkurenti var vēlēties zināt, ar ko tu sazinies.",
+          "technicalExplanation": "HTTPS šifrē e‑pasta sesijas saturu, bet DNS pieprasījumi (tie atklāj, kādas vietnes tu apmeklē) tiek sūtīti nešifrēti, ja netiek izmantots DNS‑over‑HTTPS vai VPN. Tīkla operators var redzēt savienojumu modeļus, pat ja nevar lasīt saturu."
+        },
+        "cons_email_vpn": {
+          "title": "Izcila drošības prakse",
+          "whatHappened": "Tu ieslēdzi VPN pirms piekļuves e‑pastam. Viss tavs trafiks tagad ir šifrēts un iet caur drošu tuneli, kas nav redzams nevienam kafejnīcas tīklā — arī pašai kafejnīcai.",
+          "whyRisky": "Tā ir izcila prakse, īpaši darba e‑pastam. VPN nozīmē, ka neviens lokālajā tīklā neredz, kādus pakalpojumus izmanto vai ar ko sazinies. Vienīgais, kas var redzēt trafiku, ir tavs VPN nodrošinātājs, tāpēc izvēlies tādu ar stingru privātuma politiku un bez žurnālu saglabāšanas.",
+          "saferAlternative": "Tu pieņēmi optimālu izvēli publiskam tīklam. Vienkārši pārliecinies, ka VPN ir no uzticama pakalpojumu sniedzēja — bezmaksas VPN bieži pelna, pārdodot pārlūkošanas datus, kas pilnībā grauj aizsardzības jēgu.",
+          "technicalExplanation": "VPN izveido šifrētu tuneli no ierīces līdz VPN serverim. Kafejnīcas tīkls redz tikai šifrētu datu plūsmu uz vienu IP adresi. VPN serveris tālāk pārsūta pieprasījumus internetā, tāpēc vietnes redz VPN IP, nevis tavu."
+        },
+        "cons_email_postponed": {
+          "title": "Piesardzīga pieeja",
+          "whatHappened": "Tu nolēmi atlikt e‑pasta pārbaudi līdz drošākam tīklam. Tas pilnībā novērš tīkla risku.",
+          "whyRisky": "Parastai e‑pasta pārbaudei pārbaudītā, aizsargātā tīklā tas var būt pārlieku piesardzīgi. Mūsdienu e‑pasta pakalpojumi izmanto spēcīgu HTTPS šifrēšanu. Tomēr, ja e‑pastā ir patiesi sensitīva informācija vai tu neesi pārliecināts par tīklu, gaidīšana ir drošākais variants.",
+          "saferAlternative": "Ikdienas e‑pastam pārbaudītā WPA2 tīklā ar HTTPS varētu droši turpināt — īpaši ar VPN. Taču tava piesardzība ir vērtīga. Kompromiss ir ērtums pret sirdsmieru.",
+          "technicalExplanation": "Atliekot, tu novērš visus tīkla riskus. Tas ir «nulles uzticības» piegājiens: pieņemt, ka jebkurš tīkls ārpus tavas kontroles var būt apdraudēts. Augsta riska situācijās šī pieeja ir pamatota."
+        },
+        "cons_banking_risky": {
+          "title": "Augsta riska banku darījumi",
+          "whatHappened": "Tu pieslēdzies bankai publiskā Wi‑Fi tīklā bez VPN aizsardzības. Lai gan banka izmanto HTTPS, tu sevi pakļāvi vairākām sarežģītām uzbrukumu metodēm, kas tieši mērķē finanšu darījumus.",
+          "whyRisky": "Banku darījumi ir visaugstāko likmju darbība tiešsaistē. Publiskā Wi‑Fi uzbrucējs tajā pašā tīklā var veikt «cilvēks‑pa‑vidu» uzbrukumu, nostājoties starp tevi un banku. Mūsdienu pārlūkprogrammas parasti atpazīst viltotus sertifikātus, bet nepareizi konfigurētas ierīces vai novecojusi programmatūra var nepamanīt. Uzbrucēji var izmantot arī DNS viltošanu, novirzot uz viltotu bankas vietni, kas izskatās identiska īstajai. Pat ja uzbrukums neizdodas, bankas sesija bija pakļauta naidīgai videi — un, ja ierīcē ir vājības, tās tieši šeit tiek izmantotas.",
+          "saferAlternative": "Nekad neveic banku darījumus publiskā Wi‑Fi tīklā bez VPN. Vēl labāk — izmanto telefona mobilos datus: mobilo sakaru tīklus ir daudz grūtāk uzbrukt nekā Wi‑Fi. Ja tas tiešām ir steidzami, papildu minūte VPN ieslēgšanai ir vērta tavās finanšu drošības labā.",
+          "technicalExplanation": "HTTPS nodrošina spēcīgu aizsardzību, un lielās bankas izmanto papildu pasākumus, piemēram, HSTS, lai novērstu aizsardzības pazemināšanu. Tomēr nepārbaudītos tīklos uzbrucēji var mēģināt DNS viltošanu vai izveidot pārliecinošus pikšķerēšanas portālus. Ja pieteikšanās dati tiek iegūti viltotā vietnē, tas var nodrošināt nesankcionētu piekļuvi. VPN novērš lokālos tīkla uzbrukumus, šifrējot visu trafiku pirms tas nonāk lokālajā tīklā.",
+          "cascading": [
+            "Tava bankas sesija var tikt pārtverta publiskajā tīklā",
+            "Uzbrucējs iegūst tavas pieteikšanās datus vai sesijas marķieri",
+            "Neautorizēti pārskaitījumi iztukšo kontu, pirms tu to pamani"
+          ]
+        },
+        "cons_banking_vpn": {
+          "title": "Gudra drošības izvēle",
+          "whatHappened": "Tu izmantoji VPN pirms piekļuves bankas kontam. Tas pievienoja būtisku šifrēšanas slāni, kas neļauj nevienam kafejnīcas tīklā redzēt vai ietekmēt tavu bankas sesiju.",
+          "whyRisky": "Tā bija lieliska izvēle. VPN izveido šifrētu tuneli, kas bloķē visus lokālā tīkla uzbrukumus — neviens kafejnīcā nevar veikt «cilvēks‑pa‑vidu» uzbrukumus, DNS viltošanu vai trafika analīzi. Atlikušais risks ir minimāls: tu uzticies savam VPN nodrošinātājam (izvēlies rūpīgi) un pašas bankas drošībai (parasti ļoti spēcīgai).",
+          "saferAlternative": "Visjutīgākajiem darījumiem, piemēram, lieliem pārskaitījumiem vai konta iestatījumu maiņai, mobilie dati joprojām ir zelta standarts. Taču VPN publiskā Wi‑Fi tīklā ir praktiska un spēcīga izvēle ikdienas bankošanai.",
+          "technicalExplanation": "VPN šifrē visu trafiku vēl pirms tas atstāj ierīci, padarot lokālos uzbrukumus neiespējamus. Bankas sesija iet caur šifrētu tuneli uz VPN serveri un pēc tam uz banku. Lokālie uzbrucēji redz tikai šifrētu datu plūsmu uz vienu VPN IP adresi."
+        },
+        "cons_banking_smart": {
+          "title": "Izcils spriedums",
+          "whatHappened": "Tu saprati, ka banku darījumi ir augsta riska darbība, un nolēmi tos atlikt līdz uzticamam tīklam. Tas ir tieši pareizais instinkts, lai aizsargātu finanses.",
+          "whyRisky": "Riska nav, jo tu vispār nepakļāvi bankas datus publiskam tīklam. Šī «drošība, izvairoties» pieeja bieži ir gudrākā kritiskām darbībām. Nelielais neērtums gaidīt ir nieks salīdzinājumā ar sekām, ja bankas konts tiek kompromitēts.",
+          "saferAlternative": "Tu pieņēmi labāko iespējamo lēmumu. Banku darījumi jāveic tikai tīklos, kurus tu kontrolē — mājas Wi‑Fi, darba tīkls vai mobilie dati. $200 rēķins var pagaidīt līdz drošai videi.",
+          "technicalExplanation": "Atliekot augstas jutības uzdevumus, tu pilnībā likvidē uzbrukuma virsmu. Uzbrucējs nevar nozagt to, ko tu neesi atklājis. Šī pieeja atzīst, ka ērtums nav riska vērts, kad runa ir par finanšu drošību."
         }
       }
     },
     "hotel_intermediate": {
-      "title": "Komandējums The Grand Hotel",
-      "description": "Tu esi ieradies viesnīcā komandējumā un tev jāpiekļūst internetam. Pieejami vairāki tīkli, un reģistratūra ir aizņemta. Kā tu droši pieslēgsies?",
-      "location": "The Grand Hotel Vestibils",
+      "title": "Komandējums viesnīcā Grand Metropolitan",
+      "description": "Jūs esat viesnīcā komandējumā un jums nepieciešams internets. Pieejami vairāki tīkli, un pie reģistratūras ir rinda. Jums jāizvēlas savienojums, kas pasargā darba datus.",
+      "location": "Viesnīca Grand Metropolitan",
       "scenes": {
         "hotel_update_prompt": {
           "title": "Ierīces Atjauninājumi",
-          "description": "Pirms rītdienas prezentācijas ir pieejams sistēmas atjauninājums."
+          "description": "Pirms rītdienas prezentācijas ir pieejams sistēmas atjauninājums.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_arrival": {
+          "title": "Reģistrēšanās",
+          "description": "Tu tikko ieradies viesnīcā Grand Metropolitan pēc gara lidojuma. Rītdienas prezentācija ir izšķiroša, un šovakar jāizskata dokumenti un jāatbild uz e‑pastiem. Numurā ir galds, un esi gatavs strādāt.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "briefing_hotel": {
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_network_select": {
+          "title": "Viesnīcas Wi‑Fi iespējas",
+          "description": "Tavs klēpjdators rāda vairākus tīklus. Uz galda esošajā viesnīcas informācijas kartītē minēts «bezmaksas Wi‑Fi», bet tīkla nosaukumu daļēji aizsedz kafijas traips.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_portal": {
+          "title": "Captive portāls",
+          "description": "Parādās pieteikšanās lapa. Tā prasa numura numuru un uzvārdu, lai apstiprinātu. Ir arī izvēles rūtiņa «Instalēt mūsu HotelConnect lietotni labākai pieredzei».",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_verified": {
+          "title": "Apstiprināta informācija",
+          "description": "Reģistratūra apstiprina: «Mūsu bezmaksas Wi‑Fi ir GrandMetro_Guest — lai pieteiktos, nepieciešams numura numurs un uzvārds. Ir arī GrandMetro_Premium par $15/naktī ar ātrāku internetu un labāku drošību».",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_premium_login": {
+          "title": "Premium tīkls",
+          "description": "Premium tīklam nepieciešama parole. Viesnīcas informācijas kartītē norādīts $15/naktī un solīta uzņēmuma līmeņa drošība.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_premium_connected": {
+          "title": "Premium savienojums",
+          "description": "Tu pieslēdzies premium tīklam...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_trap": {
+          "title": "Viltus viesnīcas tīkls",
+          "description": "Tu pieslēdzies tam, ko uzskatīji par viesnīcas tīklu...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_app": {
+          "title": "Lietotnes instalēšanas pieprasījums",
+          "description": "Tu instalēji lietotni, ko ieteica portāls...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_task_email": {
+          "title": "Darba e‑pasts",
+          "description": "Tu esi pieslēdzies viesnīcas tīklam. Jāpārbauda e‑pasti no komandas par rītdienas prezentāciju.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_email_open": {
+          "title": "E‑pasts atvērtā tīklā",
+          "description": "Tu pārbaudīji darba e‑pastu viesnīcas atvērtajā tīklā...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_email_vpn": {
+          "title": "E‑pasts ar VPN aizsardzību",
+          "description": "Tu ieslēdzi VPN pirms darba e‑pasta pārbaudes...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_task_email_vpn": {
+          "title": "VPN aktīvs",
+          "description": "VPN darbojas. Tagad vari droši pārbaudīt e‑pastu.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_email_vpn_portal": {
+          "title": "Aizsargāts no sākuma",
+          "description": "Tu pārbaudīji e‑pastu ar VPN aizsardzību, ko ieslēdzi uzreiz pēc pieslēgšanās...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_task_presentation": {
+          "title": "Prezentācijas faili",
+          "description": "Tev jālejupielādē atjauninātais prezentācijas fails, ko kolēģis nosūtīja ar mākoņsaiti.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_task_presentation_vpn": {
+          "title": "Prezentācijas faili",
+          "description": "VPN ir aktīvs. Tev jālejupielādē atjauninātais prezentācijas fails.",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_download_risky": {
+          "title": "Neaizsargāta lejupielāde",
+          "description": "Tu lejupielādēji failu atvērtajā tīklā...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_update_now": {
+          "description": "Tu instalēji atjauninājumus...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_update_later": {
+          "description": "Tu atliki atjauninājumus...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_download_vpn": {
+          "title": "Aizsargāta lejupielāde",
+          "description": "Tu lejupielādēji failu ar VPN aizsardzību...",
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_consequence_download_postponed": {
+          "title": "Biznesa centra izmantošana",
+          "description": "Tu nolēmi izmantot viesnīcas biznesa centru...",
+          "location": "Viesnīca Grand Metropolitan - biznesa centrs"
+        },
+        "debrief_hotel": {
+          "location": "Viesnīca Grand Metropolitan - numurs 412"
+        },
+        "hotel_completion": {
+          "title": "Scenārijs pabeigts",
+          "description": "Tu pabeidzi biznesa komandējuma scenāriju! Apskatīsim, cik prasmīgi tu pārvarēji viesnīcas tīkla izaicinājumus.",
+          "location": "Viesnīca Grand Metropolitan"
+        }
+      },
+      "networks": {
+        "hotel_official": {
+          "description": "Atvērts tīkls - raksturīgs viesnīcām ar portāla pieteikšanos"
+        },
+        "hotel_premium": {
+          "description": "Drošs premium tīkls - var prasīt maksu"
+        },
+        "hotel_fake": {
+          "description": "Izmanto defisi, nevis pasvītrojumu"
+        },
+        "hotel_conference": {
+          "description": "Konferenču centra tīkls - iespējams, nav paredzēts viesiem"
+        },
+        "personal_hotspot": {
+          "description": "Netālu kāda personīgais tīklājs"
+        },
+        "hotel_official_v": {
+          "description": "Oficiālais bezmaksas tīkls - PĀRBAUDĪTS"
+        },
+        "hotel_premium_v": {
+          "description": "Oficiālais premium tīkls - PĀRBAUDĪTS - $15/naktī"
         }
       },
       "actions": {
@@ -521,6 +914,48 @@
         "update_later": {
           "label": "Atgādināt vēlāk",
           "description": "Atlikt atjauninājumus pagaidām"
+        },
+        "call_desk": {
+          "label": "Piezvanīt reģistratūrai un pārbaudīt tīklu"
+        },
+        "login_only": {
+          "label": "Ievadīt numura datus un pieteikties"
+        },
+        "login_and_install": {
+          "label": "Pieteikties un instalēt lietotni"
+        },
+        "use_vpn_portal": {
+          "label": "Pieteikties un uzreiz ieslēgt VPN"
+        },
+        "switch_network": {
+          "label": "Atgriezties un izmēģināt citu tīklu"
+        },
+        "pay_premium": {
+          "label": "Samaksāt $15 par premium (zvanīt reģistratūrai)"
+        },
+        "use_free": {
+          "label": "Izmantot bezmaksas tīklu"
+        },
+        "email_proceed": {
+          "label": "Pārbaudīt e‑pastu tagad"
+        },
+        "email_vpn": {
+          "label": "Ieslēgt VPN, tad pārbaudīt"
+        },
+        "email_proceed_vpn": {
+          "label": "Pārbaudīt e‑pastu (VPN)"
+        },
+        "download_now": {
+          "label": "Lejupielādēt failu"
+        },
+        "download_vpn": {
+          "label": "Vispirms ieslēgt VPN"
+        },
+        "download_postpone": {
+          "label": "Tā vietā izmantot viesnīcas biznesa centru"
+        },
+        "download_vpn_active": {
+          "label": "Lejupielādēt (ar VPN)"
         }
       },
       "tasks": {
@@ -528,6 +963,27 @@
           "title": "Instalēt Drošības Atjauninājumus",
           "description": "Atjauninājumi bieži labo drošības ievainojamības.",
           "riskHint": "Atlikti atjauninājumi var atstāt zināmas ievainojamības neaizlāpītas."
+        },
+        "premium_decision": {
+          "title": "Premium tīkla izvēle",
+          "description": "Izlem, vai maksāt par premium tīklu vai izmantot bezmaksas iespēju."
+        },
+        "hotel_email": {
+          "title": "Pārskatīt komandas jaunumus",
+          "description": "Pārskati komandas e‑pastus ar jauninājumiem rītdienas prezentācijai."
+        },
+        "hotel_email_vpn": {
+          "title": "Pārskatīt komandas jaunumus",
+          "description": "Pārskati komandas e‑pastus ar jauninājumiem rītdienas prezentācijai."
+        },
+        "download_pres": {
+          "title": "Lejupielādēt atjauninātos slaidus",
+          "description": "Lejupielādē atjaunināto prezentāciju no mākoņsaites savā e‑pastā.",
+          "riskHint": "Lejupielādētie faili var tikt pārtverti vai izmainīti nedrošos tīklos."
+        },
+        "download_pres_vpn": {
+          "title": "Lejupielādēt atjauninātos slaidus",
+          "description": "Lejupielādē atjaunināto prezentāciju no mākoņsaites."
         }
       },
       "consequences": {
@@ -551,6 +1007,74 @@
           "whyRisky": "Atlikšana atstāj zināmus drošības caurumus atvērtus, kas koplietotos tīklos ir riskantāk.",
           "saferAlternative": "Atjaunini pirms sensitīva darba, īpaši ceļojot.",
           "technicalExplanation": "Uzbrucēji bieži izmanto publiski zināmas ievainojamības, kurām jau ir ielāpi."
+        },
+        "cons_hotel_trap": {
+          "title": "Ļaunais dvīnis",
+          "whatHappened": "Tu pieslēdzies «GrandMetro-Guest» — ievēroji defisi apakšsvītras vietā? Šī nelielā atšķirība nozīmē, ka tu pievienojies viltus tīklam, iespējams, izveidotam kādā tuvējā numurā vai pat stāvvietā. Viltus pieteikšanās portāls savāca tavu numura numuru, vārdu un jebkuras ievadītās paroles.",
+          "whyRisky": "Viesnīcas ir iecienīts mērķis, jo biznesa ceļotāji bieži nes vērtīgus korporatīvos datus un ir noguruši, tāpēc mazāk uzmanīgi. Uzbrucējs apzināti izvēlējās gandrīz identisku nosaukumu — «GrandMetro-Guest» pret «GrandMetro_Guest» — zinot, ka noguruši ceļotāji nosaukumus tikai pārskrien ar acīm. Pēc pieslēgšanās viss tavs trafiks iet caur uzbrucēja aprīkojumu. Viņš var lasīt nešifrētu trafiku, iegūt pieteikšanās datus no viltus portāliem un pat mainīt lapas, ko skaties.",
+          "saferAlternative": "Vienmēr precīzi pārbaudi tīkla nosaukumu ar personālu — nepaļaujies uz pieņēmumiem. Meklē sīkas atšķirības lielajos burtos, pieturzīmēs vai pareizrakstībā. Tieši pēc ceļojuma noguruma tev jābūt īpaši uzmanīgam.",
+          "technicalExplanation": "Ļaunā dvīņa uzbrukumi viesnīcās ir īpaši efektīvi, jo viesi sagaida vairākus līdzīgi nosauktus tīklus. Uzbrucēja aprīkojums darbojas kā «cilvēks‑pa‑vidu», potenciāli noņemot HTTPS aizsardzību vai parādot pārliecinošas viltus pieteikšanās lapas. Tavs vārds un numura numurs tagad ir saistīti ar tavu pārlūkošanas aktivitāti.",
+          "cascading": [
+            "Viltus portāls ieguva tavu vārdu un numura numuru",
+            "Uzbrucējs sasaista tavu identitāti ar pārlūkošanas aktivitāti",
+            "Korporatīvie dati no e‑pasta kļūst pieejami",
+            "Biznesa noslēpumi vai klientu informācija var tikt kompromitēta"
+          ]
+        },
+        "cons_app": {
+          "title": "Iespējami ļaunprātīga lietotne",
+          "whatHappened": "Tu instalēji lietotni tieši no pieteikšanās portāla, nevis no oficiālā lietotņu veikala. Pat ja tā būtu viesnīcas lietotne, tu apgāji visas drošības pārbaudes, ko veic veikals.",
+          "whyRisky": "Šis ir viens no bīstamākajiem soļiem tīklā. Likumīgi uzņēmumi gandrīz nekad nepieprasa lietotnes instalēšanu, lai izmantotu Wi‑Fi. Ja lietotni lejupielādē no captive portāla, nav pārskatīšanas procesa, kas pārbaudītu ļaunatūru. Lietotne var prasīt atļaujas lasīt e‑pastus, piekļūt failiem, izsekot atrašanās vietu, ierakstīt audio vai pat pārtvert visu, ko tu raksti. Dažas ļaunprātīgas lietotnes instalē slēptus MDM profilus, kas dod uzbrucējam pastāvīgu piekļuvi ierīcei pat pēc redzamās lietotnes dzēšanas. «Ātrāka pieslēgšanās» ērtums nekad nav šāda riska vērts.",
+          "saferAlternative": "Nekad neinstalē lietotnes, profilus vai sertifikātus no captive portāliem. Ja uzņēmumam tiešām ir lietotne, ko vēlies, meklē to oficiālajā lietotņu veikalā. Ja tās tur nav, tas ir nopietns brīdinājums.",
+          "technicalExplanation": "Sānu ielādētas lietotnes apiet veikala drošības skenēšanu. Mobile Device Management (MDM) profili var dot plašu ierīces kontroli — lasīt šifrētus ziņojumus, klusi instalēt citas lietotnes un saglabāties pat pēc rūpnīcas atiestatīšanas. Korporatīvās spiegošanas grupas īpaši mērķē biznesa ceļotājus ar šādiem uzbrukumiem.",
+          "cascading": [
+            "Ļaunprātīga lietotne iegūst ierīces atļaujas",
+            "Lietotne lasa kontaktus, e‑pastus un failus",
+            "Tava atrašanās vieta tiek izsekota reāllaikā",
+            "Akreditācijas dati tiek pārtverti un pārdoti vai izmantoti"
+          ]
+        },
+        "cons_email_open": {
+          "title": "Nešifrētas tīkla iedarbības risks",
+          "whatHappened": "Tu piekļuvi darba e‑pastam izmantoji atvērtā (bez paroles) viesnīcas tīklā. Lai gan e‑pasta pakalpojums izmanto HTTPS, pats tīkls nesniedz šifrēšanu starp ierīci un maršrutētāju.",
+          "whyRisky": "Atvērtos tīklos datu plūsma starp klēpjdatoru un maršrutētāju ir kā pastkarte — ikviens tuvumā var redzēt «aploksni». Var redzēt, ka tu pieslēdzies e‑pasta pakalpojumiem, cik bieži un cik daudz datu sūti. Darba e‑pastam šie metadati var atklāt darba paradumus. HTTPS aizsargā saturu, taču uzbrucējs tajā pašā tīklā var mēģināt pārtvert savienojumu, un atvērtais tīkls dod viņam šādu iespēju.",
+          "saferAlternative": "Darba e‑pastam atvērtos tīklos vienmēr ieslēdz VPN. VPN pievieno otro šifrēšanas slāni, kas pasargā pat tad, ja HTTPS kaut kur neizdodas. Daudzi uzņēmumi tieši tāpēc prasa VPN publiskajos tīklos.",
+          "technicalExplanation": "Atvērtos tīklos nav WPA2 šifrēšanas starp ierīci un piekļuves punktu. HTTPS šifrē e‑pasta saturu, bet DNS pieprasījumi (kas atklāj, uz kuriem serveriem pieslēdzies) bieži ceļo nešifrēti, ja neizmanto DNS‑over‑HTTPS. Lielie e‑pasta pakalpojumi izmanto HSTS, kas palīdz novērst aizsardzības pazemināšanu, bet VPN sniedz visaptverošu aizsardzību pret lokālajiem uzbrukumiem."
+        },
+        "cons_email_vpn": {
+          "title": "Profesionāla drošības prakse",
+          "whatHappened": "Tu ieslēdzi VPN pirms piekļuves darba e‑pastam. Tas šifrē visu trafiku caur drošu tuneli un pilnībā aizsargā tavu darba saziņu no jebkura viesnīcas tīklā.",
+          "whyRisky": "Tas ir tieši pareizais risinājums komandējumos. VPN nozīmē, ka pat atvērtā tīklā citi viesi redz tikai šifrētu datu plūsmu uz VPN serveri. Tava darba e‑pasta saturu, klientus un uzņēmuma mākoņpakalpojumus neviens neredz.",
+          "saferAlternative": "Tu izvēlējies pareizi. Papildu drošībai pārliecinies, ka VPN ir uzticams un konfigurēts tā, lai novērstu DNS noplūdes. Daži uzņēmumi izmanto split‑tunneling konfigurācijas — pārbaudi ar IT nodaļu.",
+          "technicalExplanation": "VPN izveido šifrētu tuneli vēl pirms dati pamet ierīci. Viss trafiks, arī DNS pieprasījumi, iet caur tuneli. Viesnīcas tīkls redz tikai šifrētus paketus uz VPN pakalpojumu sniedzēju, bez redzamības par tavu reālo darbu."
+        },
+        "cons_email_vpn_portal": {
+          "title": "Proaktīva drošība",
+          "whatHappened": "Tu ieslēdzi VPN uzreiz pēc pieslēgšanās — pirms darīt jebko citu. Tas nozīmē, ka visa sesija viesnīcas tīklā bija aizsargāta, ieskaitot šo e‑pasta pārbaudi.",
+          "whyRisky": "Šī ir labākā prakse biznesa ceļotājiem. Ieslēdzot VPN uzreiz portālā, tu nodrošināji, ka katrs datu gabals — no pirmā brīža — ir šifrēts. Tu neatstāji ievainojamu logu starp pieslēgšanos un VPN palaišanu.",
+          "saferAlternative": "Tu visu izdarīji pareizi. Vienīgais uzlabojums būtu VPN ar automātisku pieslēgšanos, kad pievienojies nezināmam tīklam. Daudzas VPN lietotnes piedāvā «always‑on» režīmu.",
+          "technicalExplanation": "Ieslēdzot VPN portāla posmā, tu pasargāji sevi visriskantākajā brīdī — sākotnējā pieslēgumā. Portāla pieteikšanās notika atvērtā tīklā, bet visa turpmākā satiksme — ieskaitot e‑pasta akreditācijas datus un saturu — gāja caur šifrēto VPN tuneli."
+        },
+        "cons_download_risky": {
+          "title": "Riskanta failu pārsūtīšana",
+          "whatHappened": "Tu lejupielādēji darba failus atvērtā viesnīcas tīklā bez VPN. Lai gan mūsdienu mākoņpakalpojumi izmanto HTTPS, tu atklāji metadatus par savu darba aktivitāti un potenciāli arī failus.",
+          "whyRisky": "Reālā problēma: viesnīcas tīklu lieto desmitiem vai simtiem viesu, un daži var būt ļaunprātīgi. Atvērtā tīklā pieredzējis uzbrucējs var pārtvert lejupielādes saiti, novirzīt uz modificētu failu vai vismaz reģistrēt, ka tu lejupielādē sensitīvus biznesa dokumentus no uzņēmuma mākoņa. Metadati vien — kur strādā, kādus pakalpojumus izmanto, kad esi aktīvs — ir vērtīgi korporatīvajiem spiegiem. Prezentācijai ar cenām, stratēģiju vai klientu informāciju tas ir būtiski.",
+          "saferAlternative": "Lejupielādējot darba failus viesnīcā, vienmēr izmanto VPN. Pāris sekundes pieslēgšanai var novērst datu noplūdi. Īpaši sensitīviem failiem apsver mobilo datu izmantošanu vai gaidi līdz uzticamam tīklam.",
+          "technicalExplanation": "Atvērtie viesnīcu tīkli pārsūta datus nešifrēti starp ierīci un maršrutētāju. HTTPS aizsargā failu saturu, bet DNS pieprasījumi atklāj, kādus mākoņpakalpojumus lieto. Pieredzējis uzbrucējs var mēģināt novirzīt uz viltotu lejupielādes lapu vai iejaukties pirms šifrēšana tiek izveidota. Lielie mākoņpakalpojumi izmanto HSTS, taču VPN pilnībā novērš šos riskus."
+        },
+        "cons_download_vpn": {
+          "title": "Droša failu pārsūtīšana",
+          "whatHappened": "Tu lejupielādēji darba failus ar VPN aizsardzību. Viss trafiks tika šifrēts caur drošu tuneli, aizsargājot gan failus, gan metadatus par tavu darbu no jebkura viesnīcas tīklā.",
+          "whyRisky": "Tu izdarīji pareizi. VPN nozīmē, ka ikviens, kas vēro viesnīcas tīklu — ļaunprātīgs viesis vai pat kompromitēta infrastruktūra — redz tikai šifrētu trafiku uz VPN serveri. Viņi nevar noteikt, ko tu lejupielādē, no kurienes un kādā uzņēmumā strādā. Tavs bizness paliek tavs.",
+          "saferAlternative": "Šī bija izcila prakse. Īpaši konfidenciāliem failiem dažas organizācijas prasa integritātes pārbaudi ar kontrolsummām — pajautā IT nodaļai par vadlīnijām.",
+          "technicalExplanation": "VPN šifrē visu trafiku vēl pirms tas atstāj ierīci, ietinot mākoņlejupielādi papildu aizsardzības slānī. Viesnīcas tīkls redz tikai šifrētus paketus uz VPN IP un neredz reālo galamērķi, saturu vai metadatus."
+        },
+        "cons_download_postponed": {
+          "title": "Piesardzīga izvēle",
+          "whatHappened": "Tu izvēlējies izmantot viesnīcas biznesa centru šai lejupielādei. Biznesa centros parasti ir vadu savienojumi, kurus ir grūtāk noklausīties nekā bezvadu tīklus.",
+          "whyRisky": "Tas ir drošībai apzinīgs lēmums. Vadu savienojumus nevar pārtvert no attāluma kā Wi‑Fi. Tomēr atceries: ja izmanto biznesa centra datorus, nevis savu klēpjdatoru, koplietošanas ierīcēs var būt taustiņspiedienu reģistratori vai ļaunatūra no iepriekšējiem lietotājiem. Ja iespējams, izmanto savu ierīci un pēc darba izlogojies no visiem kontiem.",
+          "saferAlternative": "Ideālais variants: izmantot savu klēpjdatoru ar VPN uz biznesa centra vadu savienojuma. Tā iegūsti vadu drošību un VPN šifrēšanu, vienlaikus izvairoties no koplietošanas datoru riskiem.",
+          "technicalExplanation": "Vadu Ethernet prasa fizisku piekļuvi, lai noklausītos, atšķirībā no Wi‑Fi, kas izplatās caur sienām. Tomēr trafiks joprojām iet caur viesnīcas infrastruktūru, tāpēc VPN ir vērtīgs. Koplietošanas datori rada citus riskus — ļaunatūru, taustiņspiedienu reģistratorus un saglabātus pieteikšanās datus no iepriekšējiem lietotājiem."
         }
       }
     },
@@ -562,6 +1086,135 @@
         "airport_cert_warning": {
           "title": "Sertifikāta Brīdinājums",
           "description": "Atverot līguma portālu, parādās drošības brīdinājums."
+        },
+        "airport_arrival": {
+          "title": "Reiss kavējas",
+          "description": "Tavs reiss kavējas par 2 stundām. Tu esi noguris, saspringts, un telefona baterija ir 15%. Priekšnieks tikko uzrakstīja, ka klienta līgums jāparaksta ŠODIEN, un termiņš ir pēc 45 minūtēm. Tu atrodi vietu pie rozetes.",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "briefing_airport": {
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_network_select": {
+          "title": "Lidostas tīkli",
+          "description": "Tavs klēpjdators rāda vairākus tīklus. Tu uztraucies par termiņu. Blakus ir informācijas kiosks, bet tur ir rinda.",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_mobile_connected": {
+          "title": "Mobilie dati",
+          "description": "Tu ieslēdzi telefona tīklāju...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_task_contract_mobile": {
+          "title": "Steidzams līgums",
+          "description": "Tu esi droši pieslēdzies ar mobilajiem datiem. Līguma parakstīšanas termiņš ir pēc 30 minūtēm. Dokumentam nepieciešama tava digitālā paraksta.",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_sign_mobile": {
+          "title": "Drošs paraksts ar mobilajiem datiem",
+          "description": "Tu parakstīji līgumu, izmantojot mobilos datus...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_portal": {
+          "title": "Lidostas portāls",
+          "description": "Ielādējas lidostas portāls. Tas rāda reklāmas un lūdz piekrist noteikumiem. Ir izvēle «Pieslēgties ātrāk, lejupielādējot Airport Companion lietotni» un «Premium ātrgaitas piekļuve» par $8.",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_cert_warning_free": {
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_cert_warning_premium": {
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_cert_abort": {
+          "description": "Tu nolēmi neturpināt...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_cert_proceed_free": {
+          "description": "Tu ignorēji brīdinājumu...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_cert_proceed_premium": {
+          "description": "Tu ignorēji brīdinājumu...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_verified": {
+          "title": "Apstiprinājums informācijas kioska",
+          "description": "Pēc 10 minūšu gaidīšanas (termiņš tagad ir pēc 35 minūtēm) personāls apstiprina: «Mūsu oficiālais tīkls ir MetroAirport_Free ar pasvītrojumu. Esiet uzmanīgi — bijuši ziņojumi par viltus tīkliem. SkyLounge tīkls ir tikai atpūtas zāles dalībniekiem».",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_trap": {
+          "title": "Vispārīgs lamatu tīkls",
+          "description": "Tu pieslēdzies «Airport_Free_WiFi»...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_trap_subtle": {
+          "title": "Smalks nosaukuma slazds",
+          "description": "Tu pieslēdzies «MetroAirport-Guest»...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_app": {
+          "title": "Lietotnes instalēšana",
+          "description": "Tu lejupielādēji lietotni «Airport Companion»...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_task_contract_premium": {
+          "title": "Steidzams līgums",
+          "description": "Tu esi pieslēdzies lidostas premium tīklam ($8). Līguma parakstīšanas termiņš ir pēc 30 minūtēm. Dokumentam nepieciešama tava digitālā paraksta.",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_sign_premium": {
+          "title": "Paraksts premium tīklā",
+          "description": "Tu parakstīji līgumu premium tīklā...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_task_contract_risky": {
+          "title": "Steidzams līgums",
+          "description": "Tu esi bezmaksas lidostas tīklā bez VPN. Termiņš ir pēc 25 minūtēm.",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_sign_risky": {
+          "title": "Neaizsargāts paraksts",
+          "description": "Tu parakstīji līgumu atvērtā tīklā...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_sign_vpn": {
+          "title": "Aizsargāts paraksts",
+          "description": "Tu ieslēdzi VPN pirms parakstīšanas...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_consequence_sign_delayed": {
+          "title": "Termiņa pagarinājums",
+          "description": "Tu piezvanīji klientam...",
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "debrief_airport": {
+          "location": "Metro Starptautiskā Lidosta - vārti B7"
+        },
+        "airport_completion": {
+          "title": "Scenārijs pabeigts",
+          "description": "Tu pabeidzi scenāriju «Pārsēšanās Metro Lidostā»! Šis bija vissarežģītākais sprieduma tests spiediena apstākļos.",
+          "location": "Metro Starptautiskā Lidosta"
+        }
+      },
+      "networks": {
+        "airport_official": {
+          "description": "Oficiālais lidostas tīkls - atvērts ar portāla pieteikšanos"
+        },
+        "airport_lounge": {
+          "description": "Aviokompānijas atpūtas zonas tīkls - nepieciešama dalība"
+        },
+        "airport_fake_1": {
+          "description": "Spēcīgs signāls, vispārīgs nosaukums"
+        },
+        "airport_fake_2": {
+          "description": "Līdzīgs nosaukums, bet ar defisi un citu sufiksu"
+        },
+        "mobile_hotspot": {
+          "description": "Jūsu tālruņa personīgais tīklājs - izmanto mobilo datu tīklu"
+        },
+        "airport_official_v": {
+          "description": "Oficiālais lidostas tīkls - PĀRBAUDĪTS"
         }
       },
       "actions": {
@@ -572,6 +1225,48 @@
         "cert_proceed": {
           "label": "Turpināt jebkurā gadījumā",
           "description": "Ignorēt brīdinājumu un turpināt"
+        },
+        "wait_kiosk": {
+          "label": "Stāvēt rindā pie informācijas kioska un pārbaudīt"
+        },
+        "use_mobile": {
+          "label": "Izmantot mobilos datus kā tīklāju"
+        },
+        "sign_mobile": {
+          "label": "Parakstīt līgumu tagad"
+        },
+        "call_client_mobile": {
+          "label": "Piezvanīt klientam un lūgt termiņa pagarinājumu"
+        },
+        "accept_terms": {
+          "label": "Pieņemt noteikumus un pieslēgties (bezmaksas)"
+        },
+        "download_app": {
+          "label": "Lejupielādēt lietotni ātrākam savienojumam"
+        },
+        "pay_premium": {
+          "label": "Samaksāt $8 par premium piekļuvi"
+        },
+        "use_mobile_instead": {
+          "label": "Pārslēgties uz mobilajiem datiem"
+        },
+        "sign_premium": {
+          "label": "Parakstīt līgumu tagad"
+        },
+        "sign_vpn_premium": {
+          "label": "Vispirms ieslēgt VPN, tad parakstīt"
+        },
+        "call_client_premium": {
+          "label": "Piezvanīt klientam un lūgt termiņa pagarinājumu"
+        },
+        "sign_anyway": {
+          "label": "Parakstīt tagad — nav laika!"
+        },
+        "enable_vpn_late": {
+          "label": "Vispirms ieslēgt VPN"
+        },
+        "switch_mobile": {
+          "label": "Pārslēgties uz mobilajiem datiem"
         }
       },
       "tasks": {
@@ -579,6 +1274,21 @@
           "title": "Sertifikāta Brīdinājums",
           "description": "Pārlūks norāda, ka vietnes sertifikātu nevar pārbaudīt.",
           "riskHint": "Sertifikāta brīdinājumi var nozīmēt pārtveršanu vai viltotu vietni."
+        },
+        "contract_sign_mobile": {
+          "title": "Parakstīt klienta līgumu",
+          "description": "Atver drošo dokumentu portālu un digitāli paraksti klienta līgumu pirms termiņa.",
+          "riskHint": "Tu esi drošā mobilo datu savienojumā."
+        },
+        "contract_sign_premium": {
+          "title": "Parakstīt klienta līgumu",
+          "description": "Atver drošo dokumentu portālu un digitāli paraksti klienta līgumu pirms termiņa.",
+          "riskHint": "Tu esi maksas tīklā, bet tas joprojām ir publisks Wi‑Fi."
+        },
+        "contract_sign_risky": {
+          "title": "Parakstīt klienta līgumu",
+          "description": "Parakstīt līgumu šajā neaizsargātajā tīklā?",
+          "riskHint": "Tu esi atvērtā tīklā ar daudzām potenciālām draudēm."
         }
       },
       "consequences": {
@@ -609,6 +1319,67 @@
           "whyRisky": "Ja brīdinājumu izraisīja pārtveršana, tavi pieteikšanās dati var tikt atklāti vai lapa var būt viltota.",
           "saferAlternative": "Atgriezies un izmanto mobilos datus vai verificētu tīklu pirms turpināšanas.",
           "technicalExplanation": "Brīdinājumi parādās, kad pārlūks nevar pārbaudīt vietnes identitāti. Publiskā Wi-Fi uzbrucēji to var izmantot, lai pārtvertu datus."
+        },
+        "cons_airport_trap": {
+          "title": "Uzbrucēja tīkls",
+          "whatHappened": "Tu pieslēdzies «Airport_Free_WiFi» — tīklam ar aizdomīgi vispārīgu nosaukumu un neparasti spēcīgu signālu. Tā bija pārnēsājama piekļuves punkta ierīce uzbrucēja mugursomā, īpaši izveidota, lai mērķētu uz stresā esošiem ceļotājiem kā tu.",
+          "whyRisky": "Lidostas ir kibernoziedznieku medību laukumi, jo ceļotāji ir ideāli upuri: noguruši, saspringti, steidzas un bieži veic augstas vērtības darījumus. Laika spiediens, ko tu izjuti, ir tieši tas, uz ko uzbrucēji paļaujas. Šim vispārīgajam tīklam («Airport_Free_WiFi») bija spēcīgāks signāls nekā īstajam, jo uzbrucējs sēž tuvumā ar jaudīgu antenu. Tava ierīce to redzēja kā «labāko» un varēja pat pieslēgties automātiski. Tagad katra parole, fails un e‑pasts iet caur uzbrucēja aprīkojumu. Viņi īpaši mērķē biznesa ceļotājus, jo korporatīvās akreditācijas dati melnajā tirgū maksā tūkstošus.",
+          "saferAlternative": "Pat spiedienā atvēli 30 sekundes, lai pārbaudītu oficiālo tīkla nosaukumu. Meklē norādes, pārbaudi lidostas oficiālo vietni ar mobilajiem datiem vai pajautā informācijas punktā. Īstais tīkls ir «MetroAirport_Free» — ievēro īsto lidostas nosaukumu, nevis vispārīgo «Airport».",
+          "technicalExplanation": "Uzbrucēji izmanto augstas pastiprināšanas virziena antenas, lai pārraidītu spēcīgāku signālu nekā leģitīmās tīklos. Tavas ierīces «automātiski pieslēgties stiprākajam signālam» funkcija darbojas pret tevi. Uzbrucējs izmanto specializētu programmatūru, lai savāktu trafiku, iegūtu akreditācijas datus un ievadītu ļaunprātīgu saturu tīmekļa lapās.",
+          "cascading": [
+            "Viss tavs trafiks iet caur uzbrucēja ierīci",
+            "Darba sistēmu pieteikšanās dati tiek iegūti",
+            "Korporatīvās tīkla piekļuve tiek kompromitēta",
+            "Sensitīvi biznesa dati tiek atklāti konkurentiem"
+          ]
+        },
+        "cons_airport_subtle": {
+          "title": "Konta drošības brīdinājums",
+          "whatHappened": "Tu pieslēdzies «MetroAirport-Guest» — sākumā tas izskatījās likumīgi, bet īstais tīkls ir «MetroAirport_Free». Viltus tīkls izmanto defisi pasvītrojuma vietā un «Guest» «Free» vietā. Šī sīkā atšķirība ir visa uzbrukuma būtība. Kad tu mēģināji parakstīt līgumu, uzņēmuma drošības sistēma konstatēja aizdomīgu pieteikšanos un bloķēja kontu.",
+          "whyRisky": "Tas ir izsmalcināts uzbrukums, kas izmanto mūsu smadzeņu darbību stresa apstākļos. Kad steidzies, tu nelasi katru simbolu — tu atpazīsti rakstu. «MetroAirport-Guest» izskatās pietiekami līdzīgs, un noguris prāts to pieņem. Uzbrucējs izpētīja īsto nosaukumu un izveidoja pārliecinošu variāciju. Tagad viņiem ir tavas korporatīvās akreditācijas dati. Kad viņi mēģināja tās izmantot citā vietā, drošības sistēmas pamanīja neiespējamu atrašanās vietas maiņu un bloķēja kontu. Tu esi bloķēts, termiņš nokavēts, un IT drošība izmeklē incidentu.",
+          "saferAlternative": "Augstu likmju situācijās pārbaudi tīkla nosaukumu simbolu pa simbolam. Lidostās pat viens nepareizs simbols var nozīmēt uzbrucēja tīklu. Vēl labāk — izmanto mobilos datus augstas svarīguma darījumiem.",
+          "technicalExplanation": "Uzbrucēji pēta mērķa vietas, lai izveidotu pārliecinošus viltus tīklu nosaukumus. Viņi izmanto kognitīvos saīsinājumus — mēs neizlasām katru simbolu, bet atpazīstam rakstus. Iegūtie akreditācijas dati tika nekavējoties pārbaudīti, un uzņēmuma drošības sistēmas pamanīja neiespējamu atrašanās vietas maiņu un bloķēja kontu.",
+          "cascading": [
+            "Viltus tīkls ieguva tavas darba akreditācijas datus",
+            "Uzbrucējs mēģināja piekļūt korporatīvajam kontam",
+            "Drošības sistēma bloķēja kontu, lai to pasargātu",
+            "Tu nokavēji līguma termiņu, būdams bloķēts"
+          ]
+        },
+        "cons_airport_app": {
+          "title": "Uzstādīta aizdomīga lietotne",
+          "whatHappened": "Laika spiediena dēļ tu instalēji lietotni no captive portāla. Pat ja tā būtu legāla lidostas lietotne, šāds lejupielādes veids apiet visas drošības pārbaudes, kas tevi aizsargā oficiālajos lietotņu veikalos.",
+          "whyRisky": "Tieši to uzbrucēji vēlas: nogurušu ceļotāju, kas pieņem ātru lēmumu bez domāšanas. «Ātrāka pieslēgšanās» solījums izmanto tavu steigu. Realitāte: lidostas nekad neprasa lietotni, lai piekļūtu Wi‑Fi. Nekad. Šai lietotnei — ļaunprātīgai vai vienkārši slikti aizsargātai — tagad ir tās atļaujas, kuras piešķīri: piekļuve kontaktiem, atrašanās vietai, kamerai, failiem un taustiņsitieniem. Pat ja tā ir īsta lidostas lietotne, instalēšana caur portālu nozīmē, ka tu ieguvi neapstiprinātu versiju, kuru uzbrucējs varēja modificēt. Pareizā versija būtu lietotņu veikalā ar drošības pārbaudēm.",
+          "saferAlternative": "Nekad neinstalē lietotnes no captive portāliem. Ja lidostai tiešām ir lietotne, ko vēlies, lejupielādē to no oficiālā lietotņu veikala pirms ceļojuma, nevis steidzīgā brīdī pie vārtiem. «Ātrāka pieslēgšanās» solījums nav ierīces kompromitēšanas vērts.",
+          "technicalExplanation": "Lietotnes, kas izplatītas ārpus oficiālajiem veikaliem, apiet drošības skenēšanu un paraksta verifikāciju. Laika spiedienā tu izlaidi atļauju pārskatīšanu — lietotne varēja pieprasīt piekļuvi kontaktiem, atrašanās vietai, kamerai, failiem un pieejamības pakalpojumiem. Šādi uzstādītas ļaunprātīgas lietotnes var ierakstīt taustiņsitienus, veikt ekrānuzņēmumus un saglabāties pēc ierīces restartēšanas."
+        },
+        "cons_sign_premium": {
+          "title": "Saprātīga drošība",
+          "whatHappened": "Tu parakstīji līgumu, pieslēdzoties premium lidostas tīklam. Maksas piekļuve parasti nodrošina labāku klientu izolāciju un dažreiz šifrēšanu, tāpēc tā ir drošāka par bezmaksas atvērto tīklu.",
+          "whyRisky": "Tas bija saprātīgs lēmums laika spiediena apstākļos. Premium lidostas tīkli bieži ir drošāki nekā bezmaksas, un maksas barjera samazina nejaušu uzbrucēju skaitu. Kopā ar HTTPS šifrēšanu parakstīšanas portālā tava darbība bija pietiekami aizsargāta. Atlikušais risks ir tas, ka tu joprojām esi koplietotā infrastruktūrā, taču premium tīklus uzbrucēji izvēlas retāk.",
+          "saferAlternative": "Maksimālai drošībai juridiskiem dokumentiem ideāli būtu mobilie dati vai VPN. Tomēr premium tīkls bija praktiska izvēle, kas sabalansēja drošību un termiņa spiedienu. Tu saprati, ka ne visi tīkli ir vienādi.",
+          "technicalExplanation": "Premium tīklos bieži tiek ieviesta klientu izolācija, kas neļauj citiem lietotājiem redzēt tavu trafiku pat tajā pašā tīklā. Kopā ar HTTPS tas nodrošina saprātīgu aizsardzību. $8 maksājums rada barjeru, kas attur oportunistiskus uzbrucējus, kuri izvēlas bezmaksas tīklus ar vairāk mērķiem."
+        },
+        "cons_sign_risky": {
+          "title": "Augsta riska juridiska darbība",
+          "whatHappened": "Tu parakstīji juridiski saistošu dokumentu atvērtā lidostas tīklā. Parakstīšanas portāls izmantoja HTTPS, bet tu joprojām pakļāvi sevi sarežģītiem uzbrukumiem, kas īpaši mērķē biznesa ceļotājus.",
+          "whyRisky": "Digitālie paraksti ir nopietna lieta — tie rada juridiskas saistības, kas pielīdzināmas rokraksta parakstam. Lūk, kāpēc tas bija riskanti: lidostas tīkli ir korporatīvās spiegošanas grupu mērķis, jo viņi zina, ka ceļotāji paraksta līgumus, piekļūst finanšu sistēmām un apmainās ar sensitīviem dokumentiem. Uzbrucējs var mēģināt pārņemt sesiju, izmantot DNS viltošanu (novirzīt uz viltotu parakstīšanas portālu) vai iegūt akreditācijas datus. Pat ja uzbrukums neizdodas, tu veici augstas vērtības juridisku darījumu naidīgā vidē. Ja ar šo līgumu vēlāk rodas problēmas, tu šaubīsies par tīkla drošību.",
+          "saferAlternative": "Juridiski saistošiem dokumentiem bez izņēmuma izmanto mobilos datus vai VPN. Ja tas nav iespējams, piezvani klientam un lūdz termiņa pagarinājumu. Lielākā daļa klientu novērtē drošības apzinīgus partnerus — tas parāda, ka tu aizsargā arī viņu intereses.",
+          "technicalExplanation": "Lai gan HTTPS nodrošina spēcīgu šifrēšanu, atvērti tīkli joprojām rada riskus: uzbrucēji var redzēt, ar kādiem pakalpojumiem tu sazinies, caur DNS pieprasījumiem, un organizētas grupas var mēģināt pikšķerēt ar viltotiem portāliem vai iejaukties pirms HTTPS tiek izveidots. Augstas vērtības mērķiem, piemēram, biznesa ceļotājiem, lidostas ir zināmas kā medību vietas."
+        },
+        "cons_sign_vpn": {
+          "title": "Droši spiediena apstākļos",
+          "whatHappened": "Neskatoties uz termiņa stresu, tu atradi papildu minūti, lai ieslēgtu VPN pirms parakstīšanas. Tas būtiski samazināja risku no tīkla uzbrukumiem.",
+          "whyRisky": "Tu pieņēmi pareizu lēmumu. Tā papildu minūte var būt starp drošu parakstīšanu un kompromitētu korporatīvo kontu. VPN šifrē visu trafiku pirms tas nonāk lidostas tīklā, bloķējot visus lokālos uzbrukumus. Ikviens, kas vēro lidostas Wi‑Fi, redz tikai šifrētu trafiku uz VPN serveri — viņi nevar redzēt, ka tu paraksti līgumu, nevar pārtvert akreditācijas datus un nevar iejaukties darījumā.",
+          "saferAlternative": "Tas bija labs lēmums. Maksimālai drošībai juridiskos dokumentos mobilie dati joprojām ir zelta standarts, jo tie pilnībā apiet lokālos tīklus. Tomēr VPN publiskā Wi‑Fi ir praktiska un efektīva izvēle, kas nodrošina spēcīgu aizsardzību.",
+          "technicalExplanation": "VPN šifrēšana ietver visu parakstīšanas sesiju šifrētā tunelī. Lidostas tīkls redz tikai šifrētus paketus uz VPN pakalpojumu sniedzēja IP adresi. Sesijas pārņemšana, DNS viltošana un trafika analīze kļūst neiespējama lokālajiem uzbrucējiem."
+        },
+        "cons_sign_delayed": {
+          "title": "Profesionāls spriedums",
+          "whatHappened": "Tu piezvanīji klientam, izskaidroji situāciju un lūdzi termiņa pagarinājumu. Viņi novērtēja tavu godīgumu par drošības apsvērumiem un piekrita pagarināt par 4 stundām, līdz tu nonāc drošā tīklā.",
+          "whyRisky": "Tas bija izcils lēmums, kas parāda nobriedušu profesionālu spriestspēju. Lūgt pagarinājumu spiediena apstākļos prasa drosmi, taču tu atpazini, ka risks abām pusēm nav vērts ietaupīt laiku. Slēptais ieguvums: izskaidrojot drošības iemeslus, tu pat nostiprināji attiecības ar klientu. Viņi tagad zina, ka tu nopietni izturies pret informācijas drošību, kas ir svarīgi, strādājot ar viņu līgumu. Partneris, kas taupa uz savu drošību, var taupīt arī uz klienta drošību.",
+          "saferAlternative": "Tu pieņēmi optimālu lēmumu augsta riska juridiskam darījumam. Drošības bažu izskaidrošana klientam demonstrē profesionalitāti un pasargā abas puses. Četru stundu aizkave ir nieks salīdzinājumā ar iespējamo kaitējumu no kompromitēta paraksta.",
+          "technicalExplanation": "Atliekot darījumu, tu pilnībā novērsi visus tīkla uzbrukumu vektorus. Juridiski saistošiem dokumentiem ar lielu finanšu ietekmi šī «nulles riska» pieeja bieži ir gudrākā izvēle. Uzbrukuma virsma tika samazināta līdz nullei."
         }
       }
     }
@@ -707,6 +1478,32 @@
       "habit": {
         "body": "Ieslēdz 2FA darba kontiem, augsta riska uzdevumiem pēc noklusējuma izvēlies mobilo internetu un izslēdz auto-pievienošanos publiskam Wi-Fi."
       }
+    }
+  },
+  "badges": {
+    "security_aware": {
+      "name": "Drošības apzinīgs",
+      "description": "Tu pabeidzi savu pirmo scenāriju bez nopietniem drošības incidentiem"
+    },
+    "vpn_master": {
+      "name": "VPN meistars",
+      "description": "Tu konsekventi izmantoji VPN publiskajos tīklos"
+    },
+    "network_detective": {
+      "name": "Tīkla detektīvs",
+      "description": "Tu veiksmīgi atpazini lamatu tīklu"
+    },
+    "patient_professional": {
+      "name": "Pacietīgs profesionālis",
+      "description": "Tu atliki sensitīvus uzdevumus līdz drošam tīklam"
+    },
+    "perfect_score": {
+      "name": "Perfekts rezultāts",
+      "description": "Tu pabeidzi scenāriju ar nulles riska punktiem"
+    },
+    "https_hero": {
+      "name": "HTTPS varonis",
+      "description": "Tu vienmēr pārbaudīji vietnes drošību pirms sensitīvu datu ievades"
     }
   }
 }

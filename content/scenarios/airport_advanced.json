@@ -111,7 +111,11 @@
         }
       ],
       "actions": [
-        { "id": "wait_kiosk", "type": "verify_staff", "label": "Wait in line at info kiosk to verify" },
+        {
+          "id": "wait_kiosk",
+          "type": "verify_staff",
+          "label": "Wait in line at info kiosk to verify"
+        },
         { "id": "use_mobile", "type": "proceed", "label": "Use mobile data hotspot instead" }
       ],
       "choices": [
@@ -165,7 +169,11 @@
       },
       "actions": [
         { "id": "sign_mobile", "type": "proceed", "label": "Sign the contract now" },
-        { "id": "call_client_mobile", "type": "postpone", "label": "Call client to request deadline extension anyway" }
+        {
+          "id": "call_client_mobile",
+          "type": "postpone",
+          "label": "Call client to request deadline extension anyway"
+        }
       ],
       "choices": [
         { "actionId": "sign_mobile", "nextSceneId": "airport_consequence_sign_mobile" },
@@ -205,9 +213,17 @@
       "location": "Metropolitan International Airport - Gate B7",
       "actions": [
         { "id": "accept_terms", "type": "proceed", "label": "Accept terms and connect (free)" },
-        { "id": "download_app", "type": "install_profile", "label": "Download app for faster connection" },
+        {
+          "id": "download_app",
+          "type": "install_profile",
+          "label": "Download app for faster connection"
+        },
         { "id": "pay_premium", "type": "proceed", "label": "Pay $8 for premium access" },
-        { "id": "use_mobile_instead", "type": "switch_network", "label": "Switch to mobile data instead" }
+        {
+          "id": "use_mobile_instead",
+          "type": "switch_network",
+          "label": "Switch to mobile data instead"
+        }
       ],
       "choices": [
         { "actionId": "accept_terms", "nextSceneId": "airport_cert_warning_free" },
@@ -399,9 +415,7 @@
           "description": "Official airport network - VERIFIED"
         }
       ],
-      "choices": [
-        { "actionId": "connect_airport_official_v", "nextSceneId": "airport_portal" }
-      ]
+      "choices": [{ "actionId": "connect_airport_official_v", "nextSceneId": "airport_portal" }]
     },
     {
       "id": "airport_consequence_trap",
@@ -421,10 +435,22 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 40,
         "cascadingEffects": [
-          { "order": 1, "effect": "All your traffic passes through attacker's device", "icon": "privacy" },
-          { "order": 2, "effect": "Login credentials for work systems captured", "icon": "credential" },
+          {
+            "order": 1,
+            "effect": "All your traffic passes through attacker's device",
+            "icon": "privacy"
+          },
+          {
+            "order": 2,
+            "effect": "Login credentials for work systems captured",
+            "icon": "credential"
+          },
           { "order": 3, "effect": "Corporate network access is compromised", "icon": "account" },
-          { "order": 4, "effect": "Sensitive business data exposed to competitors", "icon": "identity" }
+          {
+            "order": 4,
+            "effect": "Sensitive business data exposed to competitors",
+            "icon": "identity"
+          }
         ]
       },
       "nextSceneId": "debrief_airport"
@@ -447,10 +473,26 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 35,
         "cascadingEffects": [
-          { "order": 1, "effect": "Fake network captured your work credentials", "icon": "credential" },
-          { "order": 2, "effect": "Attacker attempted to access your corporate account", "icon": "account" },
-          { "order": 3, "effect": "Security system locked your account to protect it", "icon": "identity" },
-          { "order": 4, "effect": "You missed the contract deadline while locked out", "icon": "money" }
+          {
+            "order": 1,
+            "effect": "Fake network captured your work credentials",
+            "icon": "credential"
+          },
+          {
+            "order": 2,
+            "effect": "Attacker attempted to access your corporate account",
+            "icon": "account"
+          },
+          {
+            "order": 3,
+            "effect": "Security system locked your account to protect it",
+            "icon": "identity"
+          },
+          {
+            "order": 4,
+            "effect": "You missed the contract deadline while locked out",
+            "icon": "money"
+          }
         ]
       },
       "nextSceneId": "debrief_airport"
@@ -492,7 +534,11 @@
       "actions": [
         { "id": "sign_premium", "type": "proceed", "label": "Sign the contract now" },
         { "id": "sign_vpn_premium", "type": "use_vpn", "label": "Enable VPN first, then sign" },
-        { "id": "call_client_premium", "type": "postpone", "label": "Call client to request deadline extension" }
+        {
+          "id": "call_client_premium",
+          "type": "postpone",
+          "label": "Call client to request deadline extension"
+        }
       ],
       "choices": [
         { "actionId": "sign_premium", "nextSceneId": "airport_consequence_sign_premium" },

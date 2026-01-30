@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Wifi, Shield, AlertTriangle, BookOpen, ArrowRight, Loader2, BarChart3, LogIn, LogOut, User, GraduationCap } from "lucide-react";
+import {
+  Wifi,
+  Shield,
+  AlertTriangle,
+  BookOpen,
+  ArrowRight,
+  Loader2,
+  BarChart3,
+  LogIn,
+  LogOut,
+  GraduationCap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DifficultySelector } from "@/components/DifficultySelector";
@@ -23,14 +34,18 @@ export default function Home() {
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
 
-  const { data: scenarioList, isLoading: scenariosLoading, error: scenariosError } = useQuery<ScenarioListItem[]>({
+  const {
+    data: scenarioList,
+    isLoading: scenariosLoading,
+    error: scenariosError,
+  } = useQuery<ScenarioListItem[]>({
     queryKey: ["/api/scenarios"],
   });
 
   const createSessionMutation = useMutation({
     mutationFn: async (params: { scenarioId: string; difficulty: DifficultyLevel }) => {
       const response = await apiRequest("POST", "/api/sessions", params);
-      return await response.json() as GameSession;
+      return (await response.json()) as GameSession;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
@@ -43,19 +58,19 @@ export default function Home() {
 
   const handleSelectScenario = async (scenarioId: string) => {
     setViewState("loading_scenario");
-    
+
     try {
       const scenarioResponse = await fetch(`/api/scenarios/${scenarioId}`);
       if (!scenarioResponse.ok) {
         throw new Error("Failed to load scenario");
       }
       const scenario: Scenario = await scenarioResponse.json();
-      
+
       const session = await createSessionMutation.mutateAsync({
         scenarioId: scenario.id,
         difficulty: scenario.difficulty,
       });
-      
+
       setSelectedScenario(scenario);
       setCurrentSession(session);
       setViewState("playing");
@@ -73,7 +88,7 @@ export default function Home() {
 
   const handleRestartGame = async () => {
     if (!currentSession || !selectedScenario) return;
-    
+
     try {
       const session = await createSessionMutation.mutateAsync({
         scenarioId: selectedScenario.id,
@@ -90,7 +105,7 @@ export default function Home() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">{t('home.loadingScenario')}</p>
+          <p className="text-muted-foreground">{t("home.loadingScenario")}</p>
         </div>
       </div>
     );
@@ -122,7 +137,7 @@ export default function Home() {
                 <Wifi className="w-4 h-4 text-primary" />
               </div>
               <span className="font-display font-semibold text-foreground">
-                {t('home.appName')}
+                {t("home.appName")}
               </span>
             </button>
             <div className="flex items-center gap-2">
@@ -131,13 +146,13 @@ export default function Home() {
                   <Link href="/progress">
                     <Button variant="ghost" size="sm" data-testid="button-progress">
                       <BarChart3 className="w-4 h-4 mr-2" />
-                      {t('home.progress')}
+                      {t("home.progress")}
                     </Button>
                   </Link>
                   <Link href="/educator">
                     <Button variant="ghost" size="sm" data-testid="button-educator">
                       <GraduationCap className="w-4 h-4 mr-2" />
-                      {t('home.educator')}
+                      {t("home.educator")}
                     </Button>
                   </Link>
                 </>
@@ -156,38 +171,33 @@ export default function Home() {
           >
             <div>
               <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-                {t('home.chooseScenario')}
+                {t("home.chooseScenario")}
               </h1>
-              <p className="text-muted-foreground">
-                {t('home.chooseScenarioSubtitle')}
-              </p>
+              <p className="text-muted-foreground">{t("home.chooseScenarioSubtitle")}</p>
             </div>
 
             {scenariosLoading && (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <span className="ml-3 text-muted-foreground">{t('home.loadingScenarios')}</span>
+                <span className="ml-3 text-muted-foreground">{t("home.loadingScenarios")}</span>
               </div>
             )}
 
             {scenariosError && (
               <Card className="p-6 text-center">
                 <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-destructive" />
-                <h3 className="font-medium text-foreground mb-2">{t('home.failedToLoadScenarios')}</h3>
-                <p className="text-muted-foreground text-sm mb-4">
-                  {t('errors.loadingFailed')}
-                </p>
+                <h3 className="font-medium text-foreground mb-2">
+                  {t("home.failedToLoadScenarios")}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-4">{t("errors.loadingFailed")}</p>
                 <Button onClick={() => window.location.reload()} variant="outline">
-                  {t('home.refreshPage')}
+                  {t("home.refreshPage")}
                 </Button>
               </Card>
             )}
 
             {scenarioList && (
-              <DifficultySelector
-                scenarios={scenarioList}
-                onSelect={handleSelectScenario}
-              />
+              <DifficultySelector scenarios={scenarioList} onSelect={handleSelectScenario} />
             )}
           </motion.div>
         </main>
@@ -203,9 +213,7 @@ export default function Home() {
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Wifi className="w-4 h-4 text-primary" />
             </div>
-            <span className="font-display font-semibold text-foreground">
-              {t('home.appName')}
-            </span>
+            <span className="font-display font-semibold text-foreground">{t("home.appName")}</span>
           </div>
           <div className="flex items-center gap-2">
             {isAuthenticated && (
@@ -213,13 +221,13 @@ export default function Home() {
                 <Link href="/progress">
                   <Button variant="ghost" size="sm" data-testid="button-progress">
                     <BarChart3 className="w-4 h-4 mr-2" />
-                    {t('home.progress')}
+                    {t("home.progress")}
                   </Button>
                 </Link>
                 <Link href="/educator">
                   <Button variant="ghost" size="sm" data-testid="button-educator">
                     <GraduationCap className="w-4 h-4 mr-2" />
-                    {t('home.educator')}
+                    {t("home.educator")}
                   </Button>
                 </Link>
               </>
@@ -229,15 +237,15 @@ export default function Home() {
             ) : isAuthenticated ? (
               <div className="flex items-center gap-2">
                 {user?.profileImageUrl && (
-                  <img 
-                    src={user.profileImageUrl} 
-                    alt="Profile" 
+                  <img
+                    src={user.profileImageUrl}
+                    alt={t("aria.profileImageAlt")}
                     className="w-7 h-7 rounded-full"
                     data-testid="img-user-profile"
                   />
                 )}
                 <Button variant="ghost" size="sm" asChild data-testid="button-logout">
-                  <a href="/api/logout">
+                  <a href="/api/logout" aria-label={t("home.signOut")}>
                     <LogOut className="w-4 h-4" />
                   </a>
                 </Button>
@@ -246,7 +254,7 @@ export default function Home() {
               <Button variant="ghost" size="sm" asChild data-testid="button-login">
                 <a href="/api/login">
                   <LogIn className="w-4 h-4 mr-2" />
-                  {t('home.signIn')}
+                  {t("home.signIn")}
                 </a>
               </Button>
             )}
@@ -266,11 +274,9 @@ export default function Home() {
             <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
               <Wifi className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="font-display text-4xl font-bold text-foreground">
-              {t('home.title')}
-            </h1>
+            <h1 className="font-display text-4xl font-bold text-foreground">{t("home.title")}</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {t('home.description')}
+              {t("home.description")}
             </p>
           </div>
 
@@ -280,11 +286,9 @@ export default function Home() {
                 <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="font-display font-semibold text-foreground mb-2">
-                {t('home.zeroRisk')}
+                {t("home.zeroRisk")}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                {t('home.zeroRiskDesc')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t("home.zeroRiskDesc")}</p>
             </Card>
 
             <Card className="p-6">
@@ -292,11 +296,9 @@ export default function Home() {
                 <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
               </div>
               <h3 className="font-display font-semibold text-foreground mb-2">
-                {t('home.realisticConsequences')}
+                {t("home.realisticConsequences")}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                {t('home.realisticConsequencesDesc')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t("home.realisticConsequencesDesc")}</p>
             </Card>
 
             <Card className="p-6">
@@ -304,56 +306,48 @@ export default function Home() {
                 <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-display font-semibold text-foreground mb-2">
-                {t('home.educationalDebriefs')}
+                {t("home.educationalDebriefs")}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                {t('home.educationalDebriefsDesc')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t("home.educationalDebriefsDesc")}</p>
             </Card>
           </div>
 
           <div className="text-center space-y-4">
-            <Button 
-              size="lg" 
-              onClick={handleStartChallenge}
-              data-testid="button-start-challenge"
-            >
-              {t('home.startLearning')}
+            <Button size="lg" onClick={handleStartChallenge} data-testid="button-start-challenge">
+              {t("home.startLearning")}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <p className="text-sm text-muted-foreground">
-              {t('home.difficultyLevels')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t("home.difficultyLevels")}</p>
           </div>
 
           <Card className="p-6 bg-muted/50">
             <h3 className="font-display font-semibold text-foreground mb-3">
-              {t('home.whatYouWillLearn')}
+              {t("home.whatYouWillLearn")}
             </h3>
             <ul className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>{t('home.learn1')}</span>
+                <span>{t("home.learn1")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>{t('home.learn2')}</span>
+                <span>{t("home.learn2")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>{t('home.learn3')}</span>
+                <span>{t("home.learn3")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>{t('home.learn4')}</span>
+                <span>{t("home.learn4")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>{t('home.learn5')}</span>
+                <span>{t("home.learn5")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>{t('home.learn6')}</span>
+                <span>{t("home.learn6")}</span>
               </li>
             </ul>
           </Card>
@@ -362,9 +356,7 @@ export default function Home() {
 
       <footer className="border-t border-border mt-12">
         <div className="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          <p>
-            {t('home.footer')}
-          </p>
+          <p>{t("home.footer")}</p>
         </div>
       </footer>
     </div>

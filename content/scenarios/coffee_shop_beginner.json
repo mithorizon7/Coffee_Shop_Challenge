@@ -355,7 +355,11 @@
       "actions": [
         { "id": "proceed_email", "type": "proceed", "label": "Check email now" },
         { "id": "use_vpn_email", "type": "use_vpn", "label": "Enable VPN first, then check email" },
-        { "id": "postpone_email", "type": "postpone", "label": "Wait until you're on a more secure network" }
+        {
+          "id": "postpone_email",
+          "type": "postpone",
+          "label": "Wait until you're on a more secure network"
+        }
       ],
       "choices": [
         { "actionId": "proceed_email", "nextSceneId": "consequence_email_safe" },
@@ -380,7 +384,11 @@
       "actions": [
         { "id": "proceed_email", "type": "proceed", "label": "Check email now" },
         { "id": "use_vpn_email", "type": "use_vpn", "label": "Enable VPN first, then check email" },
-        { "id": "postpone_email", "type": "postpone", "label": "Wait until you're on a more secure network" }
+        {
+          "id": "postpone_email",
+          "type": "postpone",
+          "label": "Wait until you're on a more secure network"
+        }
       ],
       "choices": [
         { "actionId": "proceed_email", "nextSceneId": "consequence_email_unverified" },
@@ -470,7 +478,11 @@
       "actions": [
         { "id": "proceed_banking", "type": "proceed", "label": "Log into bank now" },
         { "id": "use_vpn_banking", "type": "use_vpn", "label": "Enable VPN first" },
-        { "id": "postpone_banking", "type": "postpone", "label": "Handle this later on a secure network" }
+        {
+          "id": "postpone_banking",
+          "type": "postpone",
+          "label": "Handle this later on a secure network"
+        }
       ],
       "choices": [
         { "actionId": "proceed_banking", "nextSceneId": "consequence_banking_risky" },
@@ -494,7 +506,11 @@
       },
       "actions": [
         { "id": "proceed_banking_vpn", "type": "proceed", "label": "Log into bank (VPN active)" },
-        { "id": "postpone_banking", "type": "postpone", "label": "Still prefer to wait for home network" }
+        {
+          "id": "postpone_banking",
+          "type": "postpone",
+          "label": "Still prefer to wait for home network"
+        }
       ],
       "choices": [
         { "actionId": "proceed_banking_vpn", "nextSceneId": "consequence_banking_vpn" },
@@ -519,10 +535,26 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 30,
         "cascadingEffects": [
-          { "order": 1, "effect": "Your email credentials were captured by the fake login page", "icon": "credential" },
-          { "order": 2, "effect": "Attacker uses your email to reset passwords on other accounts", "icon": "account" },
-          { "order": 3, "effect": "Your linked bank and shopping accounts are now accessible", "icon": "money" },
-          { "order": 4, "effect": "Personal data from these accounts enables identity theft", "icon": "identity" }
+          {
+            "order": 1,
+            "effect": "Your email credentials were captured by the fake login page",
+            "icon": "credential"
+          },
+          {
+            "order": 2,
+            "effect": "Attacker uses your email to reset passwords on other accounts",
+            "icon": "account"
+          },
+          {
+            "order": 3,
+            "effect": "Your linked bank and shopping accounts are now accessible",
+            "icon": "money"
+          },
+          {
+            "order": 4,
+            "effect": "Personal data from these accounts enables identity theft",
+            "icon": "identity"
+          }
         ]
       },
       "nextSceneId": "debrief_coffee_shop"
@@ -645,9 +677,21 @@
         "safetyPointsChange": 0,
         "riskPointsChange": 40,
         "cascadingEffects": [
-          { "order": 1, "effect": "Your banking session may be intercepted on the public network", "icon": "credential" },
-          { "order": 2, "effect": "Attacker captures your login credentials or session token", "icon": "account" },
-          { "order": 3, "effect": "Unauthorized transfers drain your account before you notice", "icon": "money" }
+          {
+            "order": 1,
+            "effect": "Your banking session may be intercepted on the public network",
+            "icon": "credential"
+          },
+          {
+            "order": 2,
+            "effect": "Attacker captures your login credentials or session token",
+            "icon": "account"
+          },
+          {
+            "order": 3,
+            "effect": "Unauthorized transfers drain your account before you notice",
+            "icon": "money"
+          }
         ]
       },
       "nextSceneId": "debrief_coffee_shop"

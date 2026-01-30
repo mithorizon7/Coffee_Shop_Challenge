@@ -1,7 +1,7 @@
 {
   "captivePortal": {
-    "whatIs": "What is a Captive Portal?",
-    "explanation": "A captive portal is the login page that appears when you connect to public Wi-Fi. Hotels, airports, and coffee shops use them to verify guests, accept terms of service, or collect payment. While legitimate portals are common, attackers can create fake ones to steal your credentials. Be cautious: never install apps or enter sensitive information beyond what's absolutely required.",
+    "whatIs": "Captive portals",
+    "explanation": "A captive portal is a web page you must complete before a public Wi-Fi network grants internet access. Venues use it to confirm guests, collect payment, or require acceptance of terms. Attackers sometimes clone these pages to capture credentials or push malicious installs. Enter only the minimum required information, and never install apps, profiles, or certificates from a portal.",
     "imageAlt": "Example of a hotel Wi-Fi captive portal login page",
     "imageCaption": "Example: A typical hotel captive portal asking you to agree to terms before connecting"
   },
@@ -23,6 +23,9 @@
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
+    "previous": "Previous",
+    "next": "Next",
+    "more": "More",
     "switchToLight": "Switch to light mode",
     "switchToDark": "Switch to dark mode"
   },
@@ -73,7 +76,7 @@
   "scenario": {
     "difficulty": {
       "beginner": "Beginner",
-      "intermediate": "Intermediate", 
+      "intermediate": "Intermediate",
       "advanced": "Advanced"
     },
     "difficultyDesc": {
@@ -101,7 +104,108 @@
     "startScenario": "Start Scenario",
     "tryAgain": "Try Again",
     "selectNewScenario": "Select New Scenario",
-    "playAgain": "Play Again"
+    "playAgain": "Play Again",
+    "startScenarioWithTime": "Start scenario: {title}. Estimated time: {time}."
+  },
+  "time": {
+    "minutes": "{count, plural, one {# minute} other {# minutes}}"
+  },
+  "timer": {
+    "penaltyTitle": "Time pressure",
+    "penaltyBody": "You ran out of time, adding {points} risk points."
+  },
+  "pagination": {
+    "ariaLabel": "Pagination",
+    "goToPrevious": "Go to previous page",
+    "goToNext": "Go to next page",
+    "morePages": "More pages"
+  },
+  "breadcrumb": {
+    "ariaLabel": "Breadcrumb",
+    "more": "More"
+  },
+  "carousel": {
+    "previous": "Previous slide",
+    "next": "Next slide"
+  },
+  "sidebar": {
+    "title": "Sidebar",
+    "description": "Displays the mobile sidebar."
+  },
+  "progress": {
+    "loading": "Loading your progress...",
+    "signInTitle": "Sign In to Track Progress",
+    "signInBody": "Create an account to save your game sessions and track your improvement over time.",
+    "signInCta": "Sign In",
+    "backToHome": "Back to Home",
+    "backToGame": "Back to Game",
+    "title": "Your Progress",
+    "subtitle": "Track your Wi-Fi security learning journey",
+    "noSessionsTitle": "No Sessions Yet",
+    "noSessionsBody": "Complete your first challenge to start tracking your progress.",
+    "startFirstChallenge": "Start Your First Challenge",
+    "metrics": {
+      "sessions": "Sessions",
+      "accuracy": "Accuracy",
+      "badges": "Badges",
+      "trend": "Trend"
+    },
+    "trend": {
+      "improving": "Your security judgment is improving",
+      "declining": "Consider reviewing the basics",
+      "stable": "Keep practicing to see trends"
+    },
+    "trendLabel": {
+      "improving": "Improving",
+      "declining": "Declining",
+      "stable": "Stable"
+    },
+    "learningTrendTitle": "Learning Trend",
+    "correctDecisionsLabel": "Correct Decisions",
+    "badgesEarnedTitle": "Badges Earned",
+    "recentSessionsTitle": "Recent Sessions",
+    "sessionMeta": "{date} • {correct}/{total} correct"
+  },
+  "educator": {
+    "loading": "Loading...",
+    "loadingAnalytics": "Loading analytics...",
+    "accessRequiredTitle": "Educator Access Required",
+    "accessRequiredBody": "Sign in to access the educator dashboard and view learner analytics.",
+    "signInCta": "Sign In",
+    "backToHome": "Back to Home",
+    "accessRestrictedTitle": "Access Restricted",
+    "accessRestrictedBody": "The educator dashboard is only available to users with educator privileges. Contact your administrator if you believe you should have access.",
+    "backToGame": "Back to Game",
+    "badge": "Educator",
+    "title": "Educator Dashboard",
+    "subtitle": "Monitor learner performance and identify common mistake patterns",
+    "noDataTitle": "No Data Yet",
+    "noDataBody": "Learners need to complete game sessions before analytics appear here.",
+    "goToGame": "Go to Game",
+    "metrics": {
+      "learners": "Learners",
+      "sessions": "Sessions",
+      "accuracy": "Accuracy",
+      "avgSafety": "Avg Safety",
+      "avgRisk": "Avg Risk"
+    },
+    "scenarioPerformanceTitle": "Scenario Performance",
+    "scenarioPerformanceEmpty": "No scenario data available yet.",
+    "plays": "{count, plural, one {# play} other {# plays}}",
+    "commonMistakesTitle": "Common Mistake Areas",
+    "commonMistakesEmpty": "No significant mistake patterns detected yet.",
+    "badDecisionsLabel": "{rate}% bad decisions",
+    "riskPointsLabel": "{points} risk pts",
+    "recentLearnerActivityTitle": "Recent Learner Activity",
+    "recentLearnerActivityEmpty": "No learner activity yet.",
+    "table": {
+      "learner": "Learner",
+      "sessions": "Sessions",
+      "accuracy": "Accuracy",
+      "lastActive": "Last Active"
+    },
+    "anonymous": "Anonymous",
+    "never": "Never"
   },
   "network": {
     "network": "Network",
@@ -124,6 +228,7 @@
     "connect": "Connect",
     "disconnect": "Disconnect",
     "ssid": "Network name (SSID)",
+    "cardAriaLabel": "Network {ssid}, {security}, signal strength {strength} of 5{details}",
     "publicNetwork": "Public network",
     "privateNetwork": "Private network",
     "guestNetwork": "Guest network",
@@ -154,7 +259,7 @@
     "exit": "Exit",
     "returnToMenu": "Return to Menu",
     "sceneNotFound": "Scene not found",
-    "readyToStart": "Ready to start the scenario?",
+    "readyToStart": "Scenario ready. Start when you're ready.",
     "findNetworks": "Find Networks",
     "portalOptions": "Portal Options",
     "sensitivity": "{level} Sensitivity",
@@ -172,13 +277,14 @@
     "moreSteps": "+{count} more",
     "chooseNetwork": "Choose a Network",
     "availableNetworks": "Available Networks",
-    "chooseTask": "What would you like to do?",
+    "chooseTask": "Choose a task",
     "selectTask": "Select a task",
     "taskSensitivity": "Sensitivity: {level}",
     "sensitivityLevels": {
       "low": "Low",
       "medium": "Medium",
-      "high": "High"
+      "high": "High",
+      "critical": "Critical"
     }
   },
   "actions": {
@@ -224,13 +330,13 @@
       "step3Title": "Enable Your VPN",
       "step3Desc": "Before doing anything sensitive, turn on your VPN to encrypt all traffic.",
       "step4Title": "Assess the Task",
-      "step4Desc": "Banking or passwords? Wait for a secure network. Just browsing? Proceed with caution.",
+      "step4Desc": "If the task involves banking, passwords, or account changes, wait for a secure network. For low-risk browsing, proceed with caution.",
       "step5Title": "Never Install",
       "step5Desc": "Decline any prompts to install apps, profiles, or certificates from portals."
     },
     "rogueHotspot": {
-      "title": "What is a Rogue Hotspot?",
-      "description": "A rogue hotspot (also called an 'evil twin') is a fake Wi-Fi network set up by an attacker to look like a legitimate one. When you connect, they can see your traffic, steal passwords, or redirect you to fake websites.",
+      "title": "Rogue hotspots",
+      "description": "A rogue hotspot (an \"evil twin\") is a fake Wi-Fi network that imitates a real one. When you connect, the operator can observe traffic, capture logins, or redirect you to spoofed sites.",
       "howToSpotTitle": "How to spot one:",
       "spot1": "Names that look almost right but have small differences (hyphens, underscores, extra words)",
       "spot2": "Networks claiming to be 'FREE' versions of business networks",
@@ -269,13 +375,13 @@
     "step3Title": "Enable Your VPN",
     "step3Desc": "Before doing anything sensitive, turn on your VPN to encrypt all traffic.",
     "step4Title": "Assess the Task",
-    "step4Desc": "Banking or passwords? Wait for a secure network. Just browsing? Proceed with caution.",
+    "step4Desc": "If the task involves banking, passwords, or account changes, wait for a secure network. For low-risk browsing, proceed with caution.",
     "step5Title": "Never Install",
     "step5Desc": "Decline any prompts to install apps, profiles, or certificates from portals."
   },
   "rogueHotspot": {
-    "title": "What is a Rogue Hotspot?",
-    "description": "A rogue hotspot (also called an \"evil twin\") is a fake Wi-Fi network set up by an attacker to look like a legitimate one. When you connect, they can see your traffic, steal passwords, or redirect you to fake websites.",
+    "title": "Rogue hotspots",
+    "description": "A rogue hotspot (an \"evil twin\") is a fake Wi-Fi network that imitates a real one. When you connect, the operator can observe traffic, capture logins, or redirect you to spoofed sites.",
     "howToSpot": "How to spot one:",
     "spot1": "Names that look almost right but have small differences (hyphens, underscores, extra words)",
     "spot2": "Networks claiming to be \"FREE\" versions of business networks",
@@ -320,7 +426,11 @@
     "scenarioNotFound": "Scenario not found",
     "loadingFailed": "Failed to load. Please try again.",
     "networkError": "Network error. Please check your connection.",
-    "sessionExpired": "Session expired. Starting a new game."
+    "sessionExpired": "Session expired. Starting a new game.",
+    "unauthorizedTitle": "Unauthorized",
+    "unauthorizedBody": "You are logged out. Logging in again...",
+    "notFoundTitle": "404 Page Not Found",
+    "notFoundBody": "The page you are looking for doesn't exist."
   },
   "aria": {
     "languageSelector": "Select language",
@@ -332,57 +442,145 @@
     "networkCard": "Network option",
     "scoreTracker": "Current score",
     "timer": "Time remaining",
-    "vpnToggle": "Toggle VPN protection"
+    "vpnToggle": "Toggle VPN protection",
+    "profileImageAlt": "User profile image",
+    "timerWithValue": "Time remaining: {time}"
   },
   "scenarios": {
     "coffee_shop_beginner": {
       "title": "Morning at The Daily Grind",
-      "description": "You've stopped at your favorite coffee shop before an important meeting. You need to check a few things online, but which network should you trust?",
+      "description": "You stop at your usual coffee shop before an important meeting. You need to check a few items online and decide which network is safe enough to use.",
       "location": "The Daily Grind Coffee Shop",
       "scenes": {
         "arrival_1": {
           "title": "Welcome to The Daily Grind",
-          "description": "You settle into a comfortable corner seat with your latte. Your laptop is open and you see several Wi-Fi networks available. You have 30 minutes before your meeting."
+          "description": "You settle into a comfortable corner seat with your latte. Your laptop is open and you see several Wi-Fi networks available. You have 30 minutes before your meeting.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "network_select_1": {
           "title": "Choose a Network",
-          "description": "Several networks appear on your screen. The coffee shop has a sign on the counter, but you can't quite read it from here."
+          "description": "Several networks appear on your screen. The coffee shop has a sign on the counter, but you can't quite read it from here.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "verified_network": {
           "title": "Staff Confirmation",
-          "description": "The barista confirms: 'Our official network is DailyGrind_Guest. The password is on your receipt!' They also mention they've seen some fake networks pop up recently."
+          "description": "The barista confirms: 'Our official network is DailyGrind_Guest. The password is on your receipt!' They also mention they've seen some fake networks pop up recently.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "task_email_verified": {
           "title": "Check Your Email",
-          "description": "You're connected to the verified official network. Now you need to check your email for the meeting agenda."
+          "description": "You're connected to the verified official network. Now you need to check your email for the meeting agenda.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "task_email": {
           "title": "Check Your Email",
-          "description": "You're connected. Now you need to check your email for the meeting agenda."
+          "description": "You're connected. Now you need to check your email for the meeting agenda.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "task_banking": {
           "title": "Quick Banking Task",
-          "description": "While checking email, you remember you need to transfer money to cover a bill due today."
+          "description": "While checking email, you remember you need to transfer money to cover a bill due today.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "task_banking_vpn": {
           "title": "Quick Banking Task",
-          "description": "Your VPN is active. You remember you need to transfer money to cover a bill due today."
+          "description": "Your VPN is active. You remember you need to transfer money to cover a bill due today.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "autojoin_prompt": {
           "title": "Network Settings",
-          "description": "Before you start browsing, consider a quick safety setting."
+          "description": "Before you start browsing, consider a quick safety setting.",
+          "location": "The Daily Grind Coffee Shop"
         },
         "consequence_trap": {
           "title": "Network Trap Detected",
-          "description": "You connected to what appeared to be the coffee shop's network..."
+          "description": "You connected to what appeared to be the coffee shop's network...",
+          "location": "The Daily Grind Coffee Shop"
         },
         "consequence_open": {
           "title": "Risky Connection",
-          "description": "You connected to an open network with a generic name..."
+          "description": "You connected to an open network with a generic name...",
+          "location": "The Daily Grind Coffee Shop"
         },
         "consequence_neighbor": {
           "title": "Wrong Network",
-          "description": "You connected to a neighboring business's network..."
+          "description": "You connected to a neighboring business's network...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "briefing_coffee_shop": {
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "autojoin_prompt_verified": {
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_autojoin_safe": {
+          "description": "You updated your network settings...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_autojoin_risky": {
+          "description": "You kept the default setting...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_autojoin_safe_verified": {
+          "description": "You updated your network settings...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_autojoin_risky_verified": {
+          "description": "You kept the default setting...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_email_unverified": {
+          "title": "Email Checked - But Did You Verify?",
+          "description": "You checked your email on the network...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_email_vpn_unverified": {
+          "title": "VPN Protected - Good Instinct",
+          "description": "You enabled your VPN before checking email...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_email_postponed_unverified": {
+          "title": "Cautious Approach",
+          "description": "You decided to wait on checking email...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_email_safe": {
+          "title": "Email Checked",
+          "description": "You checked your email on the verified network...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_email_vpn": {
+          "title": "VPN Protected",
+          "description": "You enabled your VPN before checking email...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_email_postponed": {
+          "title": "Task Postponed",
+          "description": "You decided to wait on checking email...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_banking_risky": {
+          "title": "Banking on Public Wi-Fi",
+          "description": "You accessed your bank account on the public network...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_banking_vpn": {
+          "title": "Protected Banking",
+          "description": "You accessed your bank with VPN protection...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "consequence_banking_smart": {
+          "title": "Banking Postponed",
+          "description": "You decided to wait on banking...",
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "debrief_coffee_shop": {
+          "location": "The Daily Grind Coffee Shop"
+        },
+        "completion": {
+          "title": "Scenario Complete",
+          "description": "You've completed the Coffee Shop Challenge! Let's review how you did.",
+          "location": "The Daily Grind Coffee Shop"
         }
       },
       "networks": {
@@ -478,7 +676,8 @@
           "title": "Connected to Wrong Network",
           "whatHappened": "You connected to 'Bookstore_Next_Door' - a legitimate network, but not the one for this coffee shop. While probably not malicious, this wasn't the intended network.",
           "whyRisky": "Connecting to unknown networks, even if they appear legitimate, means trusting an unknown administrator. You have no control over their security practices or logging policies.",
-          "saferAlternative": "Always verify you're connecting to the correct network for your location. Ask staff for the official network name rather than guessing."
+          "saferAlternative": "Always verify you're connecting to the correct network for your location. Ask staff for the official network name rather than guessing.",
+          "technicalExplanation": "Network administrators can log MAC addresses, connection times, websites visited (via DNS queries), and data transferred. On networks without proper security, they could potentially inspect unencrypted traffic or be vulnerable to the same attacks as any other network."
         },
         "cons_autojoin_safe": {
           "title": "Auto-Join Disabled",
@@ -500,17 +699,211 @@
           "whyRisky": "Here's the problem: You got lucky, but you didn't know you were safe. 'DailyGrind_Guest' looked right, but attackers specifically create convincing names. Without verification, you had no way to distinguish the real network from a well-crafted fake. The 30 seconds it takes to ask staff could prevent hours of dealing with compromised accounts. Building the habit of verification is more important than any single safe connection.",
           "saferAlternative": "Before connecting to any public network, ask staff for the exact network name. It only takes a moment, and it turns guessing into a more informed choice. This habit greatly reduces the risk of evil-twin networks, but you should still stay alert for look-alike names and unexpected login pages.",
           "technicalExplanation": "Even correctly named networks can be spoofed. Attackers can copy the SSID and use stronger signals to lure devices. Staff verification is the best practical first step, but also check for small spelling differences and be cautious of unexpected captive portals."
+        },
+        "cons_email_vpn_unverified": {
+          "title": "Smart Protection Layer",
+          "whatHappened": "You enabled your VPN before checking email. This was a smart move - your VPN encrypts all traffic, making it unreadable to anyone on the local network, even if you're on a compromised network.",
+          "whyRisky": "This is good security practice! The VPN protects you even if the network isn't what it claims to be. However, there's one small gap: you didn't verify the network with staff. While your VPN protects your data, verifying the network is still a good habit. Why? Because VPNs can disconnect unexpectedly, and some apps might leak data before the VPN connects.",
+          "saferAlternative": "Combining verification AND VPN gives you defense in depth - multiple layers of protection. Verify first so you know the network is legitimate, then add VPN for encrypted privacy. That way, if either protection fails, the other still works.",
+          "technicalExplanation": "VPNs create an encrypted tunnel that protects your data from local network observers. However, the initial connection to the VPN server happens over the local network. A sophisticated attacker could potentially interfere with this handshake, though this is rare. Verification + VPN eliminates this edge case."
+        },
+        "cons_email_postponed_unverified": {
+          "title": "Playing It Safe",
+          "whatHappened": "You decided not to check email on this network. Given that you didn't verify the network with staff, this caution is well-placed.",
+          "whyRisky": "Your instinct to be careful is valuable! You recognized uncertainty and chose safety over convenience. For routine email, this level of caution might not always be necessary on verified networks - but since you connected without verification, postponing was a reasonable choice.",
+          "saferAlternative": "For future reference: if you had verified the network with staff first, checking email would be reasonably safe (especially with a VPN). The verification step is what transforms an unknown risk into a known quantity.",
+          "technicalExplanation": "Postponing eliminates all network-based risk. You can't have data intercepted on a network you don't use. The trade-off is convenience, but when you're uncertain about network authenticity, this is the safest approach."
+        },
+        "cons_email_safe": {
+          "title": "Reasonably Safe",
+          "whatHappened": "You checked your email on the verified official network. Since your email provider uses HTTPS, your login credentials and email content were encrypted between your browser and the email server.",
+          "whyRisky": "This was a reasonable choice. The WPA2 encryption protects your data from other coffee shop customers, and HTTPS protects it from the coffee shop's network itself. The remaining small risk: the network operator (coffee shop) can see you're connecting to gmail.com or outlook.com - they just can't see what you're reading or sending. This metadata alone usually isn't sensitive for personal email.",
+          "saferAlternative": "For extra security, especially with work email containing sensitive business information, a VPN hides even the metadata about which services you're using. This matters more for business contexts where competitors might want to know who you're communicating with.",
+          "technicalExplanation": "HTTPS encrypts the content of your email session, but DNS queries (which reveal the websites you visit) travel unencrypted unless you use DNS-over-HTTPS or a VPN. Network operators can see connection patterns even when they can't read the content."
+        },
+        "cons_email_vpn": {
+          "title": "Excellent Security Practice",
+          "whatHappened": "You enabled your VPN before accessing your email. All your traffic is now encrypted and routed through a secure tunnel, invisible to anyone on the coffee shop network - including the coffee shop itself.",
+          "whyRisky": "This is excellent practice, especially for work email. The VPN means nobody on the local network can see what services you're using or who you're communicating with. The only entity that can see your traffic is your VPN provider, so choose one with a strong privacy policy and no-logs commitment.",
+          "saferAlternative": "You made the optimal choice for a public network. Just ensure your VPN is from a reputable provider - free VPNs often monetize by selling your browsing data, which defeats the purpose entirely.",
+          "technicalExplanation": "A VPN creates an encrypted tunnel from your device to the VPN server. The coffee shop's network only sees encrypted gibberish going to one IP address. The VPN server then forwards your requests to the internet, so websites see the VPN's IP instead of yours."
+        },
+        "cons_email_postponed": {
+          "title": "Cautious Approach",
+          "whatHappened": "You decided to postpone checking your email until you're on a more secure network. This eliminates any network-based risk entirely.",
+          "whyRisky": "For just checking email on a verified, secured network, this might be more caution than necessary. Modern email services use strong HTTPS encryption. However, if your email contains truly sensitive information, or if you're unsure about the network, waiting is always the safest option.",
+          "saferAlternative": "For routine email checking on a verified WPA2 network with HTTPS, you could safely proceed - especially with a VPN. But your instinct to be careful is valuable. The trade-off is convenience versus peace of mind.",
+          "technicalExplanation": "Postponing eliminates all network-based risks. This is the 'zero trust' approach - assume any network outside your control could be compromised. For high-stakes situations, this mindset serves you well."
+        },
+        "cons_banking_risky": {
+          "title": "High-Risk Banking",
+          "whatHappened": "You logged into your bank on a public Wi-Fi network without VPN protection. While your bank uses HTTPS to encrypt your session, you've exposed yourself to several sophisticated attack vectors that specifically target financial transactions.",
+          "whyRisky": "Banking is the highest-stakes activity you can do online. Here's why public Wi-Fi is dangerous for it: An attacker on the same network could perform a 'man-in-the-middle' attack, positioning themselves between you and the bank. Modern browsers usually catch fake certificates, but misconfigured devices or outdated software might not. Attackers can also use DNS spoofing to redirect you to a fake bank website that looks identical to the real one. Even if the attack fails, your banking session was exposed to a hostile environment - and if your device has any security weaknesses, this is when they get exploited.",
+          "saferAlternative": "Never access banking on public Wi-Fi without a VPN. Better yet, use your phone's mobile data for banking - cellular networks are much harder to attack than Wi-Fi. If it's truly urgent, the extra minute to enable a VPN is worth it for your financial security.",
+          "technicalExplanation": "HTTPS provides strong protection, and major banks use additional measures like HSTS to prevent downgrade attacks. However, on unverified networks, attackers could attempt DNS spoofing (redirecting you to fake banking sites) or set up convincing phishing portals. Your banking credentials, if captured on a fake site, could allow unauthorized access. VPNs prevent local network attacks by encrypting all traffic before it reaches the local network.",
+          "cascading": [
+            "Your banking session may be intercepted on the public network",
+            "Attacker captures your login credentials or session token",
+            "Unauthorized transfers drain your account before you notice"
+          ]
+        },
+        "cons_banking_vpn": {
+          "title": "Smart Security Choice",
+          "whatHappened": "You used a VPN before accessing your bank account. This adds a crucial layer of encryption that prevents anyone on the coffee shop network from seeing or interfering with your banking session.",
+          "whyRisky": "This was an excellent decision. The VPN creates an encrypted tunnel that blocks all local network attacks - no one at the coffee shop can perform man-in-the-middle attacks, DNS spoofing, or traffic analysis. The remaining risk is minimal: you're trusting your VPN provider (choose wisely) and the bank's own security (which is typically very strong).",
+          "saferAlternative": "For the most sensitive transactions like large transfers or changing account settings, mobile data is still the gold standard. But VPN on public Wi-Fi is a solid, practical choice that provides strong protection for everyday banking.",
+          "technicalExplanation": "The VPN encrypts all traffic before it leaves your device, making local network attacks impossible. Your banking session travels through the encrypted tunnel to the VPN server, then to your bank. Local attackers see only encrypted gibberish going to a single VPN IP address."
+        },
+        "cons_banking_smart": {
+          "title": "Excellent Judgment",
+          "whatHappened": "You recognized that banking is a high-stakes activity and chose to postpone it until you're on a trusted network. This is exactly the right instinct for protecting your finances.",
+          "whyRisky": "There is no risk because you didn't expose your banking credentials to a public network at all. This 'security by avoidance' approach is often the wisest choice for critical operations. The minor inconvenience of waiting is nothing compared to the potential consequences of a compromised bank account.",
+          "saferAlternative": "You made the best possible decision. Banking should be reserved for networks you control - your home Wi-Fi, your workplace network, or your phone's mobile data connection. The $200 bill can wait until you're in a secure environment.",
+          "technicalExplanation": "By postponing high-sensitivity tasks, you eliminate the attack surface entirely. Attackers can't steal what you never exposed. This approach recognizes that convenience is not worth the risk when it comes to your financial security."
         }
       }
     },
     "hotel_intermediate": {
-      "title": "Business Trip at The Grand Hotel",
-      "description": "You've arrived at a hotel for a business trip and need to get online. Multiple networks are available, and the front desk is busy. How will you connect safely?",
-      "location": "The Grand Hotel Lobby",
+      "title": "Business Trip at Grand Metropolitan Hotel",
+      "description": "You're at a hotel on a business trip and need to get online. Multiple networks are available, and the front desk is busy. You must choose a connection that keeps work data protected.",
+      "location": "Grand Metropolitan Hotel",
       "scenes": {
         "hotel_update_prompt": {
           "title": "Device Updates",
-          "description": "A system update is available before tomorrow's presentation."
+          "description": "A system update is available before tomorrow's presentation.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_arrival": {
+          "title": "Checking In",
+          "description": "You've just arrived at the Grand Metropolitan Hotel after a long flight. Tomorrow's presentation is crucial, and you need to review some documents and respond to emails tonight. The room has a desk and you're ready to work.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "briefing_hotel": {
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_network_select": {
+          "title": "Hotel Wi-Fi Options",
+          "description": "Your laptop shows several networks. The hotel information card on the desk mentions 'complimentary Wi-Fi' but the network name is partially obscured by a coffee stain.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_portal": {
+          "title": "Captive Portal",
+          "description": "A login page appears. It asks for your room number and last name to authenticate. There's also a checkbox to 'Install our HotelConnect app for the best experience.'",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_verified": {
+          "title": "Verified Information",
+          "description": "The front desk confirms: 'Our free Wi-Fi is GrandMetro_Guest - you'll need your room number and last name to log in. We also have GrandMetro_Premium for $15/night with faster speeds and better security.'",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_premium_login": {
+          "title": "Premium Network",
+          "description": "The premium network requires a password. The hotel information card shows it costs $15/night but promises 'enterprise-grade security.'",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_premium_connected": {
+          "title": "Premium Connection",
+          "description": "You're connected to the premium network...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_trap": {
+          "title": "Fake Hotel Network",
+          "description": "You connected to what you thought was the hotel's network...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_app": {
+          "title": "App Installation Request",
+          "description": "You installed the app the portal suggested...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_task_email": {
+          "title": "Work Email",
+          "description": "You're connected to the hotel network. You need to check emails from your team about tomorrow's presentation.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_email_open": {
+          "title": "Email on Open Network",
+          "description": "You checked your work email on the hotel's open network...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_email_vpn": {
+          "title": "VPN-Protected Email",
+          "description": "You enabled your VPN before checking work email...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_task_email_vpn": {
+          "title": "VPN Active",
+          "description": "Your VPN is running. You can now check your emails securely.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_email_vpn_portal": {
+          "title": "Secured from the Start",
+          "description": "You checked email with VPN protection you enabled at login...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_task_presentation": {
+          "title": "Presentation Files",
+          "description": "You need to download an updated presentation file that your colleague shared via a cloud link.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_task_presentation_vpn": {
+          "title": "Presentation Files",
+          "description": "Your VPN is active. You need to download an updated presentation file.",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_download_risky": {
+          "title": "Unprotected Download",
+          "description": "You downloaded the file on the open network...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_update_now": {
+          "description": "You installed the updates...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_update_later": {
+          "description": "You postponed the updates...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_download_vpn": {
+          "title": "Protected Download",
+          "description": "You downloaded the file with VPN protection...",
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_consequence_download_postponed": {
+          "title": "Using Business Center",
+          "description": "You decided to use the hotel's business center...",
+          "location": "Grand Metropolitan Hotel - Business Center"
+        },
+        "debrief_hotel": {
+          "location": "Grand Metropolitan Hotel - Room 412"
+        },
+        "hotel_completion": {
+          "title": "Scenario Complete",
+          "description": "You've completed the Hotel Business Trip scenario! Let's see how well you navigated the hotel's network challenges.",
+          "location": "Grand Metropolitan Hotel"
+        }
+      },
+      "networks": {
+        "hotel_official": {
+          "description": "Open network - typical for hotels with portal login"
+        },
+        "hotel_premium": {
+          "description": "Secured premium network - may require purchase"
+        },
+        "hotel_fake": {
+          "description": "Uses hyphen instead of underscore"
+        },
+        "hotel_conference": {
+          "description": "Conference center network - may not be for guests"
+        },
+        "personal_hotspot": {
+          "description": "Someone's personal hotspot nearby"
+        },
+        "hotel_official_v": {
+          "description": "Official free network - VERIFIED"
+        },
+        "hotel_premium_v": {
+          "description": "Official premium network - VERIFIED - $15/night"
         }
       },
       "actions": {
@@ -521,6 +914,48 @@
         "update_later": {
           "label": "Remind me later",
           "description": "Postpone updates for now"
+        },
+        "call_desk": {
+          "label": "Call front desk to verify network"
+        },
+        "login_only": {
+          "label": "Enter room info and login"
+        },
+        "login_and_install": {
+          "label": "Login AND install the app"
+        },
+        "use_vpn_portal": {
+          "label": "Login, then immediately enable VPN"
+        },
+        "switch_network": {
+          "label": "Go back and try a different network"
+        },
+        "pay_premium": {
+          "label": "Pay $15 for premium (call front desk)"
+        },
+        "use_free": {
+          "label": "Use the free network instead"
+        },
+        "email_proceed": {
+          "label": "Check email now"
+        },
+        "email_vpn": {
+          "label": "Enable VPN, then check"
+        },
+        "email_proceed_vpn": {
+          "label": "Check email (VPN protected)"
+        },
+        "download_now": {
+          "label": "Download the file"
+        },
+        "download_vpn": {
+          "label": "Enable VPN first"
+        },
+        "download_postpone": {
+          "label": "Use hotel business center instead"
+        },
+        "download_vpn_active": {
+          "label": "Download (VPN protected)"
         }
       },
       "tasks": {
@@ -528,6 +963,27 @@
           "title": "Install Security Updates",
           "description": "Updates often include fixes for security flaws.",
           "riskHint": "Delaying updates can leave known vulnerabilities unpatched."
+        },
+        "premium_decision": {
+          "title": "Premium Network Decision",
+          "description": "Decide whether to pay for the premium network or use the free option."
+        },
+        "hotel_email": {
+          "title": "Check Team Updates",
+          "description": "Review emails from your team with updates for tomorrow's presentation."
+        },
+        "hotel_email_vpn": {
+          "title": "Check Team Updates",
+          "description": "Review emails from your team with updates for tomorrow's presentation."
+        },
+        "download_pres": {
+          "title": "Download Updated Slides",
+          "description": "Download the updated presentation from the cloud sharing link in your email.",
+          "riskHint": "Downloaded files could be intercepted or modified on insecure networks."
+        },
+        "download_pres_vpn": {
+          "title": "Download Updated Slides",
+          "description": "Download the updated presentation from the cloud sharing link."
         }
       },
       "consequences": {
@@ -551,6 +1007,74 @@
           "whyRisky": "Postponing updates can leave known security holes open, which is a bigger risk on shared networks.",
           "saferAlternative": "Update before sensitive work whenever you can, especially while traveling.",
           "technicalExplanation": "Attackers often target publicly known vulnerabilities that are already fixed by patches."
+        },
+        "cons_hotel_trap": {
+          "title": "Evil Twin Attack",
+          "whatHappened": "You connected to 'GrandMetro-Guest' - notice the hyphen instead of the underscore? This subtle difference means you joined a fake network, probably set up by someone in a nearby room or even in the parking lot. A fake login portal captured your room number, name, and any passwords you entered.",
+          "whyRisky": "Hotels are prime hunting grounds for attackers because business travelers often carry valuable corporate data and are tired from travel, making them less vigilant. The attacker deliberately chose a name almost identical to the real network - 'GrandMetro-Guest' versus 'GrandMetro_Guest' - knowing that exhausted travelers glance at network names rather than reading them carefully. Once connected, everything you do online passes through the attacker's equipment. They can read unencrypted traffic, capture login credentials from fake portals, and even modify web pages you're viewing.",
+          "saferAlternative": "Always verify the exact network name with hotel staff - don't assume. Look for subtle differences in capitalization, punctuation, or spelling. When tired from travel, that's precisely when you should be most careful, not less.",
+          "technicalExplanation": "Evil twin attacks are especially effective in hotels because guests expect to see multiple similar-sounding networks. The attacker's equipment acts as a man-in-the-middle, potentially stripping HTTPS encryption or presenting convincing fake login pages. Your room number and name are now linked to your browsing activity.",
+          "cascading": [
+            "Fake portal captured your name and room number",
+            "Attacker links your identity to browsing activity",
+            "Corporate data from email becomes accessible",
+            "Business secrets or client info may be compromised"
+          ]
+        },
+        "cons_app": {
+          "title": "Potentially Malicious App",
+          "whatHappened": "You installed an app directly from a login portal instead of from the official app store. Even if this was truly the hotel's app, you've bypassed all the security checks that app stores perform.",
+          "whyRisky": "This is one of the most dangerous things you can do on a network. Here's why: Legitimate businesses almost never require app installation just to use Wi-Fi. When an app is downloaded from a captive portal instead of an app store, there's no review process checking for malware. The app could request permissions to read your emails, access your files, track your location, record audio, or even capture everything you type. Some malicious apps install hidden 'MDM profiles' that give remote attackers persistent access to your device even after you delete the visible app. The convenience of 'faster connection' is never worth this risk.",
+          "saferAlternative": "Never install apps, profiles, or certificates from captive portals. If a business legitimately has an app you want, search for it in your device's official app store. If it's not there, that's a red flag.",
+          "technicalExplanation": "Sideloaded apps bypass app store security scanning. Mobile Device Management (MDM) profiles can grant extensive device control - reading encrypted messages, installing other apps silently, and persisting across factory resets. Corporate espionage groups specifically target business travelers with these attacks.",
+          "cascading": [
+            "Malicious app gains device permissions",
+            "App reads your contacts, emails, and files",
+            "Your location is tracked in real-time",
+            "Credentials are captured and sold or used"
+          ]
+        },
+        "cons_email_open": {
+          "title": "Unencrypted Network Exposure",
+          "whatHappened": "You accessed your work email on an open (no password) hotel network. While your email provider uses HTTPS to encrypt the contents, the network itself provides no encryption layer between your device and the router.",
+          "whyRisky": "Here's what you need to understand about open networks: The data traveling between your laptop and the hotel's router is like a postcard - anyone in range can read the envelope. They can see you're connecting to your email provider, how often you check it, and how much data you're sending. For business email, this metadata can reveal patterns about your work. While HTTPS protects the content of your communications, sophisticated attackers on the same network could attempt various interception techniques, and the open network gives them a vantage point to try.",
+          "saferAlternative": "For business email on open networks, always enable a VPN first. The VPN adds a second encryption layer that protects you even if something goes wrong with HTTPS. Many companies require VPN use on public networks for exactly this reason.",
+          "technicalExplanation": "Open networks have no WPA2 encryption between your device and the access point. While HTTPS encrypts email content, DNS queries (revealing which servers you contact) often travel unencrypted unless you use DNS-over-HTTPS. Major email providers use HSTS (HTTP Strict Transport Security) which helps prevent downgrade attacks, but a VPN provides comprehensive protection against all local network-based attacks."
+        },
+        "cons_email_vpn": {
+          "title": "Professional Security Practice",
+          "whatHappened": "You enabled your VPN before accessing your work email. This encrypts all traffic from your device through a secure tunnel, completely protecting your business communications from anyone on the hotel network.",
+          "whyRisky": "This is exactly the right approach for business travel. The VPN means that even on an open network where other guests could theoretically snoop, they see nothing but encrypted gibberish going to a VPN server. Your work email, the clients you're communicating with, and your company's cloud services remain completely private.",
+          "saferAlternative": "You made the right call. For additional security, ensure your VPN is from a reputable provider and is configured to prevent DNS leaks. Some corporate VPNs also require split tunneling configurations - check with your IT department.",
+          "technicalExplanation": "The VPN creates an encrypted tunnel before any data leaves your device. All traffic - including DNS queries that would normally reveal which services you're using - travels through this tunnel. The hotel network sees only encrypted packets destined for your VPN provider, with no visibility into your actual business communications."
+        },
+        "cons_email_vpn_portal": {
+          "title": "Proactive Security",
+          "whatHappened": "You enabled your VPN immediately after connecting - before doing anything else. This means your entire hotel network session has been protected, including this email check.",
+          "whyRisky": "This is the best practice for business travelers. By enabling VPN immediately at the captive portal, you ensured that every piece of traffic - from the very first moment - has been encrypted. You didn't leave a window of vulnerability between connecting and starting your VPN.",
+          "saferAlternative": "You did everything right. The only way to improve would be to use a VPN that auto-connects whenever you join an unknown network, eliminating the manual step entirely. Many VPN apps offer this 'always-on' feature.",
+          "technicalExplanation": "By enabling VPN at the portal stage, you protected yourself during the highest-risk moment: initial connection. The captive portal login itself traveled over an open network, but all subsequent traffic - including email credentials and content - traveled through your encrypted VPN tunnel."
+        },
+        "cons_download_risky": {
+          "title": "Risky File Transfer",
+          "whatHappened": "You downloaded work files on an open hotel network without VPN protection. While modern cloud services use HTTPS, you've exposed metadata about your business activities and potentially the files themselves.",
+          "whyRisky": "Here's the real concern: hotel networks are shared by dozens or hundreds of guests, some of whom may have malicious intent. On an open network, a sophisticated attacker could potentially intercept your download link, redirect you to a modified file, or at minimum log that you're downloading sensitive business documents from your company's cloud storage. The metadata alone - which company you work for, what cloud services you use, when you're active - has value to corporate spies. For a presentation that might contain pricing, strategy, or client information, this exposure matters.",
+          "saferAlternative": "Always use a VPN when downloading work files on hotel networks. The few seconds it takes to connect could prevent a data breach. For truly sensitive files, consider using mobile data or waiting for a trusted network.",
+          "technicalExplanation": "Open hotel networks transmit data unencrypted between your device and the router. While HTTPS protects file contents in transit, DNS queries reveal which cloud services you're using. Sophisticated attackers could attempt to redirect you to fake download pages or intercept your connection before encryption is established. Major cloud services use security measures like HSTS to prevent many attacks, but a VPN eliminates these risks entirely."
+        },
+        "cons_download_vpn": {
+          "title": "Secure File Transfer",
+          "whatHappened": "You used VPN protection while downloading your work files. All traffic was encrypted through a secure tunnel, protecting both the files and all metadata about your business activities from anyone on the hotel network.",
+          "whyRisky": "You made the right choice. The VPN means that anyone monitoring the hotel network - whether a malicious guest or even a compromised hotel system - sees only encrypted traffic going to a VPN server. They can't tell what you're downloading, where it's from, or what company you work for. Your business remains your business.",
+          "saferAlternative": "This was excellent practice. For extremely confidential files, some organizations require file integrity verification through checksums - your IT department may have guidelines for this.",
+          "technicalExplanation": "The VPN encrypted all traffic before it left your device, wrapping your cloud download in an additional layer of protection. The hotel network sees only encrypted packets going to a VPN IP, with no visibility into the actual destination, content, or metadata of your file transfer."
+        },
+        "cons_download_postponed": {
+          "title": "Cautious Choice",
+          "whatHappened": "You chose to use the hotel's business center for this download. Business centers typically have wired connections, which are harder to eavesdrop on than wireless networks.",
+          "whyRisky": "This was a security-conscious decision. Wired connections can't be intercepted by nearby wireless attackers. However, remember: if using the business center's computers rather than your own laptop, those shared machines could have keyloggers or malware from previous users. Always bring your own device when possible, and log out of all accounts when finished.",
+          "saferAlternative": "The ideal approach: use your own laptop with a VPN on the business center's wired connection. This gives you the security of a wired connection plus the encryption of a VPN, while avoiding the risks of shared computers.",
+          "technicalExplanation": "Wired ethernet connections require physical access to intercept, unlike Wi-Fi which broadcasts through walls. However, wired connections still route through the hotel's network infrastructure, so a VPN remains valuable. Shared computers pose different risks - malware, keyloggers, and stored credentials from previous users."
         }
       }
     },
@@ -562,6 +1086,135 @@
         "airport_cert_warning": {
           "title": "Certificate Warning",
           "description": "A security warning appears when you open the contract portal."
+        },
+        "airport_arrival": {
+          "title": "Flight Delayed",
+          "description": "Your flight has been delayed by 2 hours. You're exhausted, stressed, and your phone is at 15% battery. Your boss just messaged that the client contract needs your signature TODAY, and there's a deadline in 45 minutes. You find a seat near an outlet.",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "briefing_airport": {
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_network_select": {
+          "title": "Airport Networks",
+          "description": "Your laptop shows multiple networks. You're stressed about the deadline. There's an airport info kiosk nearby, but there's a line.",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_mobile_connected": {
+          "title": "Mobile Data",
+          "description": "You enabled your phone's hotspot...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_task_contract_mobile": {
+          "title": "Urgent Contract",
+          "description": "You're securely connected via mobile data. The contract signing deadline is in 30 minutes. The document requires your digital signature.",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_sign_mobile": {
+          "title": "Secure Mobile Signature",
+          "description": "You signed the contract on your mobile data connection...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_portal": {
+          "title": "Airport Portal",
+          "description": "The airport's portal loads. It shows ads and asks you to accept terms. There's an option to 'Connect faster by downloading our Airport Companion app' and a 'Premium High-Speed Access' for $8.",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_cert_warning_free": {
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_cert_warning_premium": {
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_cert_abort": {
+          "description": "You chose not to proceed...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_cert_proceed_free": {
+          "description": "You proceeded past the warning...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_cert_proceed_premium": {
+          "description": "You proceeded past the warning...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_verified": {
+          "title": "Info Kiosk Confirmation",
+          "description": "After waiting 10 minutes (your deadline is now 35 minutes away), the staff confirms: 'Our official network is MetroAirport_Free with an underscore. Be careful - we've had reports of fake networks. The SkyLounge network is only for lounge members.'",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_trap": {
+          "title": "Generic Trap Network",
+          "description": "You connected to 'Airport_Free_WiFi'...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_trap_subtle": {
+          "title": "Subtle Naming Trap",
+          "description": "You connected to 'MetroAirport-Guest'...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_app": {
+          "title": "App Installation",
+          "description": "You downloaded the 'Airport Companion' app...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_task_contract_premium": {
+          "title": "Urgent Contract",
+          "description": "You're connected to the premium airport network ($8). The contract signing deadline is in 30 minutes. The document requires your digital signature.",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_sign_premium": {
+          "title": "Premium Network Signature",
+          "description": "You signed the contract on the premium network...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_task_contract_risky": {
+          "title": "Urgent Contract",
+          "description": "You're on the free airport network without VPN. The contract deadline is in 25 minutes.",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_sign_risky": {
+          "title": "Unprotected Signature",
+          "description": "You signed the contract on the open network...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_sign_vpn": {
+          "title": "Protected Signature",
+          "description": "You enabled VPN before signing...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_consequence_sign_delayed": {
+          "title": "Deadline Extension",
+          "description": "You called the client...",
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "debrief_airport": {
+          "location": "Metropolitan International Airport - Gate B7"
+        },
+        "airport_completion": {
+          "title": "Scenario Complete",
+          "description": "You've completed the Airport Rush scenario! This was the most challenging test of your judgment under pressure.",
+          "location": "Metropolitan International Airport"
+        }
+      },
+      "networks": {
+        "airport_official": {
+          "description": "Official airport network - open with captive portal"
+        },
+        "airport_lounge": {
+          "description": "Airline lounge network - requires membership"
+        },
+        "airport_fake_1": {
+          "description": "Strong signal, generic name"
+        },
+        "airport_fake_2": {
+          "description": "Similar name but with hyphen and different suffix"
+        },
+        "mobile_hotspot": {
+          "description": "Your phone's personal hotspot - uses cellular data"
+        },
+        "airport_official_v": {
+          "description": "Official airport network - VERIFIED"
         }
       },
       "actions": {
@@ -572,6 +1225,48 @@
         "cert_proceed": {
           "label": "Proceed anyway",
           "description": "Ignore the warning and continue"
+        },
+        "wait_kiosk": {
+          "label": "Wait in line at info kiosk to verify"
+        },
+        "use_mobile": {
+          "label": "Use mobile data hotspot instead"
+        },
+        "sign_mobile": {
+          "label": "Sign the contract now"
+        },
+        "call_client_mobile": {
+          "label": "Call client to request deadline extension anyway"
+        },
+        "accept_terms": {
+          "label": "Accept terms and connect (free)"
+        },
+        "download_app": {
+          "label": "Download app for faster connection"
+        },
+        "pay_premium": {
+          "label": "Pay $8 for premium access"
+        },
+        "use_mobile_instead": {
+          "label": "Switch to mobile data instead"
+        },
+        "sign_premium": {
+          "label": "Sign the contract now"
+        },
+        "sign_vpn_premium": {
+          "label": "Enable VPN first, then sign"
+        },
+        "call_client_premium": {
+          "label": "Call client to request deadline extension"
+        },
+        "sign_anyway": {
+          "label": "Sign now - no time!"
+        },
+        "enable_vpn_late": {
+          "label": "Enable VPN first"
+        },
+        "switch_mobile": {
+          "label": "Switch to mobile data"
         }
       },
       "tasks": {
@@ -579,6 +1274,21 @@
           "title": "Certificate Warning",
           "description": "The browser says the site's certificate can't be verified.",
           "riskHint": "Certificate warnings can indicate interception or a fake site."
+        },
+        "contract_sign_mobile": {
+          "title": "Sign Client Contract",
+          "description": "Open the secure document portal and digitally sign the client contract before the deadline.",
+          "riskHint": "You're on a secure mobile data connection."
+        },
+        "contract_sign_premium": {
+          "title": "Sign Client Contract",
+          "description": "Open the secure document portal and digitally sign the client contract before the deadline.",
+          "riskHint": "You're on a paid network but it's still public Wi-Fi."
+        },
+        "contract_sign_risky": {
+          "title": "Sign Client Contract",
+          "description": "Sign the contract on this unprotected network?",
+          "riskHint": "You're on an open network with many potential threats."
         }
       },
       "consequences": {
@@ -609,6 +1319,67 @@
           "whyRisky": "If the warning was caused by interception, your login could be exposed or the page could be a fake.",
           "saferAlternative": "Back out and use mobile data or a verified network before proceeding.",
           "technicalExplanation": "Certificate warnings appear when the browser cannot verify the site's identity. On public Wi-Fi, attackers can exploit this to intercept credentials."
+        },
+        "cons_airport_trap": {
+          "title": "Attacker's Network",
+          "whatHappened": "You connected to 'Airport_Free_WiFi' - a network with a suspiciously generic name and unusually strong signal. This was a portable hotspot in an attacker's backpack, set up specifically to target stressed travelers like you.",
+          "whyRisky": "Airports are hunting grounds for cybercriminals because travelers are the perfect victims: stressed, tired, rushed, and often handling high-value transactions. The time pressure you felt is exactly what attackers count on. This generic-sounding network ('Airport_Free_WiFi') had a stronger signal than the real network because the attacker is sitting nearby with a high-power antenna. Your device saw it as the 'best' option and may have even auto-connected. Now, every password you type, every file you download, every email you send passes through equipment controlled by someone who wants to steal it. They specifically target business travelers because corporate credentials are worth thousands of dollars on the black market.",
+          "saferAlternative": "Even under time pressure, take 30 seconds to verify the official network name. Look for posted signs, check the airport's official website using mobile data, or ask at an information desk. The real network is 'MetroAirport_Free' - notice the airport's actual name, not generic 'Airport'.",
+          "technicalExplanation": "Attackers use high-gain directional antennas to broadcast a stronger signal than legitimate networks. Your device's 'auto-connect to strongest signal' feature works against you. The attacker runs specialized software to capture all traffic, harvest credentials, and inject malicious content into web pages.",
+          "cascading": [
+            "All your traffic passes through attacker's device",
+            "Login credentials for work systems captured",
+            "Corporate network access is compromised",
+            "Sensitive business data exposed to competitors"
+          ]
+        },
+        "cons_airport_subtle": {
+          "title": "Account Security Alert",
+          "whatHappened": "You connected to 'MetroAirport-Guest' - it looked legitimate at first glance, but the real network is 'MetroAirport_Free'. The fake uses a hyphen instead of underscore, and 'Guest' instead of 'Free'. This tiny difference is the entire attack. When you tried to sign the contract, your company's security system detected suspicious login activity and locked your account.",
+          "whyRisky": "This is a sophisticated attack that exploits how our brains work under stress. When you're rushed, you don't carefully read every character - you pattern-match. 'MetroAirport-Guest' looks close enough to legitimate that your tired brain accepted it. The attacker researched the airport's real network name and created a convincing variation. Now they have your corporate credentials. When they tried to use those credentials from a different location, your company's security systems detected the anomaly and locked your account to protect it. You're now locked out, you've missed your deadline, and your company's IT security team is investigating a breach.",
+          "saferAlternative": "Verify network names character by character when the stakes are high. In airports, even one wrong character could mean you're connecting to an attacker's network. Better yet, use mobile data for high-stakes transactions.",
+          "technicalExplanation": "Attackers research target locations to create convincing fake network names. They exploit cognitive shortcuts - we don't read every character, we recognize patterns. The captured credentials were immediately tested, triggering enterprise security systems that detected the impossible location change and locked the account.",
+          "cascading": [
+            "Fake network captured your work credentials",
+            "Attacker attempted to access your corporate account",
+            "Security system locked your account to protect it",
+            "You missed the contract deadline while locked out"
+          ]
+        },
+        "cons_airport_app": {
+          "title": "Suspicious App Installed",
+          "whatHappened": "Under time pressure, you installed an app from a captive portal. Even if this was a legitimate airport app, downloading software this way bypasses all the security checks that protect you in official app stores.",
+          "whyRisky": "This is exactly what attackers want: a stressed traveler making quick decisions without thinking. The promise of 'faster connection' exploits your urgency. Here's the reality: legitimate airports don't require app installation for Wi-Fi access. Ever. This app, whether malicious or just poorly secured, now has whatever permissions you granted - possibly access to your contacts, location, camera, files, and keystrokes. Even if it's truly the airport's app, installing through a captive portal means you got an unverified version that could have been modified by an attacker on the network. The proper version would be in the app store with security reviews.",
+          "saferAlternative": "Never install apps from captive portals. Period. If an airport truly has an app you want, download it from your device's official app store before your trip, not in a rushed moment at the gate. The 'faster connection' promise isn't worth device compromise.",
+          "technicalExplanation": "Apps distributed outside official stores bypass security scanning and signature verification. The time pressure made you skip permission reviews - the app may have requested access to contacts, location, camera, files, and accessibility services. Malicious apps installed this way can record keystrokes, capture screens, and persist through device restarts."
+        },
+        "cons_sign_premium": {
+          "title": "Reasonable Security",
+          "whatHappened": "You signed the contract while connected to the premium airport network. Paying for premium access typically provides better network isolation and sometimes encryption, making it more secure than the free open network.",
+          "whyRisky": "This was a reasonable choice given the time pressure. Premium airport networks often have better security practices than free networks, and the payment barrier reduces casual attackers. Combined with the HTTPS encryption of the signing portal, your transaction had decent protection. The remaining risk is that you're still on shared infrastructure, but premium networks are less targeted than free ones.",
+          "saferAlternative": "For maximum security on legal documents, mobile data or VPN would be ideal. But the premium network was a practical choice that balanced security with your deadline pressure. You recognized that not all networks are equal.",
+          "technicalExplanation": "Premium networks often implement client isolation, preventing other users from seeing your traffic even on the same network. Combined with HTTPS, this provides reasonable protection. The $8 payment also creates a barrier that deters opportunistic attackers who prefer free networks with more targets."
+        },
+        "cons_sign_risky": {
+          "title": "High-Risk Legal Action",
+          "whatHappened": "You signed a legally binding document on an open airport network. The signing portal used HTTPS, but you've still exposed yourself to sophisticated attacks that specifically target business travelers.",
+          "whyRisky": "Digital signatures are serious business - they create legal obligations equivalent to your handwritten signature. Here's why this was risky: Airport networks are specifically targeted by corporate espionage groups because they know travelers sign contracts, access financial systems, and share sensitive documents. An attacker could attempt session hijacking (taking over your authenticated session), DNS spoofing (redirecting you to a fake signing portal), or credential capture. Even if the attack fails, you've performed a high-value legal transaction in a hostile environment. If something goes wrong with this contract later, you'll wonder whether the network was compromised.",
+          "saferAlternative": "For legally binding documents, use mobile data or a VPN without exception. If neither is available, call the client to request a deadline extension. Most clients appreciate security-conscious partners - it shows you'll protect their interests too.",
+          "technicalExplanation": "While HTTPS provides strong encryption, open networks still expose you to risks: attackers can see which services you're connecting to via DNS queries, and sophisticated groups may attempt phishing through fake portals or try to intercept traffic before HTTPS is established. For high-value targets like business travelers, airports are known hunting grounds for organized groups seeking corporate data."
+        },
+        "cons_sign_vpn": {
+          "title": "Secure Under Pressure",
+          "whatHappened": "Despite the deadline stress, you took the extra minute to enable VPN protection before signing the contract. This significantly reduced your exposure to network-based attacks.",
+          "whyRisky": "You made the right call. That extra minute to enable VPN could be the difference between a secure contract signing and a compromised corporate account. The VPN encrypts all traffic before it touches the airport network, blocking all local network attacks. Anyone monitoring the airport Wi-Fi sees only encrypted traffic going to a VPN server - they can't tell you're signing a contract, can't intercept your credentials, and can't tamper with the transaction.",
+          "saferAlternative": "This was a good decision. For maximum security on legal documents, mobile data remains the gold standard since it bypasses local networks entirely. But VPN on public Wi-Fi is a practical, effective choice that provides strong protection.",
+          "technicalExplanation": "VPN encryption wraps your entire signing session in an encrypted tunnel. The airport network sees only encrypted packets going to your VPN provider's IP address. Session hijacking, DNS spoofing, and traffic analysis become impossible for local attackers."
+        },
+        "cons_sign_delayed": {
+          "title": "Professional Judgment",
+          "whatHappened": "You called the client to explain your situation and requested a deadline extension. They appreciated your honesty about security concerns and agreed to extend by 4 hours until you reach a secure network.",
+          "whyRisky": "This was an excellent decision that shows mature professional judgment. It took courage to ask for an extension under pressure, but you recognized that the risk to both parties wasn't worth the time savings. Here's the hidden benefit: by explaining your security concerns, you've actually strengthened the client relationship. They now know you take information security seriously, which matters when you're handling their sensitive contract. A partner who cuts corners on their own security might cut corners on client security too.",
+          "saferAlternative": "You made the optimal choice for a high-stakes legal transaction. Explaining security concerns to clients demonstrates professionalism and protects both parties. The four-hour delay is nothing compared to the potential fallout from a compromised contract signing.",
+          "technicalExplanation": "By postponing the transaction, you eliminated all network-based attack vectors entirely. For legally binding documents with significant financial implications, this 'zero risk' approach is often the wisest choice. The 'attack surface' was reduced to zero."
         }
       }
     }
@@ -707,6 +1478,32 @@
       "habit": {
         "body": "Enable 2FA on work accounts, default to mobile data for high-stakes tasks, and disable auto-join for public Wi-Fi."
       }
+    }
+  },
+  "badges": {
+    "security_aware": {
+      "name": "Security Aware",
+      "description": "Completed your first scenario without major security incidents"
+    },
+    "vpn_master": {
+      "name": "VPN Master",
+      "description": "Consistently used VPN protection on public networks"
+    },
+    "network_detective": {
+      "name": "Network Detective",
+      "description": "Successfully identified a trap network"
+    },
+    "patient_professional": {
+      "name": "Patient Professional",
+      "description": "Postponed sensitive tasks until reaching a secure network"
+    },
+    "perfect_score": {
+      "name": "Perfect Score",
+      "description": "Completed a scenario with zero risk points"
+    },
+    "https_hero": {
+      "name": "HTTPS Hero",
+      "description": "Always verified site security before entering sensitive data"
     }
   }
 }

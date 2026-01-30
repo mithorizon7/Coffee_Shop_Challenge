@@ -1,5 +1,5 @@
 import { sql, relations } from "drizzle-orm";
-import { pgTable, text, varchar, integer, jsonb, boolean, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, varchar, integer, jsonb, timestamp, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -12,27 +12,33 @@ export * from "./models/auth";
 // ============ PROGRESS TRACKING TABLES ============
 
 // Completed game sessions stored in database for progress tracking
-export const completedSessions = pgTable("completed_sessions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  
-  userId: varchar("user_id").notNull(),
-  scenarioId: varchar("scenario_id").notNull(),
-  difficulty: varchar("difficulty").notNull(),
-  
-  safetyPoints: integer("safety_points").notNull().default(0),
-  riskPoints: integer("risk_points").notNull().default(0),
-  decisionsCount: integer("decisions_count").notNull().default(0),
-  correctDecisions: integer("correct_decisions").notNull().default(0),
-  
-  grade: varchar("grade"),
-  badges: jsonb("badges").$type<string[]>().default([]),
-  
-  startedAt: timestamp("started_at").notNull(),
-  completedAt: timestamp("completed_at").notNull().defaultNow(),
-}, (table) => [
-  index("IDX_completed_sessions_user_id").on(table.userId),
-  index("IDX_completed_sessions_completed_at").on(table.completedAt),
-]);
+export const completedSessions = pgTable(
+  "completed_sessions",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+
+    userId: varchar("user_id").notNull(),
+    scenarioId: varchar("scenario_id").notNull(),
+    difficulty: varchar("difficulty").notNull(),
+
+    safetyPoints: integer("safety_points").notNull().default(0),
+    riskPoints: integer("risk_points").notNull().default(0),
+    decisionsCount: integer("decisions_count").notNull().default(0),
+    correctDecisions: integer("correct_decisions").notNull().default(0),
+
+    grade: varchar("grade"),
+    badges: jsonb("badges").$type<string[]>().default([]),
+
+    startedAt: timestamp("started_at").notNull(),
+    completedAt: timestamp("completed_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("IDX_completed_sessions_user_id").on(table.userId),
+    index("IDX_completed_sessions_completed_at").on(table.completedAt),
+  ]
+);
 
 // Relations for completed sessions
 export const completedSessionsRelations = relations(completedSessions, ({ one }) => ({
@@ -96,12 +102,31 @@ export const taskSchema = z.object({
 export type Task = z.infer<typeof taskSchema>;
 
 // Player action choices
-export type ActionType = "connect" | "proceed" | "use_vpn" | "postpone" | "switch_network" | "verify_staff" | "install_profile" | "override_warning" | "decline";
+export type ActionType =
+  | "connect"
+  | "proceed"
+  | "use_vpn"
+  | "postpone"
+  | "switch_network"
+  | "verify_staff"
+  | "install_profile"
+  | "override_warning"
+  | "decline";
 
 // Action choice for the player
 export const actionSchema = z.object({
   id: z.string(),
-  type: z.enum(["connect", "proceed", "use_vpn", "postpone", "switch_network", "verify_staff", "install_profile", "override_warning", "decline"]),
+  type: z.enum([
+    "connect",
+    "proceed",
+    "use_vpn",
+    "postpone",
+    "switch_network",
+    "verify_staff",
+    "install_profile",
+    "override_warning",
+    "decline",
+  ]),
   label: z.string(),
   labelKey: z.string().optional(),
   description: z.string().optional(),
@@ -113,9 +138,9 @@ export const actionSchema = z.object({
 export type Action = z.infer<typeof actionSchema>;
 
 // Consequence types
-export type ConsequenceType = 
+export type ConsequenceType =
   | "credential_harvested"
-  | "session_compromised" 
+  | "session_compromised"
   | "malware_installed"
   | "account_locked"
   | "privacy_leaked"
@@ -137,7 +162,7 @@ export const consequenceSchema = z.object({
     "vpn_protected",
     "action_postponed",
     "network_verified",
-    "missed_verification"
+    "missed_verification",
   ]),
   severity: z.enum(["success", "warning", "danger"]),
   title: z.string(),
@@ -152,11 +177,17 @@ export const consequenceSchema = z.object({
   technicalExplanationKey: z.string().optional(),
   safetyPointsChange: z.number(),
   riskPointsChange: z.number(),
-  cascadingEffects: z.array(z.object({
-    order: z.number(),
-    effect: z.string(),
-    icon: z.enum(["credential", "account", "money", "identity", "privacy", "malware"]).optional(),
-  })).optional(),
+  cascadingEffects: z
+    .array(
+      z.object({
+        order: z.number(),
+        effect: z.string(),
+        icon: z
+          .enum(["credential", "account", "money", "identity", "privacy", "malware"])
+          .optional(),
+      })
+    )
+    .optional(),
 });
 
 export type Consequence = z.infer<typeof consequenceSchema>;
@@ -164,7 +195,16 @@ export type Consequence = z.infer<typeof consequenceSchema>;
 // Scene in the branching narrative
 export const sceneSchema = z.object({
   id: z.string(),
-  type: z.enum(["arrival", "briefing", "network_selection", "captive_portal", "task_prompt", "consequence", "debrief", "completion"]),
+  type: z.enum([
+    "arrival",
+    "briefing",
+    "network_selection",
+    "captive_portal",
+    "task_prompt",
+    "consequence",
+    "debrief",
+    "completion",
+  ]),
   title: z.string(),
   titleKey: z.string().optional(),
   description: z.string(),
@@ -174,18 +214,26 @@ export const sceneSchema = z.object({
   task: taskSchema.optional(),
   actions: z.array(actionSchema).optional(),
   consequence: consequenceSchema.optional(),
-  sections: z.array(z.object({
-    title: z.string().optional(),
-    titleKey: z.string().optional(),
-    body: z.string().optional(),
-    bodyKey: z.string().optional(),
-  })).optional(),
+  sections: z
+    .array(
+      z.object({
+        title: z.string().optional(),
+        titleKey: z.string().optional(),
+        body: z.string().optional(),
+        bodyKey: z.string().optional(),
+      })
+    )
+    .optional(),
   nextSceneId: z.string().optional(),
-  choices: z.array(z.object({
-    actionId: z.string(),
-    nextSceneId: z.string(),
-    condition: z.string().optional(),
-  })).optional(),
+  choices: z
+    .array(
+      z.object({
+        actionId: z.string(),
+        nextSceneId: z.string(),
+        condition: z.string().optional(),
+      })
+    )
+    .optional(),
 });
 
 export type Scene = z.infer<typeof sceneSchema>;

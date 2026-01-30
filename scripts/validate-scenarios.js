@@ -57,19 +57,25 @@ function validateScenarioFile(filePath) {
     const actionIds = actions.map((a) => a.id);
     const actionDupes = getDuplicates(actionIds);
     if (actionDupes.length > 0) {
-      errors.push(`${fileName}: scene ${scene.id} has duplicate action ids (${actionDupes.join(", ")})`);
+      errors.push(
+        `${fileName}: scene ${scene.id} has duplicate action ids (${actionDupes.join(", ")})`
+      );
     }
 
     const choices = Array.isArray(scene.choices) ? scene.choices : [];
     const choiceActionIds = choices.map((c) => c.actionId);
     const choiceDupes = getDuplicates(choiceActionIds);
     if (choiceDupes.length > 0) {
-      errors.push(`${fileName}: scene ${scene.id} has duplicate choice actionIds (${choiceDupes.join(", ")})`);
+      errors.push(
+        `${fileName}: scene ${scene.id} has duplicate choice actionIds (${choiceDupes.join(", ")})`
+      );
     }
 
     for (const choice of choices) {
       if (!sceneIds.has(choice.nextSceneId)) {
-        errors.push(`${fileName}: scene ${scene.id} choice ${choice.actionId} nextSceneId not found (${choice.nextSceneId})`);
+        errors.push(
+          `${fileName}: scene ${scene.id} choice ${choice.actionId} nextSceneId not found (${choice.nextSceneId})`
+        );
       }
     }
 
@@ -79,7 +85,9 @@ function validateScenarioFile(filePath) {
         const expectedActionId = network.actionId ?? `connect_${network.id}`;
         const hasChoice = choices.some((c) => c.actionId === expectedActionId);
         if (!hasChoice) {
-          errors.push(`${fileName}: scene ${scene.id} network ${network.id} missing choice (${expectedActionId})`);
+          errors.push(
+            `${fileName}: scene ${scene.id} network ${network.id} missing choice (${expectedActionId})`
+          );
         }
       }
     }

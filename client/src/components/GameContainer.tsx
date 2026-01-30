@@ -13,16 +13,26 @@ import { BadgeDisplay } from "./BadgeDisplay";
 import { CountdownTimer } from "./CountdownTimer";
 import { useAuth } from "@/hooks/use-auth";
 import type { GameSession, Scenario, Network } from "@shared/schema";
-import { 
-  getCurrentSceneFromScenario, 
-  processNetworkSelection, 
-  processAction, 
+import {
+  getCurrentSceneFromScenario,
+  processNetworkSelection,
+  processAction,
   completeSession,
-  calculateGrade 
+  calculateGrade,
 } from "@/lib/gameEngine";
+import {
+  translateActionDescription,
+  translateActionLabel,
+  translateNetworkDescription,
+  translateScenarioLocation,
+  translateSceneDescription,
+  translateSceneLocation,
+  translateSceneTitle,
+} from "@/lib/translateContent";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useToast } from "@/hooks/use-toast";
 
 interface GameContainerProps {
   initialSession: GameSession;
@@ -31,25 +41,22 @@ interface GameContainerProps {
   onRestart: () => void;
 }
 
-export function GameContainer({ 
-  initialSession, 
-  scenario, 
-  onExit, 
-  onRestart 
-}: GameContainerProps) {
+export function GameContainer({ initialSession, scenario, onExit, onRestart }: GameContainerProps) {
   const { t } = useTranslation();
   const [session, setSession] = useState<GameSession>(initialSession);
-  
+
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [sessionSnapshots, setSessionSnapshots] = useState<GameSession[]>([]);
   const { isAuthenticated } = useAuth();
   const progressSavedRef = useRef(false);
   const completionHandledRef = useRef(false);
+  const timeoutNotifiedRef = useRef<Record<string, boolean>>({});
+  const { toast } = useToast();
 
   const updateSessionMutation = useMutation({
     mutationFn: async (updates: Partial<GameSession>) => {
       const response = await apiRequest("PATCH", `/api/sessions/${session.id}`, updates);
-      return await response.json() as GameSession;
+      return (await response.json()) as GameSession;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
@@ -75,30 +82,52 @@ export function GameContainer({
   });
 
   const currentScene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
+  const currentSceneId = currentScene?.id;
   const showWarnings = session.difficulty === "beginner";
   const isAdvanced = session.difficulty === "advanced";
 
-  const sceneTitle = currentScene?.titleKey ? t(currentScene.titleKey) : currentScene?.title;
-  const sceneDescription = currentScene?.descriptionKey ? t(currentScene.descriptionKey) : currentScene?.description;
-  
+  const sceneTitle = currentScene
+    ? currentScene.titleKey
+      ? t(currentScene.titleKey)
+      : translateSceneTitle(t, scenario.id, currentScene.id, currentScene.title)
+    : "";
+  const sceneDescription = currentScene
+    ? currentScene.descriptionKey
+      ? t(currentScene.descriptionKey)
+      : translateSceneDescription(t, scenario.id, currentScene.id, currentScene.description)
+    : "";
+  const sceneLocation = currentScene
+    ? translateSceneLocation(
+        t,
+        scenario.id,
+        currentScene.id,
+        translateScenarioLocation(t, scenario.id, currentScene.location || scenario.location)
+      )
+    : "";
+
   const isDecisionScene = useMemo(() => {
-    return currentScene?.type === "network_selection" || 
-           currentScene?.type === "task_prompt" || 
-           currentScene?.type === "captive_portal";
+    return (
+      currentScene?.type === "network_selection" ||
+      currentScene?.type === "task_prompt" ||
+      currentScene?.type === "captive_portal"
+    );
   }, [currentScene?.type]);
 
-  const syncSession = useCallback((updatedSession: GameSession) => {
-    setSession(updatedSession);
-    updateSessionMutation.mutate({
-      currentSceneId: updatedSession.currentSceneId,
-      selectedNetworkId: updatedSession.selectedNetworkId,
-      vpnEnabled: updatedSession.vpnEnabled,
-      score: updatedSession.score,
-      completedSceneIds: updatedSession.completedSceneIds,
-      badges: updatedSession.badges,
-      completedAt: updatedSession.completedAt,
-    });
-  }, [updateSessionMutation]);
+  const syncSession = useCallback(
+    (updatedSession: GameSession) => {
+      setSession(updatedSession);
+      updateSessionMutation.mutate({
+        currentSceneId: updatedSession.currentSceneId,
+        selectedNetworkId: updatedSession.selectedNetworkId,
+        vpnEnabled: updatedSession.vpnEnabled,
+        score: updatedSession.score,
+        completedSceneIds: updatedSession.completedSceneIds,
+        badges: updatedSession.badges,
+        completedAt: updatedSession.completedAt,
+      });
+    },
+    [updateSessionMutation]
+  );
 
   useEffect(() => {
     if (currentScene?.type !== "completion") return;
@@ -112,13 +141,12 @@ export function GameContainer({
       progressSavedRef.current = true;
       saveProgressMutation.mutate(completedSession);
     }
-  }, [
-    currentScene?.type,
-    session,
-    isAuthenticated,
-    syncSession,
-    saveProgressMutation,
-  ]);
+  }, [currentScene, session, isAuthenticated, syncSession, saveProgressMutation]);
+
+  useEffect(() => {
+    if (!currentSceneId) return;
+    timeoutNotifiedRef.current[currentSceneId] = false;
+  }, [currentSceneId]);
 
   const handleTimeUp = useCallback(() => {
     const updatedSession = {
@@ -129,52 +157,75 @@ export function GameContainer({
       },
     };
     syncSession(updatedSession);
-  }, [session, syncSession]);
 
-  const handleNetworkSelect = useCallback((network: Network) => {
-    if (isTransitioning) return;
-    
-    setIsTransitioning(true);
-    const currentSceneType = currentScene?.type;
-    
-    if (currentSceneType === "network_selection" || currentSceneType === "captive_portal" || currentSceneType === "task_prompt") {
-      setSessionSnapshots(prev => [...prev, JSON.parse(JSON.stringify(session))]);
+    if (currentScene && !timeoutNotifiedRef.current[currentScene.id]) {
+      timeoutNotifiedRef.current[currentScene.id] = true;
+      toast({
+        title: t("timer.penaltyTitle"),
+        description: t("timer.penaltyBody", { points: 15 }),
+        variant: "destructive",
+      });
     }
-    
-    const { updatedSession } = processNetworkSelection(session, network, scenario);
-    
-    setTimeout(() => {
-      syncSession(updatedSession);
-      setIsTransitioning(false);
-    }, 300);
-  }, [session, scenario, isTransitioning, syncSession, currentScene?.type]);
+  }, [session, syncSession, currentScene, toast, t]);
 
-  const handleAction = useCallback((actionId: string) => {
-    if (isTransitioning) return;
-    
-    setIsTransitioning(true);
-    const currentSceneType = currentScene?.type;
-    
-    if (currentSceneType === "network_selection" || currentSceneType === "captive_portal" || currentSceneType === "task_prompt") {
-      setSessionSnapshots(prev => [...prev, JSON.parse(JSON.stringify(session))]);
-    }
-    
-    const { updatedSession } = processAction(session, actionId, scenario);
-    
-    setTimeout(() => {
-      syncSession(updatedSession);
-      setIsTransitioning(false);
-    }, 300);
-  }, [session, scenario, isTransitioning, syncSession, currentScene?.type]);
-  
+  const handleNetworkSelect = useCallback(
+    (network: Network) => {
+      if (isTransitioning) return;
+
+      setIsTransitioning(true);
+      const currentSceneType = currentScene?.type;
+
+      if (
+        currentSceneType === "network_selection" ||
+        currentSceneType === "captive_portal" ||
+        currentSceneType === "task_prompt"
+      ) {
+        setSessionSnapshots((prev) => [...prev, JSON.parse(JSON.stringify(session))]);
+      }
+
+      const { updatedSession } = processNetworkSelection(session, network, scenario);
+
+      setTimeout(() => {
+        syncSession(updatedSession);
+        setIsTransitioning(false);
+      }, 300);
+    },
+    [session, scenario, isTransitioning, syncSession, currentScene?.type]
+  );
+
+  const handleAction = useCallback(
+    (actionId: string) => {
+      if (isTransitioning) return;
+
+      setIsTransitioning(true);
+      const currentSceneType = currentScene?.type;
+
+      if (
+        currentSceneType === "network_selection" ||
+        currentSceneType === "captive_portal" ||
+        currentSceneType === "task_prompt"
+      ) {
+        setSessionSnapshots((prev) => [...prev, JSON.parse(JSON.stringify(session))]);
+      }
+
+      const { updatedSession } = processAction(session, actionId, scenario);
+
+      setTimeout(() => {
+        syncSession(updatedSession);
+        setIsTransitioning(false);
+      }, 300);
+    },
+    [session, scenario, isTransitioning, syncSession, currentScene?.type]
+  );
+
   const handleTryAnother = useCallback(() => {
     if (isTransitioning || sessionSnapshots.length === 0) return;
-    
+
     setIsTransitioning(true);
     const previousSession = sessionSnapshots[sessionSnapshots.length - 1];
-    
+
     setTimeout(() => {
-      setSessionSnapshots(prev => prev.slice(0, -1));
+      setSessionSnapshots((prev) => prev.slice(0, -1));
       syncSession(previousSession);
       setIsTransitioning(false);
     }, 300);
@@ -182,10 +233,10 @@ export function GameContainer({
 
   const handleContinue = useCallback(() => {
     if (isTransitioning) return;
-    
+
     setIsTransitioning(true);
     const scene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
-    
+
     if (scene?.nextSceneId) {
       setTimeout(() => {
         const completedSceneIds = session.completedSceneIds.includes(session.currentSceneId)
@@ -204,7 +255,7 @@ export function GameContainer({
         const completedSession = completeSession(session);
         syncSession(completedSession);
         setIsTransitioning(false);
-        
+
         if (isAuthenticated && !progressSavedRef.current) {
           progressSavedRef.current = true;
           saveProgressMutation.mutate(completedSession);
@@ -213,21 +264,13 @@ export function GameContainer({
     }
   }, [session, scenario, isTransitioning, syncSession, isAuthenticated, saveProgressMutation]);
 
-  const handleComplete = useCallback(() => {
-    const completedSession = completeSession(session);
-    syncSession(completedSession);
-    
-    if (isAuthenticated && !progressSavedRef.current) {
-      progressSavedRef.current = true;
-      saveProgressMutation.mutate(completedSession);
-    }
-  }, [session, syncSession, isAuthenticated, saveProgressMutation]);
-
   if (!currentScene) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">{t('game.sceneNotFound')}</p>
-        <Button onClick={onExit} className="mt-4">{t('game.returnToMenu')}</Button>
+        <p className="text-muted-foreground">{t("game.sceneNotFound")}</p>
+        <Button onClick={onExit} className="mt-4">
+          {t("game.returnToMenu")}
+        </Button>
       </div>
     );
   }
@@ -248,16 +291,11 @@ export function GameContainer({
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onExit}
-              data-testid="button-exit"
-            >
+            <Button variant="ghost" size="sm" onClick={onExit} data-testid="button-exit">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              {t('game.exit')}
+              {t("game.exit")}
             </Button>
-            
+
             <div className="flex-1 flex justify-center">
               <ProgressIndicator
                 scenes={scenario.scenes}
@@ -265,7 +303,7 @@ export function GameContainer({
                 completedSceneIds={session.completedSceneIds}
               />
             </div>
-            
+
             <div className="flex items-center gap-3">
               {isAdvanced && isDecisionScene && currentScene && (
                 <CountdownTimer
@@ -293,11 +331,9 @@ export function GameContainer({
             <div className="mb-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <MapPin className="w-4 h-4" />
-                <span>{currentScene.location}</span>
+                <span>{sceneLocation}</span>
               </div>
-              <h1 className="font-display text-2xl font-bold text-foreground mb-2">
-                {sceneTitle}
-              </h1>
+              <h1 className="font-display text-2xl font-bold text-foreground mb-2">{sceneTitle}</h1>
               <p className="text-muted-foreground leading-relaxed" data-testid="scene-description">
                 {sceneDescription}
               </p>
@@ -306,11 +342,9 @@ export function GameContainer({
             {currentScene.type === "arrival" && (
               <Card className="p-6 text-center">
                 <Wifi className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <p className="text-muted-foreground mb-4">
-                  {t('game.readyToStart')}
-                </p>
+                <p className="text-muted-foreground mb-4">{t("game.readyToStart")}</p>
                 <Button onClick={handleContinue} data-testid="button-start-scenario">
-                  {t('game.findNetworks')}
+                  {t("game.findNetworks")}
                 </Button>
               </Card>
             )}
@@ -323,9 +357,7 @@ export function GameContainer({
                     const sectionBody = section.bodyKey ? t(section.bodyKey) : section.body;
                     return (
                       <div key={index} className="space-y-1">
-                        <h3 className="font-medium text-foreground">
-                          {sectionTitle}
-                        </h3>
+                        <h3 className="font-medium text-foreground">{sectionTitle}</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {sectionBody}
                         </p>
@@ -335,105 +367,129 @@ export function GameContainer({
                 </div>
                 <div className="pt-2 border-t border-border">
                   <Button onClick={handleContinue} data-testid="button-briefing-continue">
-                    {t('common.continue')}
+                    {t("common.continue")}
                   </Button>
                 </div>
               </Card>
             )}
 
-            {(currentScene.type === "network_selection" || currentScene.type === "captive_portal") && currentScene.networks && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Wifi className="w-4 h-4" />
-                  <span>{t('network.availableNetworks')}</span>
-                </div>
-                <div className="space-y-3">
-                  {currentScene.networks.map((network) => (
-                    <NetworkCard
-                      key={network.id}
-                      network={network}
-                      onSelect={handleNetworkSelect}
-                      showWarnings={showWarnings}
-                      isSelected={session.selectedNetworkId === network.id}
-                    />
-                  ))}
-                </div>
-                
-                {currentScene.actions && currentScene.actions.length > 0 && (
-                  <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
-                {currentScene.actions.map((action) => {
-                  const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
-                  const actionDescription = action.descriptionKey ? t(action.descriptionKey) : action.description;
-                  return (
-                  <Button
-                    key={action.id}
-                    variant="outline"
-                    onClick={() => handleAction(action.id)}
-                    data-testid={`action-${action.id}`}
-                    title={actionDescription}
-                  >
-                    {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
-                    {actionLabel}
-                  </Button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
+            {(currentScene.type === "network_selection" ||
+              currentScene.type === "captive_portal") &&
+              currentScene.networks && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Wifi className="w-4 h-4" />
+                    <span>{t("network.availableNetworks")}</span>
+                  </div>
+                  <div className="space-y-3">
+                    {currentScene.networks.map((network) => (
+                      <NetworkCard
+                        key={network.id}
+                        network={network}
+                        onSelect={handleNetworkSelect}
+                        showWarnings={showWarnings}
+                        isSelected={session.selectedNetworkId === network.id}
+                        description={translateNetworkDescription(
+                          t,
+                          scenario.id,
+                          network.id,
+                          network.description ?? ""
+                        )}
+                      />
+                    ))}
+                  </div>
 
-            {currentScene.type === "captive_portal" && !currentScene.networks && currentScene.actions && (
-              <div className="space-y-6">
-                <Card className="p-6 bg-muted/30">
-                  <div className="flex items-start gap-3 mb-4">
-                    <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-medium text-foreground mb-2">{t('captivePortal.whatIs')}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {t('captivePortal.explanation')}
-                      </p>
+                  {currentScene.actions && currentScene.actions.length > 0 && (
+                    <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
+                      {currentScene.actions.map((action) => {
+                        const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
+                        const actionDescription = action.descriptionKey
+                          ? t(action.descriptionKey)
+                          : action.description;
+                        return (
+                          <Button
+                            key={action.id}
+                            variant="outline"
+                            onClick={() => handleAction(action.id)}
+                            data-testid={`action-${action.id}`}
+                            title={actionDescription}
+                          >
+                            {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
+                            {actionLabel}
+                          </Button>
+                        );
+                      })}
                     </div>
-                  </div>
-                  <div className="mt-4 rounded-md overflow-hidden border border-border shadow-sm max-w-md mx-auto">
-                    <img 
-                      src={captivePortalImage} 
-                      alt={t('captivePortal.imageAlt')} 
-                      className="w-full h-auto"
-                      data-testid="captive-portal-example-image"
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center mt-3 italic">
-                    {t('captivePortal.imageCaption')}
-                  </p>
-                </Card>
+                  )}
+                </div>
+              )}
 
-                <Card className="p-6">
-                  <h3 className="font-medium text-foreground mb-4">{t('game.portalOptions')}</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {currentScene.actions.map((action) => {
-                      const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
-                      const actionDescription = action.descriptionKey ? t(action.descriptionKey) : action.description;
-                      return (
-                      <Button
-                        key={action.id}
-                        variant="outline"
-                        onClick={() => handleAction(action.id)}
-                        data-testid={`action-${action.id}`}
-                        title={actionDescription}
-                      >
-                        {actionLabel}
-                      </Button>
-                      );
-                    })}
-                  </div>
-                </Card>
-              </div>
-            )}
+            {currentScene.type === "captive_portal" &&
+              !currentScene.networks &&
+              currentScene.actions && (
+                <div className="space-y-6">
+                  <Card className="p-6 bg-muted/30">
+                    <div className="flex items-start gap-3 mb-4">
+                      <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-medium text-foreground mb-2">
+                          {t("captivePortal.whatIs")}
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {t("captivePortal.explanation")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 rounded-md overflow-hidden border border-border shadow-sm max-w-md mx-auto">
+                      <img
+                        src={captivePortalImage}
+                        alt={t("captivePortal.imageAlt")}
+                        className="w-full h-auto"
+                        data-testid="captive-portal-example-image"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center mt-3 italic">
+                      {t("captivePortal.imageCaption")}
+                    </p>
+                  </Card>
+
+                  <Card className="p-6">
+                    <h3 className="font-medium text-foreground mb-4">{t("game.portalOptions")}</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {currentScene.actions.map((action) => {
+                        const actionLabel = action.labelKey
+                          ? t(action.labelKey)
+                          : translateActionLabel(t, scenario.id, action.id, action.label);
+                        const actionDescription = action.descriptionKey
+                          ? t(action.descriptionKey)
+                          : translateActionDescription(
+                              t,
+                              scenario.id,
+                              action.id,
+                              action.description || ""
+                            );
+                        return (
+                          <Button
+                            key={action.id}
+                            variant="outline"
+                            onClick={() => handleAction(action.id)}
+                            data-testid={`action-${action.id}`}
+                            title={actionDescription}
+                          >
+                            {actionLabel}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </Card>
+                </div>
+              )}
 
             {currentScene.type === "task_prompt" && currentScene.task && currentScene.actions && (
               <TaskPromptCard
                 task={currentScene.task}
                 actions={currentScene.actions}
+                scenarioId={scenario.id}
                 onAction={handleAction}
                 showHints={showWarnings}
               />
@@ -442,6 +498,8 @@ export function GameContainer({
             {currentScene.type === "consequence" && currentScene.consequence && (
               <ConsequenceScreen
                 consequence={currentScene.consequence}
+                scenarioId={scenario.id}
+                sceneId={currentScene.id}
                 onContinue={handleContinue}
                 onTryAnother={sessionSnapshots.length > 0 ? handleTryAnother : undefined}
               />
@@ -450,7 +508,7 @@ export function GameContainer({
             {session.vpnEnabled && (
               <div className="fixed bottom-4 right-4 bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg pointer-events-none">
                 <Shield className="w-4 h-4" />
-                {t('game.vpnActive')}
+                {t("game.vpnActive")}
               </div>
             )}
           </motion.div>

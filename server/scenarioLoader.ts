@@ -12,7 +12,7 @@ const SCENARIOS_DIR = path.join(CONTENT_DIR, "scenarios");
  */
 export function loadScenariosFromJSON(): Scenario[] {
   const scenarios: Scenario[] = [];
-  
+
   try {
     // Check if scenarios directory exists
     if (!fs.existsSync(SCENARIOS_DIR)) {
@@ -21,14 +21,14 @@ export function loadScenariosFromJSON(): Scenario[] {
     }
 
     // Read all JSON files in the scenarios directory
-    const files = fs.readdirSync(SCENARIOS_DIR).filter(f => f.endsWith(".json"));
-    
+    const files = fs.readdirSync(SCENARIOS_DIR).filter((f) => f.endsWith(".json"));
+
     for (const file of files) {
       const filePath = path.join(SCENARIOS_DIR, file);
       try {
         const content = fs.readFileSync(filePath, "utf-8");
         const scenario = JSON.parse(content) as Scenario;
-        
+
         // Basic validation
         if (scenario.id && scenario.title && scenario.scenes) {
           scenarios.push(scenario);
@@ -43,8 +43,8 @@ export function loadScenariosFromJSON(): Scenario[] {
 
     // Sort by difficulty order
     const difficultyOrder = { beginner: 0, intermediate: 1, advanced: 2 };
-    scenarios.sort((a, b) => 
-      (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0)
+    scenarios.sort(
+      (a, b) => (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0)
     );
 
     console.log(`Loaded ${scenarios.length} scenarios from JSON files`);
@@ -60,18 +60,18 @@ export function loadScenariosFromJSON(): Scenario[] {
  */
 export function loadBadgesFromJSON(): Badge[] {
   const badgesPath = path.join(CONTENT_DIR, "badges.json");
-  
+
   try {
     if (fs.existsSync(badgesPath)) {
       const content = fs.readFileSync(badgesPath, "utf-8");
       const badges = JSON.parse(content) as Badge[];
-      
+
       // Basic validation
-      const validBadges = badges.filter(b => b.id && b.name && b.description);
+      const validBadges = badges.filter((b) => b.id && b.name && b.description);
       if (validBadges.length !== badges.length) {
         console.warn(`Some badges in badges.json are missing required fields`);
       }
-      
+
       console.log(`Loaded ${validBadges.length} badges from JSON`);
       return validBadges;
     }
@@ -90,11 +90,11 @@ export function loadBadgesFromJSON(): Badge[] {
 export function initializeContent(): void {
   const scenarios = loadScenariosFromJSON();
   setScenarios(scenarios);
-  
+
   // Load badges from JSON and update the shared cache
   const badges = loadBadgesFromJSON();
   setBadges(badges);
-  
+
   // Validate that content was loaded
   if (scenarios.length === 0) {
     console.error("WARNING: No scenarios loaded! Check content/scenarios/ directory.");
@@ -102,7 +102,7 @@ export function initializeContent(): void {
   if (badges.length === 0) {
     console.error("WARNING: No badges loaded! Check content/badges.json file.");
   }
-  
+
   console.log(`Content initialized: ${scenarios.length} scenarios, ${badges.length} badges`);
 }
 
@@ -119,8 +119,8 @@ export function reloadScenarios(): Scenario[] {
  * Get scenario file path for editing reference.
  */
 export function getScenarioFilePath(scenarioId: string): string | null {
-  const files = fs.readdirSync(SCENARIOS_DIR).filter(f => f.endsWith(".json"));
-  
+  const files = fs.readdirSync(SCENARIOS_DIR).filter((f) => f.endsWith(".json"));
+
   for (const file of files) {
     const filePath = path.join(SCENARIOS_DIR, file);
     try {
@@ -133,6 +133,6 @@ export function getScenarioFilePath(scenarioId: string): string | null {
       // Skip invalid files
     }
   }
-  
+
   return null;
 }

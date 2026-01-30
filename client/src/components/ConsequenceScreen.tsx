@@ -1,13 +1,36 @@
-import { AlertTriangle, CheckCircle, AlertCircle, Shield, Key, User, DollarSign, UserX, Eye, Bug, ChevronRight, RotateCcw } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle,
+  AlertCircle,
+  Shield,
+  Key,
+  User,
+  DollarSign,
+  UserX,
+  Eye,
+  Bug,
+  ChevronRight,
+  RotateCcw,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Consequence } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import {
+  translateConsequenceSaferAlternative,
+  translateConsequenceTechnicalExplanation,
+  translateConsequenceTitle,
+  translateConsequenceWhatHappened,
+  translateConsequenceWhyRisky,
+  translateCascadingEffect,
+} from "@/lib/translateContent";
 
 interface ConsequenceScreenProps {
   consequence: Consequence;
+  scenarioId: string;
+  sceneId: string;
   onContinue: () => void;
   onTryAnother?: () => void;
 }
@@ -48,17 +71,67 @@ const cascadeIcons = {
   malware: Bug,
 };
 
-export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: ConsequenceScreenProps) {
+function getConsequenceTranslationId(consequence: Consequence, sceneId: string): string {
+  const key =
+    consequence.titleKey ||
+    consequence.whatHappenedKey ||
+    consequence.whyRiskyKey ||
+    consequence.saferAlternativeKey ||
+    consequence.technicalExplanationKey;
+  if (key) {
+    const match = key.match(/scenarios\.[^.]+\.consequences\.([^.]+)\./);
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+  if (consequence.id) {
+    return consequence.id;
+  }
+  if (sceneId.startsWith("consequence_")) {
+    return `cons_${sceneId.slice("consequence_".length)}`;
+  }
+  if (sceneId.includes("_consequence_")) {
+    return `cons_${sceneId.replace("_consequence_", "_")}`;
+  }
+  return `cons_${sceneId}`;
+}
+
+export function ConsequenceScreen({
+  consequence,
+  scenarioId,
+  sceneId,
+  onContinue,
+  onTryAnother,
+}: ConsequenceScreenProps) {
   const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
   const SeverityIcon = config.Icon;
-  const title = consequence.titleKey ? t(consequence.titleKey) : consequence.title;
-  const whatHappened = consequence.whatHappenedKey ? t(consequence.whatHappenedKey) : consequence.whatHappened;
-  const whyRisky = consequence.whyRiskyKey ? t(consequence.whyRiskyKey) : consequence.whyRisky;
-  const saferAlternative = consequence.saferAlternativeKey ? t(consequence.saferAlternativeKey) : consequence.saferAlternative;
+  const consequenceId = getConsequenceTranslationId(consequence, sceneId);
+  const title = consequence.titleKey
+    ? t(consequence.titleKey)
+    : translateConsequenceTitle(t, scenarioId, consequenceId, consequence.title);
+  const whatHappened = consequence.whatHappenedKey
+    ? t(consequence.whatHappenedKey)
+    : translateConsequenceWhatHappened(t, scenarioId, consequenceId, consequence.whatHappened);
+  const whyRisky = consequence.whyRiskyKey
+    ? t(consequence.whyRiskyKey)
+    : translateConsequenceWhyRisky(t, scenarioId, consequenceId, consequence.whyRisky);
+  const saferAlternative = consequence.saferAlternativeKey
+    ? t(consequence.saferAlternativeKey)
+    : translateConsequenceSaferAlternative(
+        t,
+        scenarioId,
+        consequenceId,
+        consequence.saferAlternative
+      );
   const technicalExplanation = consequence.technicalExplanationKey
     ? t(consequence.technicalExplanationKey)
-    : consequence.technicalExplanation;
+    : translateConsequenceTechnicalExplanation(
+        t,
+        scenarioId,
+        consequenceId,
+        consequence.technicalExplanation || ""
+      );
   const rationaleTypeKeys: Record<string, string> = {
     credential_harvested: "scoring.rationale.type.credential_harvested",
     session_compromised: "scoring.rationale.type.session_compromised",
@@ -84,56 +157,68 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
     >
       <Card className={cn("overflow-hidden", config.border)}>
         <div className={cn("p-4 flex items-center gap-4", config.headerBg)}>
-          <div className={cn("w-12 h-12 rounded-full flex items-center justify-center", config.iconBg)}>
+          <div
+            className={cn("w-12 h-12 rounded-full flex items-center justify-center", config.iconBg)}
+          >
             <SeverityIcon className={cn("w-6 h-6", config.iconColor)} />
           </div>
           <div>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {title}
-            </h2>
+            <h2 className="font-display text-xl font-semibold text-foreground">{title}</h2>
           </div>
         </div>
-        
+
         <div className="p-6 space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">1</div>
-                  {t('consequence.whatHappened')}
+                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                    1
+                  </div>
+                  {t("consequence.whatHappened")}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-what-happened">
+                <p
+                  className="text-muted-foreground text-sm leading-relaxed"
+                  data-testid="consequence-what-happened"
+                >
                   {whatHappened}
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">2</div>
-                  {consequence.severity === "success" ? t('consequence.whySafe') : t('consequence.whyRisky')}
+                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                    2
+                  </div>
+                  {consequence.severity === "success"
+                    ? t("consequence.whySafe")
+                    : t("consequence.whyRisky")}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed" data-testid="consequence-why-risky">
+                <p
+                  className="text-muted-foreground text-sm leading-relaxed"
+                  data-testid="consequence-why-risky"
+                >
                   {whyRisky}
                 </p>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className={cn("p-4 rounded-lg", config.bg)}>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                   <Shield className={cn("w-4 h-4", config.iconColor)} />
-                  {consequence.severity === "success" ? t('consequence.whyWorked') : t('consequence.saferAlternative')}
+                  {consequence.severity === "success"
+                    ? t("consequence.whyWorked")
+                    : t("consequence.saferAlternative")}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {saferAlternative}
-                </p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{saferAlternative}</p>
               </div>
-              
+
               {technicalExplanation && (
                 <div className="p-4 rounded-lg bg-muted/50">
                   <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                    {t('consequence.technicalDetails')}
+                    {t("consequence.technicalDetails")}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {technicalExplanation}
@@ -142,29 +227,37 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
               )}
             </div>
           </div>
-          
+
           {consequence.cascadingEffects && consequence.cascadingEffects.length > 0 && (
             <div className="border-t border-border pt-6">
               <h3 className="font-medium text-foreground mb-4">
-                {t('consequence.cascadingTitle')}
+                {t("consequence.cascadingTitle")}
               </h3>
               <div className="grid sm:grid-cols-2 gap-3">
-                {consequence.cascadingEffects.map((effect) => {
-                  const IconComponent = cascadeIcons[effect.icon as keyof typeof cascadeIcons] || ChevronRight;
+                {consequence.cascadingEffects.map((effect, index) => {
+                  const IconComponent =
+                    cascadeIcons[effect.icon as keyof typeof cascadeIcons] || ChevronRight;
+                  const effectText = translateCascadingEffect(
+                    t,
+                    scenarioId,
+                    consequenceId,
+                    index,
+                    effect.effect
+                  );
                   return (
                     <div
                       key={effect.order}
                       className="flex items-start gap-3 p-3 rounded-lg bg-muted/30"
                     >
-                      <div className={cn(
-                        "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
-                        config.iconBg
-                      )}>
+                      <div
+                        className={cn(
+                          "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                          config.iconBg
+                        )}
+                      >
                         <IconComponent className={cn("w-4 h-4", config.iconColor)} />
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {effect.effect}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{effectText}</p>
                     </div>
                   );
                 })}
@@ -173,13 +266,11 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
           )}
 
           <div className="border-t border-border pt-6">
-            <h3 className="font-medium text-foreground mb-3">
-              {t('scoring.rationale.title')}
-            </h3>
+            <h3 className="font-medium text-foreground mb-3">{t("scoring.rationale.title")}</h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               {safetyPoints !== 0 && (
                 <p>
-                  {t('scoring.rationale.safety', {
+                  {t("scoring.rationale.safety", {
                     points: safetyPoints,
                     reason: t(rationaleKey),
                   })}
@@ -187,15 +278,13 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
               )}
               {riskPoints !== 0 && (
                 <p>
-                  {t('scoring.rationale.risk', {
+                  {t("scoring.rationale.risk", {
                     points: riskPoints,
                     reason: t(rationaleKey),
                   })}
                 </p>
               )}
-              {safetyPoints === 0 && riskPoints === 0 && (
-                <p>{t('scoring.rationale.neutral')}</p>
-              )}
+              {safetyPoints === 0 && riskPoints === 0 && <p>{t("scoring.rationale.neutral")}</p>}
             </div>
           </div>
         </div>
@@ -210,15 +299,11 @@ export function ConsequenceScreen({ consequence, onContinue, onTryAnother }: Con
             data-testid="button-try-another"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
-            {t('common.tryAnotherOption')}
+            {t("common.tryAnotherOption")}
           </Button>
         )}
-        <Button
-          onClick={onContinue}
-          className="flex-1"
-          data-testid="button-continue"
-        >
-          {t('common.continue')}
+        <Button onClick={onContinue} className="flex-1" data-testid="button-continue">
+          {t("common.continue")}
         </Button>
       </div>
     </motion.div>

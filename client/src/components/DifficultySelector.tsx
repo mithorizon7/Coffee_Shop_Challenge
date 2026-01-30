@@ -4,21 +4,29 @@ import { Badge } from "@/components/ui/badge";
 import type { DifficultyLevel, ScenarioListItem } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import {
+  translateScenarioTitle,
+  translateScenarioDescription,
+  translateScenarioLocation,
+} from "@/lib/translateContent";
 
 interface DifficultySelectorProps {
   scenarios: ScenarioListItem[];
   onSelect: (scenarioId: string) => void;
 }
 
-const difficultyConfig: Record<DifficultyLevel, {
-  icon: typeof Shield;
-  labelKey: string;
-  descriptionKey: string;
-  featureKeys: string[];
-  color: string;
-  bgColor: string;
-  borderColor: string;
-}> = {
+const difficultyConfig: Record<
+  DifficultyLevel,
+  {
+    icon: typeof Shield;
+    labelKey: string;
+    descriptionKey: string;
+    featureKeys: string[];
+    color: string;
+    bgColor: string;
+    borderColor: string;
+  }
+> = {
   beginner: {
     icon: Shield,
     labelKey: "scenario.difficulty.beginner",
@@ -62,14 +70,25 @@ const difficultyConfig: Record<DifficultyLevel, {
 
 export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorProps) {
   const { t } = useTranslation();
-  
-  const groupedScenarios = scenarios.reduce((acc, scenario) => {
-    if (!acc[scenario.difficulty]) {
-      acc[scenario.difficulty] = [];
-    }
-    acc[scenario.difficulty].push(scenario);
-    return acc;
-  }, {} as Record<DifficultyLevel, ScenarioListItem[]>);
+
+  const formatEstimatedTime = (estimatedTime: string) => {
+    const match = estimatedTime.match(/(\\d+)/);
+    if (!match) return estimatedTime;
+    const minutes = Number(match[1]);
+    if (!Number.isFinite(minutes)) return estimatedTime;
+    return t("time.minutes", { count: minutes });
+  };
+
+  const groupedScenarios = scenarios.reduce(
+    (acc, scenario) => {
+      if (!acc[scenario.difficulty]) {
+        acc[scenario.difficulty] = [];
+      }
+      acc[scenario.difficulty].push(scenario);
+      return acc;
+    },
+    {} as Record<DifficultyLevel, ScenarioListItem[]>
+  );
 
   const orderedDifficulties: DifficultyLevel[] = ["beginner", "intermediate", "advanced"];
 
@@ -85,28 +104,31 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
         return (
           <div key={difficulty} className="space-y-3">
             <div className="flex items-start gap-3">
-              <div className={cn(
-                "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-                config.bgColor
-              )}>
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                  config.bgColor
+                )}
+              >
                 <DifficultyIcon className={cn("w-5 h-5", config.color)} />
               </div>
               <div className="flex-1">
-                <h3 className="font-display font-semibold text-foreground">
-                  {t(config.labelKey)}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {t(config.descriptionKey)}
-                </p>
+                <h3 className="font-display font-semibold text-foreground">{t(config.labelKey)}</h3>
+                <p className="text-sm text-muted-foreground">{t(config.descriptionKey)}</p>
                 <ul className="mt-2 space-y-1">
                   {config.featureKeys.map((featureKey, index) => (
-                    <li key={index} className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      <span className={cn(
-                        "w-1.5 h-1.5 rounded-full flex-shrink-0",
-                        difficulty === 'beginner' && "bg-green-500 dark:bg-green-400",
-                        difficulty === 'intermediate' && "bg-amber-500 dark:bg-amber-400",
-                        difficulty === 'advanced' && "bg-red-500 dark:bg-red-400"
-                      )} />
+                    <li
+                      key={index}
+                      className="text-xs text-muted-foreground flex items-center gap-1.5"
+                    >
+                      <span
+                        className={cn(
+                          "w-1.5 h-1.5 rounded-full flex-shrink-0",
+                          difficulty === "beginner" && "bg-green-500 dark:bg-green-400",
+                          difficulty === "intermediate" && "bg-amber-500 dark:bg-amber-400",
+                          difficulty === "advanced" && "bg-red-500 dark:bg-red-400"
+                        )}
+                      />
                       {t(featureKey)}
                     </li>
                   ))}
@@ -115,38 +137,58 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
             </div>
 
             <div className="space-y-2 ml-[3.25rem]">
-              {scenariosForDifficulty.map((scenario) => (
-                <Card
-                  key={scenario.id}
-                  className={cn(
-                    "p-4 cursor-pointer hover-elevate active-elevate-2 transition-all duration-150",
-                    config.borderColor
-                  )}
-                  onClick={() => onSelect(scenario.id)}
-                  data-testid={`scenario-card-${scenario.id}`}
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-medium text-foreground">
-                          {scenario.title}
-                        </h4>
-                        <Badge variant="secondary" className="text-xs">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {scenario.estimatedTime}
-                        </Badge>
+              {scenariosForDifficulty.map((scenario) => {
+                const title = translateScenarioTitle(t, scenario.id, scenario.title);
+                const description = translateScenarioDescription(
+                  t,
+                  scenario.id,
+                  scenario.description
+                );
+                const location = translateScenarioLocation(t, scenario.id, scenario.location);
+                const estimatedTime = formatEstimatedTime(scenario.estimatedTime);
+
+                return (
+                  <Card
+                    key={scenario.id}
+                    className={cn(
+                      "p-4 transition-all duration-150 hover-elevate active-elevate-2",
+                      config.borderColor
+                    )}
+                    data-testid={`scenario-card-${scenario.id}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onSelect(scenario.id)}
+                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+                      aria-describedby={`scenario-desc-${scenario.id}`}
+                      aria-label={t("scenario.startScenarioWithTime", {
+                        title,
+                        time: estimatedTime,
+                      })}
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-medium text-foreground">{title}</h4>
+                            <Badge variant="secondary" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {estimatedTime}
+                            </Badge>
+                          </div>
+                          <p
+                            id={`scenario-desc-${scenario.id}`}
+                            className="text-sm text-muted-foreground mt-1 line-clamp-2"
+                          >
+                            {description}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">{location}</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                        {scenario.description}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {scenario.location}
-                      </p>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                  </div>
-                </Card>
-              ))}
+                    </button>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         );

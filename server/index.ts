@@ -20,7 +20,7 @@ app.use(
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
-  }),
+  })
 );
 
 app.use(express.urlencoded({ extended: false }));
@@ -57,9 +57,10 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         const bodyStr = JSON.stringify(capturedJsonResponse);
         // Truncate large response bodies to prevent memory issues
-        const truncatedBody = bodyStr.length > MAX_LOG_BODY_LENGTH 
-          ? bodyStr.slice(0, MAX_LOG_BODY_LENGTH) + "...[truncated]"
-          : bodyStr;
+        const truncatedBody =
+          bodyStr.length > MAX_LOG_BODY_LENGTH
+            ? bodyStr.slice(0, MAX_LOG_BODY_LENGTH) + "...[truncated]"
+            : bodyStr;
         logLine += ` :: ${truncatedBody}`;
       }
 
@@ -73,7 +74,7 @@ app.use((req, res, next) => {
 (async () => {
   // Initialize scenario content from JSON files
   initializeContent();
-  
+
   await setupAuth(app);
   registerAuthRoutes(app);
   await registerRoutes(httpServer, app);
@@ -109,7 +110,7 @@ app.use((req, res, next) => {
     },
     () => {
       log(`serving on port ${port}`);
-    },
+    }
   );
 
   // Graceful shutdown handling

@@ -13,13 +13,9 @@ export function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       data-testid="button-theme-toggle"
-      aria-label={theme === "dark" ? t('common.switchToLight') : t('common.switchToDark')}
+      aria-label={theme === "dark" ? t("common.switchToLight") : t("common.switchToDark")}
     >
-      {theme === "dark" ? (
-        <Sun className="w-5 h-5" />
-      ) : (
-        <Moon className="w-5 h-5" />
-      )}
+      {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
     </Button>
   );
 }
