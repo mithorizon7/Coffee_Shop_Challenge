@@ -114,8 +114,8 @@
         { "actionId": "connect_hotel_official", "nextSceneId": "hotel_portal" },
         { "actionId": "connect_hotel_premium", "nextSceneId": "hotel_premium_login" },
         { "actionId": "connect_hotel_fake", "nextSceneId": "hotel_consequence_trap" },
-        { "actionId": "connect_hotel_conference", "nextSceneId": "hotel_premium_login" },
-        { "actionId": "connect_personal_hotspot", "nextSceneId": "hotel_portal" },
+        { "actionId": "connect_hotel_conference", "nextSceneId": "hotel_consequence_conference" },
+        { "actionId": "connect_personal_hotspot", "nextSceneId": "hotel_consequence_hotspot" },
         { "actionId": "call_desk", "nextSceneId": "hotel_verified" }
       ]
     },
@@ -307,6 +307,46 @@
         ]
       },
       "nextSceneId": "hotel_update_prompt"
+    },
+    {
+      "id": "hotel_consequence_hotspot",
+      "type": "consequence",
+      "title": "Personal Hotspot",
+      "description": "You connected to a nearby personal hotspot...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_hotspot",
+        "type": "privacy_leaked",
+        "severity": "warning",
+        "title": "Unverified Personal Hotspot",
+        "whatHappened": "You connected to 'iPhone-John', a nearby personal hotspot. There's no captive portal because it's not the hotel's network.",
+        "whyRisky": "You don't know who owns or controls it. The hotspot owner can monitor DNS and any unencrypted traffic, and could run malicious services. Even with WPA2, you're trusting a stranger's device with your work traffic.",
+        "saferAlternative": "Use your own phone's hotspot or a verified hotel network. If you must use a hotspot, confirm the owner and use a VPN for any work.",
+        "technicalExplanation": "WPA2 protects the wireless link from eavesdroppers, but the hotspot owner controls routing and DNS and can log metadata or redirect traffic.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 10
+      },
+      "nextSceneId": "hotel_network_select"
+    },
+    {
+      "id": "hotel_consequence_conference",
+      "type": "consequence",
+      "title": "Conference Network",
+      "description": "You tried the conference center network...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_conference",
+        "type": "action_postponed",
+        "severity": "warning",
+        "title": "Access Denied",
+        "whatHappened": "The Conference_Center network opened a portal asking for an event code or attendee login. You don't have credentials, so you can't get online.",
+        "whyRisky": "This isn't necessarily malicious, but guessing credentials or using someone else's access violates policies and wastes time when you have work to do.",
+        "saferAlternative": "Use a verified hotel network or ask the front desk which guest network is correct.",
+        "technicalExplanation": "Conference networks often use captive portals tied to event credentials and segregated access. Without authorization, your device is isolated.",
+        "safetyPointsChange": 0,
+        "riskPointsChange": 5
+      },
+      "nextSceneId": "hotel_network_select"
     },
     {
       "id": "hotel_task_email",
