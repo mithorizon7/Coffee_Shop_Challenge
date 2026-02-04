@@ -298,7 +298,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
               {t("game.exit")}
             </Button>
 
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center min-w-0">
               <ProgressIndicator
                 scenes={scenario.scenes}
                 currentSceneId={session.currentSceneId}
