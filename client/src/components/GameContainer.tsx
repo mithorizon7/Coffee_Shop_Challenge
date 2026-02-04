@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { MapPin, Wifi, ArrowLeft, Shield, Info } from "lucide-react";
+import { MapPin, Wifi, ArrowLeft, Shield, Info, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import captivePortalImage from "@assets/ChatGPT_Image_Dec_17,_2025,_04_26_45_PM_1766006848813.png";
@@ -39,9 +39,25 @@ interface GameContainerProps {
   scenario: Scenario;
   onExit: () => void;
   onRestart: () => void;
+  onAdvance: () => void;
+  exploration?: {
+    phase: "explore" | "final";
+    rootNetworkSceneId: string | null;
+    rootNetworkIds: string[];
+    exploredNetworkIds: string[];
+    onNetworkExplored: (networkId: string) => void;
+    onStartFinalRun: () => void;
+  };
 }
 
-export function GameContainer({ initialSession, scenario, onExit, onRestart }: GameContainerProps) {
+export function GameContainer({
+  initialSession,
+  scenario,
+  onExit,
+  onRestart,
+  onAdvance,
+  exploration,
+}: GameContainerProps) {
   const { t } = useTranslation();
   const [session, setSession] = useState<GameSession>(initialSession);
 
@@ -51,7 +67,21 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
   const progressSavedRef = useRef(false);
   const completionHandledRef = useRef(false);
   const timeoutNotifiedRef = useRef<Record<string, boolean>>({});
+  const rootSnapshotRef = useRef<GameSession | null>(null);
   const { toast } = useToast();
+  const isExplorationPhase = exploration?.phase === "explore";
+  const rootNetworkIds = exploration?.rootNetworkIds ?? [];
+  const rootNetworkSceneId = exploration?.rootNetworkSceneId ?? null;
+  const exploredNetworkIds = exploration?.exploredNetworkIds ?? [];
+  const explorationTotal = rootNetworkIds.length;
+  const explorationCount = exploredNetworkIds.length;
+  const allNetworksExplored =
+    isExplorationPhase &&
+    explorationTotal > 0 &&
+    rootNetworkIds.every((id) => exploredNetworkIds.includes(id));
+  const isFinalRun = !isExplorationPhase || explorationTotal === 0;
+  const isRootNetworkScene =
+    !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
 
   const updateSessionMutation = useMutation({
     mutationFn: async (updates: Partial<GameSession>) => {
@@ -113,6 +143,13 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
     );
   }, [currentScene?.type]);
 
+  const nextScene = currentScene?.nextSceneId
+    ? scenario.scenes.find((scene) => scene.id === currentScene.nextSceneId)
+    : undefined;
+  const isTerminalConsequence =
+    currentScene?.type === "consequence" &&
+    (nextScene?.type === "debrief" || nextScene?.type === "completion");
+
   const syncSession = useCallback(
     (updatedSession: GameSession) => {
       setSession(updatedSession);
@@ -137,16 +174,21 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
     const completedSession = completeSession(session);
     syncSession(completedSession);
 
-    if (isAuthenticated && !progressSavedRef.current) {
+    if (isAuthenticated && isFinalRun && !progressSavedRef.current) {
       progressSavedRef.current = true;
       saveProgressMutation.mutate(completedSession);
     }
-  }, [currentScene, session, isAuthenticated, syncSession, saveProgressMutation]);
+  }, [currentScene, session, isAuthenticated, isFinalRun, syncSession, saveProgressMutation]);
 
   useEffect(() => {
     if (!currentSceneId) return;
     timeoutNotifiedRef.current[currentSceneId] = false;
   }, [currentSceneId]);
+
+  useEffect(() => {
+    if (!isRootNetworkScene) return;
+    rootSnapshotRef.current = JSON.parse(JSON.stringify(session));
+  }, [isRootNetworkScene, session]);
 
   const handleTimeUp = useCallback(() => {
     const updatedSession = {
@@ -171,6 +213,11 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
   const handleNetworkSelect = useCallback(
     (network: Network) => {
       if (isTransitioning) return;
+      if (isRootNetworkScene && exploredNetworkIds.includes(network.id)) return;
+
+      if (isExplorationPhase && rootNetworkIds.includes(network.id)) {
+        exploration?.onNetworkExplored(network.id);
+      }
 
       setIsTransitioning(true);
       const currentSceneType = currentScene?.type;
@@ -190,7 +237,18 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
         setIsTransitioning(false);
       }, 300);
     },
-    [session, scenario, isTransitioning, syncSession, currentScene?.type]
+    [
+      session,
+      scenario,
+      isTransitioning,
+      syncSession,
+      currentScene?.type,
+      isExplorationPhase,
+      exploredNetworkIds,
+      rootNetworkIds,
+      exploration,
+      isRootNetworkScene,
+    ]
   );
 
   const handleAction = useCallback(
@@ -231,6 +289,19 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
     }, 300);
   }, [sessionSnapshots, isTransitioning, syncSession]);
 
+  const handleExplorationRestart = useCallback(() => {
+    if (isTransitioning) return;
+    const snapshot = rootSnapshotRef.current;
+    if (!snapshot) return;
+
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSessionSnapshots([]);
+      syncSession(snapshot);
+      setIsTransitioning(false);
+    }, 300);
+  }, [isTransitioning, syncSession]);
+
   const handleContinue = useCallback(() => {
     if (isTransitioning) return;
 
@@ -256,13 +327,21 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
         syncSession(completedSession);
         setIsTransitioning(false);
 
-        if (isAuthenticated && !progressSavedRef.current) {
+        if (isAuthenticated && isFinalRun && !progressSavedRef.current) {
           progressSavedRef.current = true;
           saveProgressMutation.mutate(completedSession);
         }
       }, 300);
     }
-  }, [session, scenario, isTransitioning, syncSession, isAuthenticated, saveProgressMutation]);
+  }, [
+    session,
+    scenario,
+    isTransitioning,
+    syncSession,
+    isAuthenticated,
+    isFinalRun,
+    saveProgressMutation,
+  ]);
 
   if (!currentScene) {
     return (
@@ -283,7 +362,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
         session={session}
         scenario={scenario}
         onPlayAgain={onRestart}
-        onSelectNewScenario={onExit}
+        onSelectNewScenario={onAdvance}
       />
     );
   }
@@ -385,6 +464,27 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
                     <Wifi className="w-4 h-4" />
                     <span>{t("network.availableNetworks")}</span>
                   </div>
+                  {isRootNetworkScene && explorationTotal > 0 && (
+                    <Card className="p-4 bg-muted/40 border-dashed border-border/70">
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-2xl bg-primary/15 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-foreground">
+                            {t("exploration.title")}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{t("exploration.body")}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {t("exploration.progress", {
+                              count: explorationCount,
+                              total: explorationTotal,
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  )}
                   <div className="space-y-3">
                     {currentScene.networks.map((network) => (
                       <NetworkCard
@@ -393,6 +493,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
                         onSelect={handleNetworkSelect}
                         showWarnings={showWarnings}
                         isSelected={session.selectedNetworkId === network.id}
+                        isDisabled={isRootNetworkScene && exploredNetworkIds.includes(network.id)}
                         description={translateNetworkDescription(
                           t,
                           scenario.id,
@@ -504,8 +605,32 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
                 consequence={currentScene.consequence}
                 scenarioId={scenario.id}
                 sceneId={currentScene.id}
-                onContinue={handleContinue}
-                onTryAnother={sessionSnapshots.length > 0 ? handleTryAnother : undefined}
+                onContinue={
+                  isExplorationPhase && isTerminalConsequence && explorationTotal > 0
+                    ? allNetworksExplored
+                      ? exploration?.onStartFinalRun
+                      : undefined
+                    : handleContinue
+                }
+                onTryAnother={
+                  isExplorationPhase && isTerminalConsequence && explorationTotal > 0
+                    ? allNetworksExplored
+                      ? undefined
+                      : handleExplorationRestart
+                    : sessionSnapshots.length > 0
+                      ? handleTryAnother
+                      : undefined
+                }
+                continueLabel={
+                  isExplorationPhase && isTerminalConsequence && allNetworksExplored
+                    ? t("exploration.startFinalRun")
+                    : undefined
+                }
+                footerMessage={
+                  isExplorationPhase && isTerminalConsequence && allNetworksExplored
+                    ? t("exploration.finalPrompt")
+                    : undefined
+                }
               />
             )}
 

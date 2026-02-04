@@ -87,30 +87,41 @@ export function processNetworkSelection(
       ? currentScene.choices?.find((c) => c.actionId === fallbackActionId)
       : undefined);
   const nextSceneId = choice?.nextSceneId || session.currentSceneId;
+  const nextScene = scenario.scenes.find((scene) => scene.id === nextSceneId);
 
-  if (network.isTrap) {
+  if (nextScene?.consequence) {
+    safetyChange = nextScene.consequence.safetyPointsChange;
+    riskChange = nextScene.consequence.riskPointsChange;
+  } else if (network.isTrap) {
     riskChange = 25;
   } else if (network.riskLevel === "safe" && network.verifiedByStaff) {
     safetyChange = 15;
   } else if (network.riskLevel === "safe") {
     safetyChange = 10;
+  } else if (network.verifiedByStaff && network.riskLevel === "suspicious") {
+    safetyChange = 5;
+    riskChange = 5;
   } else {
     riskChange = 10;
   }
+
+  const isCorrectDecision = safetyChange > riskChange;
+  const isScoredDecision = safetyChange !== 0 || riskChange !== 0;
 
   const completedSceneIds = alreadyCompleted
     ? session.completedSceneIds
     : [...session.completedSceneIds, session.currentSceneId];
 
-  const score = alreadyCompleted
-    ? session.score
-    : {
-        ...session.score,
-        safetyPoints: session.score.safetyPoints + safetyChange,
-        riskPoints: session.score.riskPoints + riskChange,
-        decisionsCount: session.score.decisionsCount + 1,
-        correctDecisions: session.score.correctDecisions + (safetyChange > 0 ? 1 : 0),
-      };
+  const score =
+    alreadyCompleted || !isScoredDecision
+      ? session.score
+      : {
+          ...session.score,
+          safetyPoints: session.score.safetyPoints + safetyChange,
+          riskPoints: session.score.riskPoints + riskChange,
+          decisionsCount: session.score.decisionsCount + 1,
+          correctDecisions: session.score.correctDecisions + (isCorrectDecision ? 1 : 0),
+        };
 
   return {
     updatedSession: {
@@ -144,6 +155,7 @@ export function processAction(
   let safetyChange = 0;
   let riskChange = 0;
   let vpnEnabled = session.vpnEnabled;
+  let selectedNetworkId = session.selectedNetworkId;
   const newBadges = [...session.badges];
 
   // Get current badges from getter to ensure we have latest loaded from JSON
@@ -182,13 +194,23 @@ export function processAction(
   }
 
   if (action?.type === "install_profile") {
-    riskChange = 30;
+    riskChange = nextScene?.consequence ? 0 : 30;
   }
 
-  const selectedNetwork = session.selectedNetworkId
-    ? scenario.scenes
-        .flatMap((s) => s.networks ?? [])
-        .find((n) => n.id === session.selectedNetworkId)
+  const mobileNetwork = scenario.scenes
+    .flatMap((scene) => scene.networks ?? [])
+    .find((network) => network.isMobileData);
+  const shouldSelectMobile =
+    !!mobileNetwork &&
+    (action?.type === "switch_network" ||
+      action?.id?.toLowerCase().includes("mobile") ||
+      action?.id?.toLowerCase().includes("hotspot"));
+  if (shouldSelectMobile) {
+    selectedNetworkId = mobileNetwork.id;
+  }
+
+  const selectedNetwork = selectedNetworkId
+    ? scenario.scenes.flatMap((s) => s.networks ?? []).find((n) => n.id === selectedNetworkId)
     : undefined;
 
   const isCriticalProceed =
@@ -203,27 +225,29 @@ export function processAction(
     riskChange = Math.max(riskChange, 10);
   }
 
-  const isCorrectDecision =
-    safetyChange > riskChange && (!isCriticalProceed || hasStrongProtection);
+  const isCorrectDecision = safetyChange > riskChange;
+  const isScoredDecision = safetyChange !== 0 || riskChange !== 0;
 
   const completedSceneIds = alreadyCompleted
     ? session.completedSceneIds
     : [...session.completedSceneIds, session.currentSceneId];
 
-  const score = alreadyCompleted
-    ? session.score
-    : {
-        ...session.score,
-        safetyPoints: session.score.safetyPoints + safetyChange,
-        riskPoints: session.score.riskPoints + riskChange,
-        decisionsCount: session.score.decisionsCount + 1,
-        correctDecisions: session.score.correctDecisions + (isCorrectDecision ? 1 : 0),
-      };
+  const score =
+    alreadyCompleted || !isScoredDecision
+      ? session.score
+      : {
+          ...session.score,
+          safetyPoints: session.score.safetyPoints + safetyChange,
+          riskPoints: session.score.riskPoints + riskChange,
+          decisionsCount: session.score.decisionsCount + 1,
+          correctDecisions: session.score.correctDecisions + (isCorrectDecision ? 1 : 0),
+        };
 
   return {
     updatedSession: {
       ...session,
       vpnEnabled,
+      selectedNetworkId,
       score,
       completedSceneIds,
       currentSceneId: nextSceneId,

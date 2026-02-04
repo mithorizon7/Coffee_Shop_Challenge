@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
@@ -9,13 +9,11 @@ import {
   ArrowRight,
   Loader2,
   BarChart3,
-  LogIn,
-  LogOut,
   GraduationCap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { DifficultySelector } from "@/components/DifficultySelector";
+import { ScenarioIntro } from "@/components/ScenarioIntro";
 import { GameContainer } from "@/components/GameContainer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -24,15 +22,23 @@ import { Link } from "wouter";
 import type { GameSession, Scenario, ScenarioListItem, DifficultyLevel } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
+import { orderedDifficulties } from "@/lib/difficultyConfig";
+import { translateScenarioTitle } from "@/lib/translateContent";
 
-type ViewState = "landing" | "scenario_select" | "loading_scenario" | "playing";
+type ViewState = "landing" | "scenario_intro" | "loading_scenario" | "playing";
+type ExplorationPhase = "explore" | "final";
 
 export default function Home() {
   const { t } = useTranslation();
   const [viewState, setViewState] = useState<ViewState>("landing");
   const [currentSession, setCurrentSession] = useState<GameSession | null>(null);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
-  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const [explorationPhase, setExplorationPhase] = useState<ExplorationPhase>("explore");
+  const [exploredNetworkIds, setExploredNetworkIds] = useState<string[]>([]);
+  const [rootNetworkSceneId, setRootNetworkSceneId] = useState<string | null>(null);
+  const [rootNetworkIds, setRootNetworkIds] = useState<string[]>([]);
+  const { isAuthenticated } = useAuth();
 
   const {
     data: scenarioList,
@@ -41,6 +47,16 @@ export default function Home() {
   } = useQuery<ScenarioListItem[]>({
     queryKey: ["/api/scenarios"],
   });
+
+  const orderedScenarios = useMemo(() => {
+    if (!scenarioList) return [];
+    return orderedDifficulties.flatMap((difficulty) =>
+      scenarioList.filter((scenario) => scenario.difficulty === difficulty)
+    );
+  }, [scenarioList]);
+
+  const currentScenarioPreview = orderedScenarios[scenarioIndex] ?? null;
+  const nextScenarioPreview = orderedScenarios[scenarioIndex + 1] ?? null;
 
   const createSessionMutation = useMutation({
     mutationFn: async (params: { scenarioId: string; difficulty: DifficultyLevel }) => {
@@ -53,11 +69,38 @@ export default function Home() {
   });
 
   const handleStartChallenge = () => {
-    setViewState("scenario_select");
+    setScenarioIndex(0);
+    setViewState("scenario_intro");
   };
 
-  const handleSelectScenario = async (scenarioId: string) => {
+  const startScenarioSession = async (scenario: Scenario, startAtSceneId?: string) => {
+    const session = await createSessionMutation.mutateAsync({
+      scenarioId: scenario.id,
+      difficulty: scenario.difficulty,
+    });
+
+    if (!startAtSceneId) {
+      return session;
+    }
+
+    try {
+      const response = await apiRequest("PATCH", `/api/sessions/${session.id}`, {
+        currentSceneId: startAtSceneId,
+      });
+      if (response.ok) {
+        return (await response.json()) as GameSession;
+      }
+    } catch (error) {
+      console.error("Failed to jump to network selection:", error);
+    }
+
+    return session;
+  };
+
+  const handleStartScenario = async (scenarioId: string) => {
     setViewState("loading_scenario");
+    setExplorationPhase("explore");
+    setExploredNetworkIds([]);
 
     try {
       const scenarioResponse = await fetch(`/api/scenarios/${scenarioId}`);
@@ -66,38 +109,73 @@ export default function Home() {
       }
       const scenario: Scenario = await scenarioResponse.json();
 
-      const session = await createSessionMutation.mutateAsync({
-        scenarioId: scenario.id,
-        difficulty: scenario.difficulty,
-      });
+      const rootNetworkScene =
+        scenario.scenes.find(
+          (scene) => scene.type === "network_selection" && (scene.networks?.length ?? 0) > 1
+        ) ?? scenario.scenes.find((scene) => scene.type === "network_selection");
+
+      setRootNetworkSceneId(rootNetworkScene?.id ?? null);
+      setRootNetworkIds(rootNetworkScene?.networks?.map((network) => network.id) ?? []);
+
+      const session = await startScenarioSession(scenario);
 
       setSelectedScenario(scenario);
       setCurrentSession(session);
       setViewState("playing");
     } catch (error) {
       console.error("Failed to start scenario:", error);
-      setViewState("scenario_select");
+      setViewState("scenario_intro");
+    }
+  };
+
+  const handleStartFinalRun = async () => {
+    if (!selectedScenario) return;
+
+    setExplorationPhase("final");
+    setExploredNetworkIds([]);
+
+    try {
+      const session = await startScenarioSession(selectedScenario);
+      setCurrentSession(session);
+    } catch (error) {
+      console.error("Failed to start final run:", error);
     }
   };
 
   const handleExitGame = () => {
     setCurrentSession(null);
     setSelectedScenario(null);
-    setViewState("scenario_select");
+    setViewState("scenario_intro");
   };
 
   const handleRestartGame = async () => {
     if (!currentSession || !selectedScenario) return;
 
     try {
-      const session = await createSessionMutation.mutateAsync({
-        scenarioId: selectedScenario.id,
-        difficulty: selectedScenario.difficulty,
-      });
+      const session = await startScenarioSession(selectedScenario);
       setCurrentSession(session);
     } catch (error) {
       console.error("Failed to restart game:", error);
     }
+  };
+
+  const handleAdvanceScenario = () => {
+    const nextIndex = scenarioIndex + 1;
+    setCurrentSession(null);
+    setSelectedScenario(null);
+    setRootNetworkSceneId(null);
+    setRootNetworkIds([]);
+    setExploredNetworkIds([]);
+    setExplorationPhase("explore");
+
+    if (nextIndex >= orderedScenarios.length) {
+      setScenarioIndex(0);
+      setViewState("landing");
+      return;
+    }
+
+    setScenarioIndex(nextIndex);
+    setViewState("scenario_intro");
   };
 
   if (viewState === "loading_scenario") {
@@ -119,11 +197,24 @@ export default function Home() {
         scenario={selectedScenario}
         onExit={handleExitGame}
         onRestart={handleRestartGame}
+        onAdvance={handleAdvanceScenario}
+        exploration={{
+          phase: explorationPhase,
+          rootNetworkSceneId,
+          rootNetworkIds,
+          exploredNetworkIds,
+          onNetworkExplored: (networkId: string) => {
+            setExploredNetworkIds((prev) =>
+              prev.includes(networkId) ? prev : [...prev, networkId]
+            );
+          },
+          onStartFinalRun: handleStartFinalRun,
+        }}
       />
     );
   }
 
-  if (viewState === "scenario_select") {
+  if (viewState === "scenario_intro") {
     return (
       <div className="app-shell">
         <header className="app-surface border-b border-border/60 bg-background/70 backdrop-blur-xl">
@@ -164,43 +255,41 @@ export default function Home() {
         </header>
 
         <main className="app-surface max-w-6xl mx-auto px-4 py-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                {t("home.chooseScenario")}
-              </h1>
-              <p className="text-muted-foreground max-w-2xl">{t("home.chooseScenarioSubtitle")}</p>
-            </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            {scenariosLoading && (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="ml-3 text-muted-foreground">{t("home.loadingScenarios")}</span>
+              </div>
+            )}
 
-            <Card className="p-6 md:p-8">
-              {scenariosLoading && (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <span className="ml-3 text-muted-foreground">{t("home.loadingScenarios")}</span>
-                </div>
-              )}
+            {scenariosError && (
+              <div className="rounded-2xl border border-dashed border-border/70 bg-background/60 p-6 text-center">
+                <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-destructive" />
+                <h3 className="font-medium text-foreground mb-2">
+                  {t("home.failedToLoadScenarios")}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-4">{t("errors.loadingFailed")}</p>
+                <Button onClick={() => window.location.reload()} variant="outline">
+                  {t("home.refreshPage")}
+                </Button>
+              </div>
+            )}
 
-              {scenariosError && (
-                <div className="rounded-2xl border border-dashed border-border/70 bg-background/60 p-6 text-center">
-                  <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-destructive" />
-                  <h3 className="font-medium text-foreground mb-2">
-                    {t("home.failedToLoadScenarios")}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4">{t("errors.loadingFailed")}</p>
-                  <Button onClick={() => window.location.reload()} variant="outline">
-                    {t("home.refreshPage")}
-                  </Button>
-                </div>
-              )}
-
-              {scenarioList && (
-                <DifficultySelector scenarios={scenarioList} onSelect={handleSelectScenario} />
-              )}
-            </Card>
+            {currentScenarioPreview && (
+              <ScenarioIntro
+                scenario={currentScenarioPreview}
+                index={scenarioIndex}
+                total={orderedScenarios.length}
+                onStart={() => handleStartScenario(currentScenarioPreview.id)}
+                onBack={() => setViewState("landing")}
+                nextScenarioTitle={
+                  nextScenarioPreview
+                    ? translateScenarioTitle(t, nextScenarioPreview.id, nextScenarioPreview.title)
+                    : undefined
+                }
+              />
+            )}
           </motion.div>
         </main>
       </div>
@@ -235,32 +324,6 @@ export default function Home() {
                   </Button>
                 </Link>
               </>
-            )}
-            {authLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : isAuthenticated ? (
-              <div className="flex items-center gap-2">
-                {user?.profileImageUrl && (
-                  <img
-                    src={user.profileImageUrl}
-                    alt={t("aria.profileImageAlt")}
-                    className="w-7 h-7 rounded-full"
-                    data-testid="img-user-profile"
-                  />
-                )}
-                <Button variant="ghost" size="sm" asChild data-testid="button-logout">
-                  <a href="/api/logout" aria-label={t("home.signOut")}>
-                    <LogOut className="w-4 h-4" />
-                  </a>
-                </Button>
-              </div>
-            ) : (
-              <Button variant="ghost" size="sm" asChild data-testid="button-login">
-                <a href="/api/login">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  {t("home.signIn")}
-                </a>
-              </Button>
             )}
             <LanguageSwitcher />
             <ThemeToggle />
@@ -378,6 +441,16 @@ export default function Home() {
       <footer className="app-surface border-t border-border/60 bg-background/70 backdrop-blur mt-12">
         <div className="max-w-6xl mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
           <p>{t("home.footer")}</p>
+          {!isAuthenticated && (
+            <div className="mt-3 flex justify-center">
+              <Link href="/progress">
+                <Button variant="ghost" size="sm" data-testid="button-progress-cta">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  {t("home.progress")}
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </footer>
     </div>

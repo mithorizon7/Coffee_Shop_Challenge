@@ -11,6 +11,7 @@ interface NetworkCardProps {
   showWarnings?: boolean;
   isSelected?: boolean;
   description?: string;
+  isDisabled?: boolean;
 }
 
 export function NetworkCard({
@@ -19,6 +20,7 @@ export function NetworkCard({
   showWarnings = false,
   isSelected = false,
   description,
+  isDisabled = false,
 }: NetworkCardProps) {
   const { t } = useTranslation();
 
@@ -47,14 +49,21 @@ export function NetworkCard({
     <Card
       className={cn(
         "p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/80 hover:border-primary/30 hover:shadow-[0_18px_40px_-30px_hsl(var(--foreground)/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
-        isSelected && "ring-2 ring-primary/60 bg-primary/5"
+        isSelected && "ring-2 ring-primary/60 bg-primary/5",
+        isDisabled && "cursor-not-allowed opacity-50 hover:translate-y-0 hover:shadow-none"
       )}
-      onClick={() => onSelect(network)}
+      onClick={() => {
+        if (!isDisabled) {
+          onSelect(network);
+        }
+      }}
       role="button"
-      tabIndex={0}
+      tabIndex={isDisabled ? -1 : 0}
       aria-label={cardLabel}
       aria-pressed={isSelected}
+      aria-disabled={isDisabled || undefined}
       onKeyDown={(event) => {
+        if (isDisabled) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           onSelect(network);

@@ -318,7 +318,7 @@
     "yourGrade": "Tavs Vērtējums",
     "finalScore": "Gala Rezultāts",
     "whatToRemember": "Ko Atcerēties Nākamreiz",
-    "tryAnotherScenario": "Izmēģini Citu Scenāriju",
+    "tryAnotherScenario": "Nākamais izaicinājums",
     "tipsTitle": "Ko Atcerēties Nākamreiz",
     "decisionProcess": {
       "title": "Tavs Atkārtojamais Lēmumu Process",
@@ -1505,5 +1505,17 @@
       "name": "HTTPS varonis",
       "description": "Tu vienmēr pārbaudīji vietnes drošību pirms sensitīvu datu ievades"
     }
+  },
+  "sequence": {
+    "challengeProgress": "Izaicinājums {current} no {total}",
+    "upNext": "Nākamais"
+  },
+  "exploration": {
+    "title": "Izpēti iespējas",
+    "body": "Izmēģini katru tīklu, lai redzētu, kas notiek. Vispirms izpēti riskus, pēc tam izdari gala izvēli savai atzīmei.",
+    "progress": "Izpētīti {count} no {total} tīkliem",
+    "tryAnotherNetwork": "Izmēģini citu tīklu",
+    "finalPrompt": "Tagad, kad esi izpētījis tīklu iespējas un to riskus, veic vēl vienu gājienu un izvēlies tīklu, kuru izmantotu patiesībā. Šis pēdējais gājiens tiek vērtēts.",
+    "startFinalRun": "Sākt pēdējo gājienu"
   }
 }

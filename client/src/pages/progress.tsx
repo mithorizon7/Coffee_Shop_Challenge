@@ -17,6 +17,7 @@ import {
   Clock,
   Star,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -168,6 +169,11 @@ export default function ProgressPage() {
                 </span>
               </div>
             )}
+            <Button variant="ghost" size="sm" asChild data-testid="button-logout">
+              <a href="/api/logout" aria-label={t("home.signOut")}>
+                <LogOut className="w-4 h-4" />
+              </a>
+            </Button>
             <LanguageSwitcher />
             <ThemeToggle />
           </div>

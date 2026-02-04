@@ -31,8 +31,11 @@ interface ConsequenceScreenProps {
   consequence: Consequence;
   scenarioId: string;
   sceneId: string;
-  onContinue: () => void;
+  onContinue?: () => void;
   onTryAnother?: () => void;
+  continueLabel?: string;
+  tryAnotherLabel?: string;
+  footerMessage?: string;
 }
 
 const severityConfig = {
@@ -102,6 +105,9 @@ export function ConsequenceScreen({
   sceneId,
   onContinue,
   onTryAnother,
+  continueLabel,
+  tryAnotherLabel,
+  footerMessage,
 }: ConsequenceScreenProps) {
   const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
@@ -290,22 +296,34 @@ export function ConsequenceScreen({
         </div>
       </Card>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        {onTryAnother && (
-          <Button
-            variant="outline"
-            onClick={onTryAnother}
-            className="flex-1"
-            data-testid="button-try-another"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            {t("common.tryAnotherOption")}
-          </Button>
-        )}
-        <Button onClick={onContinue} className="flex-1" data-testid="button-continue">
-          {t("common.continue")}
-        </Button>
-      </div>
+      {(footerMessage || onTryAnother || onContinue) && (
+        <div className="space-y-3">
+          {footerMessage && (
+            <div className="rounded-2xl border border-dashed border-border/70 bg-background/60 p-4 text-sm text-muted-foreground">
+              {footerMessage}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            {onTryAnother && (
+              <Button
+                variant="outline"
+                onClick={onTryAnother}
+                className="flex-1"
+                data-testid="button-try-another"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                {tryAnotherLabel ?? t("common.tryAnotherOption")}
+              </Button>
+            )}
+            {onContinue && (
+              <Button onClick={onContinue} className="flex-1" data-testid="button-continue">
+                {continueLabel ?? t("common.continue")}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

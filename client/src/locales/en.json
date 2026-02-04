@@ -318,7 +318,7 @@
     "yourGrade": "Your Grade",
     "finalScore": "Final Score",
     "whatToRemember": "What To Remember Next Time",
-    "tryAnotherScenario": "Try Another Scenario",
+    "tryAnotherScenario": "Next challenge",
     "tipsTitle": "What To Remember Next Time",
     "decisionProcess": {
       "title": "Your Repeatable Decision Process",
@@ -1505,5 +1505,17 @@
       "name": "HTTPS Hero",
       "description": "Always verified site security before entering sensitive data"
     }
+  },
+  "sequence": {
+    "challengeProgress": "Challenge {current} of {total}",
+    "upNext": "Up next"
+  },
+  "exploration": {
+    "title": "Explore the options",
+    "body": "Try each network to see what happens. You will explore the risks first, then make a final choice for your grade.",
+    "progress": "Explored {count} of {total} networks",
+    "tryAnotherNetwork": "Try another network",
+    "finalPrompt": "Now that you have explored the network options and their risks, make a final pass and choose the network you would use for real. This final run is graded.",
+    "startFinalRun": "Start final run"
   }
 }
