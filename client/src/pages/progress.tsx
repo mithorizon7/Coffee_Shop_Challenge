@@ -186,12 +186,17 @@ export default function ProgressPage() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
-          <div>
-            <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-              {t("progress.title")}
-            </h1>
-            <p className="text-muted-foreground">{t("progress.subtitle")}</p>
-          </div>
+          <Card className="p-6 md:p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/25 pointer-events-none" />
+            <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-16 h-52 w-52 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+            <div className="relative">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
+                {t("progress.title")}
+              </h1>
+              <p className="text-muted-foreground">{t("progress.subtitle")}</p>
+            </div>
+          </Card>
 
           {progress && progress.totalSessions === 0 ? (
             <Card className="p-8 text-center">
@@ -210,7 +215,7 @@ export default function ProgressPage() {
             progress && (
               <>
                 <div className="grid md:grid-cols-4 gap-4">
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-11 h-11 rounded-2xl bg-primary/15 flex items-center justify-center shadow-[0_12px_26px_-18px_hsl(var(--primary)/0.7)]">
                         <Target className="w-5 h-5 text-primary" />
@@ -229,7 +234,7 @@ export default function ProgressPage() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-11 h-11 rounded-2xl bg-emerald-100/70 dark:bg-emerald-950/40 flex items-center justify-center">
                         <Shield className="w-5 h-5 text-emerald-700 dark:text-emerald-300" />
@@ -248,7 +253,7 @@ export default function ProgressPage() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-11 h-11 rounded-2xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center">
                         <Trophy className="w-5 h-5 text-amber-700 dark:text-amber-300" />
@@ -267,7 +272,7 @@ export default function ProgressPage() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-muted/60 flex items-center justify-center">
                         {getTrendIcon(progress.improvementTrend)}
@@ -287,7 +292,7 @@ export default function ProgressPage() {
                   </Card>
                 </div>
 
-                <Card className="p-6">
+                <Card className="p-6 md:p-7">
                   <div className="flex items-center gap-2 mb-4">
                     {getTrendIcon(progress.improvementTrend)}
                     <h3 className="font-display font-semibold text-foreground">
@@ -313,14 +318,14 @@ export default function ProgressPage() {
                 </Card>
 
                 {progress.badgesEarned.length > 0 && (
-                  <Card className="p-6">
+                  <Card className="p-6 md:p-7">
                     <div className="flex items-center gap-2 mb-4">
                       <Award className="w-5 h-5 text-primary" />
                       <h3 className="font-display font-semibold text-foreground">
                         {t("progress.badgesEarnedTitle")}
                       </h3>
                     </div>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
                       {progress.badgesEarned.map((badgeId) => {
                         const badge = badgeDetails(badgeId);
                         const IconComponent = badge?.icon
@@ -355,14 +360,14 @@ export default function ProgressPage() {
                 )}
 
                 {progress.recentSessions.length > 0 && (
-                  <Card className="p-6">
+                  <Card className="p-6 md:p-7">
                     <div className="flex items-center gap-2 mb-4">
                       <Calendar className="w-5 h-5 text-primary" />
                       <h3 className="font-display font-semibold text-foreground">
                         {t("progress.recentSessionsTitle")}
                       </h3>
                     </div>
-                    <div className="space-y-3">
+                    <div className="rounded-2xl border border-border/60 bg-background/40 divide-y divide-border/70">
                       {progress.recentSessions.map((session: CompletedSession, index: number) => {
                         const scenarioTitle = translateScenarioTitle(
                           t,
@@ -380,7 +385,7 @@ export default function ProgressPage() {
                         return (
                           <div
                             key={session.id}
-                            className="flex items-center justify-between gap-4 py-3 border-b border-border last:border-0"
+                            className="flex items-center justify-between gap-4 px-4 py-4"
                             data-testid={`session-${index}`}
                           >
                             <div className="flex-1 min-w-0">

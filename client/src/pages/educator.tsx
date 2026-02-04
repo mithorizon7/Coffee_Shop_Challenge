@@ -177,12 +177,17 @@ export default function EducatorDashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
-          <div>
-            <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-              {t("educator.title")}
-            </h1>
-            <p className="text-muted-foreground">{t("educator.subtitle")}</p>
-          </div>
+          <Card className="p-6 md:p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/25 pointer-events-none" />
+            <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-16 h-52 w-52 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+            <div className="relative">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
+                {t("educator.title")}
+              </h1>
+              <p className="text-muted-foreground">{t("educator.subtitle")}</p>
+            </div>
+          </Card>
 
           {analytics && analytics.totalSessions === 0 ? (
             <Card className="p-8 text-center">
@@ -199,7 +204,7 @@ export default function EducatorDashboard() {
             analytics && (
               <>
                 <div className="grid md:grid-cols-5 gap-4">
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-sky-100/70 dark:bg-sky-950/40 flex items-center justify-center">
                         <Users className="w-5 h-5 text-sky-700 dark:text-sky-300" />
@@ -218,7 +223,7 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center">
                         <Target className="w-5 h-5 text-amber-700 dark:text-amber-300" />
@@ -237,7 +242,7 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-emerald-100/70 dark:bg-emerald-950/40 flex items-center justify-center">
                         <TrendingUp className="w-5 h-5 text-emerald-700 dark:text-emerald-300" />
@@ -256,7 +261,7 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-teal-100/70 dark:bg-teal-950/40 flex items-center justify-center">
                         <Trophy className="w-5 h-5 text-teal-700 dark:text-teal-300" />
@@ -275,7 +280,7 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-5 hover-elevate">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-2xl bg-rose-100/70 dark:bg-rose-950/40 flex items-center justify-center">
                         <AlertTriangle className="w-5 h-5 text-rose-700 dark:text-rose-300" />
@@ -296,7 +301,7 @@ export default function EducatorDashboard() {
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-6">
-                  <Card className="p-6">
+                  <Card className="p-6 md:p-7">
                     <div className="flex items-center gap-2 mb-4">
                       <BarChart3 className="w-5 h-5 text-primary" />
                       <h3 className="font-display font-semibold text-foreground">
@@ -308,7 +313,7 @@ export default function EducatorDashboard() {
                         {t("educator.scenarioPerformanceEmpty")}
                       </p>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-4 rounded-2xl border border-border/60 bg-background/40 p-4">
                         {analytics.scenarioStats.map((scenario: ScenarioStats) => (
                           <div key={scenario.scenarioId} className="space-y-2">
                             <div className="flex items-center justify-between gap-2">
@@ -339,7 +344,7 @@ export default function EducatorDashboard() {
                     )}
                   </Card>
 
-                  <Card className="p-6">
+                  <Card className="p-6 md:p-7">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="w-5 h-5 text-amber-500" />
                       <h3 className="font-display font-semibold text-foreground">
@@ -351,7 +356,7 @@ export default function EducatorDashboard() {
                         {t("educator.commonMistakesEmpty")}
                       </p>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="rounded-2xl border border-border/60 bg-background/40 divide-y divide-border/70">
                         {analytics.commonMistakes.map((mistake: CommonMistake, index: number) => {
                           const scenario = analytics.scenarioStats.find(
                             (s) => s.scenarioId === mistake.scenarioId
@@ -359,7 +364,7 @@ export default function EducatorDashboard() {
                           return (
                             <div
                               key={mistake.scenarioId}
-                              className="flex items-center justify-between gap-4 py-2 border-b border-border last:border-0"
+                              className="flex items-center justify-between gap-4 px-4 py-3"
                               data-testid={`mistake-${index}`}
                             >
                               <div className="flex-1 min-w-0">
@@ -389,7 +394,7 @@ export default function EducatorDashboard() {
                   </Card>
                 </div>
 
-                <Card className="p-6">
+                <Card className="p-6 md:p-7">
                   <div className="flex items-center gap-2 mb-4">
                     <Users className="w-5 h-5 text-primary" />
                     <h3 className="font-display font-semibold text-foreground">
@@ -401,20 +406,20 @@ export default function EducatorDashboard() {
                       {t("educator.recentLearnerActivityEmpty")}
                     </p>
                   ) : (
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto rounded-2xl border border-border/60 bg-background/40">
                       <table className="w-full text-sm">
-                        <thead>
+                        <thead className="bg-muted/40">
                           <tr className="border-b border-border">
-                            <th className="text-left py-2 text-muted-foreground font-medium">
+                            <th className="text-left py-3 px-4 text-muted-foreground font-medium">
                               {t("educator.table.learner")}
                             </th>
-                            <th className="text-center py-2 text-muted-foreground font-medium">
+                            <th className="text-center py-3 text-muted-foreground font-medium">
                               {t("educator.table.sessions")}
                             </th>
-                            <th className="text-center py-2 text-muted-foreground font-medium">
+                            <th className="text-center py-3 text-muted-foreground font-medium">
                               {t("educator.table.accuracy")}
                             </th>
-                            <th className="text-right py-2 text-muted-foreground font-medium">
+                            <th className="text-right py-3 px-4 text-muted-foreground font-medium">
                               {t("educator.table.lastActive")}
                             </th>
                           </tr>
@@ -426,7 +431,7 @@ export default function EducatorDashboard() {
                               className="border-b border-border last:border-0"
                               data-testid={`learner-${index}`}
                             >
-                              <td className="py-3">
+                              <td className="py-4 px-4">
                                 <div className="flex items-center gap-2">
                                   {learner.profileImageUrl ? (
                                     <img
@@ -444,10 +449,10 @@ export default function EducatorDashboard() {
                                   </span>
                                 </div>
                               </td>
-                              <td className="py-3 text-center text-foreground">
+                              <td className="py-4 text-center text-foreground">
                                 {learner.sessionsCompleted}
                               </td>
-                              <td className="py-3 text-center">
+                              <td className="py-4 text-center">
                                 <span
                                   className={
                                     learner.averageAccuracy >= 70
@@ -460,7 +465,7 @@ export default function EducatorDashboard() {
                                   {learner.averageAccuracy}%
                                 </span>
                               </td>
-                              <td className="py-3 text-right text-muted-foreground">
+                              <td className="py-4 px-4 text-right text-muted-foreground">
                                 <div className="flex items-center justify-end gap-1">
                                   <Clock className="w-3 h-3" />
                                   {formatDate(learner.lastActive)}

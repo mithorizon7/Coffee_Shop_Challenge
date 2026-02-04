@@ -115,7 +115,7 @@
         { "actionId": "connect_hotel_premium", "nextSceneId": "hotel_premium_login" },
         { "actionId": "connect_hotel_fake", "nextSceneId": "hotel_consequence_trap" },
         { "actionId": "connect_hotel_conference", "nextSceneId": "hotel_premium_login" },
-        { "actionId": "connect_personal_hotspot", "nextSceneId": "hotel_portal" },
+        { "actionId": "connect_personal_hotspot", "nextSceneId": "hotel_hotspot_connected" },
         { "actionId": "call_desk", "nextSceneId": "hotel_verified" }
       ]
     },
@@ -236,6 +236,26 @@
         "technicalExplanation": "WPA2 uses the shared password to derive unique encryption keys for each connected device through a four-way handshake. Unlike open networks where packets can be read in the air, your data is encrypted in a way that is difficult for nearby users to decode without your session keys.",
         "technicalExplanationKey": "scenarios.hotel_intermediate.consequences.cons_premium.technicalExplanation",
         "safetyPointsChange": 20,
+        "riskPointsChange": 0
+      },
+      "nextSceneId": "hotel_task_presentation"
+    },
+    {
+      "id": "hotel_hotspot_connected",
+      "type": "consequence",
+      "title": "Personal Hotspot",
+      "description": "You connected through a personal hotspot instead of the hotel Wi-Fi...",
+      "location": "Grand Metropolitan Hotel - Room 412",
+      "consequence": {
+        "id": "cons_hotspot",
+        "type": "safe_browsing",
+        "severity": "success",
+        "title": "Safer Connection",
+        "whatHappened": "You used a phone hotspot rather than the hotel's shared Wi-Fi. That bypasses the captive portal entirely and keeps your traffic off the public network.",
+        "whyRisky": "This is a strong choice for security. Cellular connections are encrypted between your device and the cell tower, which removes most of the local Wi-Fi attack surface. The main trade-offs are data usage and battery drain. If the hotspot belongs to someone else, you still need to trust that person.",
+        "saferAlternative": "For highly sensitive work, pairing a hotspot with a VPN adds another layer of protection. But using mobile data instead of public Wi-Fi is already a big improvement.",
+        "technicalExplanation": "LTE/5G connections use mandatory encryption and authentication between the device and the carrier's network. Unlike open Wi-Fi, there is no shared local broadcast segment for nearby attackers to exploit.",
+        "safetyPointsChange": 15,
         "riskPointsChange": 0
       },
       "nextSceneId": "hotel_task_presentation"

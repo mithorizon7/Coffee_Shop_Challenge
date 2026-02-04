@@ -46,30 +46,30 @@ export function ScenarioIntro({
   const estimatedTime = formatEstimatedTime(scenario.estimatedTime);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-2">
-        <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {t("sequence.challengeProgress", { current: index + 1, total })}
-        </span>
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">{title}</h1>
-        <p className="text-muted-foreground max-w-2xl">{description}</p>
-      </div>
+    <div className="space-y-10">
+      <div className="grid gap-8 lg:grid-cols-[1.35fr_0.65fr] items-start">
+        <Card className="p-7 md:p-10 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
+          <div className="absolute -top-24 -right-12 h-44 w-44 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-28 -left-16 h-52 w-52 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
+          <div className="relative space-y-7">
+            <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              {t("sequence.challengeProgress", { current: index + 1, total })}
+            </span>
 
-      <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] items-start">
-        <Card className="p-6 md:p-8 relative overflow-hidden">
-          <div className="absolute -top-24 -right-12 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-12 h-40 w-40 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
-          <div className="relative space-y-6">
-            <div className="w-14 h-14 rounded-2xl bg-primary/15 flex items-center justify-center shadow-[0_18px_40px_-26px_hsl(var(--primary)/0.8)]">
-              <Wifi className="w-6 h-6 text-primary" />
+            <div className="space-y-3">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+                {title}
+              </h1>
+              <p className="text-muted-foreground max-w-2xl">{description}</p>
             </div>
 
-            <div className="grid gap-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 px-4 py-3 text-sm text-foreground">
                 <MapPin className="w-4 h-4 text-primary" />
                 <span>{location}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 px-4 py-3 text-sm text-foreground">
                 <Clock className="w-4 h-4 text-primary" />
                 <span>
                   {t("scenario.estimatedTime")}: {estimatedTime}
@@ -92,8 +92,8 @@ export function ScenarioIntro({
         </Card>
 
         <div className="space-y-4">
-          <Card className="p-6">
-            <div className="flex items-start gap-3">
+          <Card className="p-6 md:p-7">
+            <div className="flex items-start gap-4">
               <div
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
@@ -102,7 +102,7 @@ export function ScenarioIntro({
               >
                 <DifficultyIcon className={cn("w-5 h-5", config.color)} />
               </div>
-              <div>
+              <div className="space-y-2">
                 <h3 className="font-display text-lg font-semibold text-foreground">
                   {t(config.labelKey)}
                 </h3>
@@ -110,7 +110,7 @@ export function ScenarioIntro({
               </div>
             </div>
 
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-4 grid gap-2">
               {config.featureKeys.map((featureKey, featureIndex) => (
                 <li
                   key={featureIndex}
@@ -131,7 +131,7 @@ export function ScenarioIntro({
           </Card>
 
           {nextScenarioTitle && (
-            <Card className="p-4 bg-muted/40">
+            <Card className="p-5 bg-muted/40">
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-2">
                 {t("sequence.upNext")}
               </p>

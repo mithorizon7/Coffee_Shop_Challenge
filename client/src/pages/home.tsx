@@ -1,11 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
   Wifi,
-  Shield,
   AlertTriangle,
-  BookOpen,
   ArrowRight,
   Loader2,
   BarChart3,
@@ -39,6 +37,10 @@ export default function Home() {
   const [rootNetworkSceneId, setRootNetworkSceneId] = useState<string | null>(null);
   const [rootNetworkIds, setRootNetworkIds] = useState<string[]>([]);
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [viewState]);
 
   const {
     data: scenarioList,
@@ -337,19 +339,24 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-12"
         >
-          <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] items-start">
-            <Card className="p-8 md:p-10 overflow-hidden">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-stretch">
+            <Card className="p-8 md:p-10 lg:p-12 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
               <div className="absolute -top-24 -right-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
               <div className="absolute -bottom-28 -left-16 h-56 w-56 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
-              <div className="relative space-y-6">
-                <div className="w-16 h-16 rounded-2xl bg-primary/15 flex items-center justify-center shadow-[0_18px_40px_-26px_hsl(var(--primary)/0.8)]">
-                  <Wifi className="w-8 h-8 text-primary" />
-                </div>
-                <div className="space-y-3">
-                  <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground">
-                    {t("home.title")}
-                  </h1>
-                  <p className="text-lg text-muted-foreground max-w-xl">{t("home.description")}</p>
+              <div className="relative flex h-full flex-col justify-between gap-10">
+                <div className="space-y-6">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/15 flex items-center justify-center shadow-[0_18px_40px_-26px_hsl(var(--primary)/0.8)]">
+                    <Wifi className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="space-y-3">
+                    <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground">
+                      {t("home.title")}
+                    </h1>
+                    <p className="text-lg text-muted-foreground max-w-xl">
+                      {t("home.description")}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <Button
@@ -365,75 +372,41 @@ export default function Home() {
               </div>
             </Card>
 
-            <div className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                <Card className="p-6">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-100/70 dark:bg-emerald-950/40 flex items-center justify-center mb-4">
-                    <Shield className="w-6 h-6 text-emerald-700 dark:text-emerald-300" />
-                  </div>
-                  <h3 className="font-display font-semibold text-foreground mb-2">
-                    {t("home.zeroRisk")}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{t("home.zeroRiskDesc")}</p>
-                </Card>
-
-                <Card className="p-6">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center mb-4">
-                    <AlertTriangle className="w-6 h-6 text-amber-700 dark:text-amber-300" />
-                  </div>
-                  <h3 className="font-display font-semibold text-foreground mb-2">
-                    {t("home.realisticConsequences")}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {t("home.realisticConsequencesDesc")}
-                  </p>
-                </Card>
-
-                <Card className="p-6 sm:col-span-2 lg:col-span-1">
-                  <div className="w-12 h-12 rounded-2xl bg-sky-100/70 dark:bg-sky-950/40 flex items-center justify-center mb-4">
-                    <BookOpen className="w-6 h-6 text-sky-700 dark:text-sky-300" />
-                  </div>
-                  <h3 className="font-display font-semibold text-foreground mb-2">
-                    {t("home.educationalDebriefs")}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {t("home.educationalDebriefsDesc")}
-                  </p>
-                </Card>
-              </div>
-
-              <Card className="p-6 bg-muted/40">
-                <h3 className="font-display font-semibold text-foreground mb-3">
+            <Card className="p-6 md:p-8 bg-muted/40 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
+              <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+              <div className="relative space-y-4">
+                <h3 className="font-display font-semibold text-foreground">
                   {t("home.whatYouWillLearn")}
                 </h3>
                 <ul className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                     <span>{t("home.learn1")}</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                     <span>{t("home.learn2")}</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                     <span>{t("home.learn3")}</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                     <span>{t("home.learn4")}</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                     <span>{t("home.learn5")}</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                     <span>{t("home.learn6")}</span>
                   </li>
                 </ul>
-              </Card>
-            </div>
+              </div>
+            </Card>
           </div>
         </motion.div>
       </main>

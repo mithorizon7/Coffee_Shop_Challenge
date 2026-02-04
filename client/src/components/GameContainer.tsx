@@ -103,6 +103,7 @@ export function GameContainer({
   const isAdvanced = session.difficulty === "advanced";
   const isExplorationPhase = exploration?.phase === "explore";
   const rootNetworkIds = exploration?.rootNetworkIds ?? [];
+  const rootNetworkIdSet = useMemo(() => new Set(rootNetworkIds), [rootNetworkIds]);
   const rootNetworkSceneId = exploration?.rootNetworkSceneId ?? null;
   const exploredNetworkIds = exploration?.exploredNetworkIds ?? [];
   const explorationTotal = rootNetworkIds.length;
@@ -114,6 +115,27 @@ export function GameContainer({
   const isFinalRun = !isExplorationPhase || explorationTotal === 0;
   const isRootNetworkScene =
     !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
+  const rootNetworkBySsid = useMemo(() => {
+    const lookup = new Map<string, string>();
+    scenario.scenes
+      .flatMap((scene) => scene.networks ?? [])
+      .filter((network) => rootNetworkIdSet.has(network.id))
+      .forEach((network) => {
+        lookup.set(network.ssid.toLowerCase(), network.id);
+      });
+    return lookup;
+  }, [scenario.scenes, rootNetworkIdSet]);
+
+  const getExplorationId = useCallback(
+    (network: Network) => {
+      if (rootNetworkIdSet.has(network.id)) {
+        return network.id;
+      }
+      const matched = rootNetworkBySsid.get(network.ssid.toLowerCase());
+      return matched ?? network.id;
+    },
+    [rootNetworkBySsid, rootNetworkIdSet]
+  );
 
   const sceneTitle = currentScene
     ? currentScene.titleKey
@@ -189,6 +211,11 @@ export function GameContainer({
     rootSnapshotRef.current = JSON.parse(JSON.stringify(session));
   }, [isRootNetworkScene, session]);
 
+  useEffect(() => {
+    if (!currentSceneId) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [currentSceneId]);
+
   const handleTimeUp = useCallback(() => {
     const updatedSession = {
       ...session,
@@ -212,10 +239,10 @@ export function GameContainer({
   const handleNetworkSelect = useCallback(
     (network: Network) => {
       if (isTransitioning) return;
-      if (isRootNetworkScene && exploredNetworkIds.includes(network.id)) return;
-
-      if (isExplorationPhase && rootNetworkIds.includes(network.id)) {
-        exploration?.onNetworkExplored(network.id);
+      const explorationId = getExplorationId(network);
+      if (isExplorationPhase && rootNetworkIdSet.has(explorationId)) {
+        if (exploredNetworkIds.includes(explorationId)) return;
+        exploration?.onNetworkExplored(explorationId);
       }
 
       setIsTransitioning(true);
@@ -244,9 +271,10 @@ export function GameContainer({
       currentScene?.type,
       isExplorationPhase,
       exploredNetworkIds,
-      rootNetworkIds,
       exploration,
       isRootNetworkScene,
+      getExplorationId,
+      rootNetworkIdSet,
     ]
   );
 
@@ -485,22 +513,29 @@ export function GameContainer({
                     </Card>
                   )}
                   <div className="space-y-3">
-                    {currentScene.networks.map((network) => (
-                      <NetworkCard
-                        key={network.id}
-                        network={network}
-                        onSelect={handleNetworkSelect}
-                        showWarnings={showWarnings}
-                        isSelected={session.selectedNetworkId === network.id}
-                        isDisabled={isRootNetworkScene && exploredNetworkIds.includes(network.id)}
-                        description={translateNetworkDescription(
-                          t,
-                          scenario.id,
-                          network.id,
-                          network.description ?? ""
-                        )}
-                      />
-                    ))}
+                    {currentScene.networks.map((network) => {
+                      const explorationId = getExplorationId(network);
+                      const isExplorationLocked =
+                        isExplorationPhase &&
+                        rootNetworkIdSet.has(explorationId) &&
+                        exploredNetworkIds.includes(explorationId);
+                      return (
+                        <NetworkCard
+                          key={network.id}
+                          network={network}
+                          onSelect={handleNetworkSelect}
+                          showWarnings={showWarnings}
+                          isSelected={session.selectedNetworkId === network.id}
+                          isDisabled={isExplorationLocked}
+                          description={translateNetworkDescription(
+                            t,
+                            scenario.id,
+                            network.id,
+                            network.description ?? ""
+                          )}
+                        />
+                      );
+                    })}
                   </div>
 
                   {currentScene.actions && currentScene.actions.length > 0 && (
