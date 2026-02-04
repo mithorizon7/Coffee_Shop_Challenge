@@ -33,6 +33,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { renderRichText } from "@/lib/richText";
 
 interface GameContainerProps {
   initialSession: GameSession;
@@ -40,6 +42,7 @@ interface GameContainerProps {
   onExit: () => void;
   onRestart: () => void;
   onAdvance: () => void;
+  isLastScenario?: boolean;
   exploration?: {
     phase: "explore" | "final";
     rootNetworkSceneId: string | null;
@@ -56,6 +59,7 @@ export function GameContainer({
   onExit,
   onRestart,
   onAdvance,
+  isLastScenario = false,
   exploration,
 }: GameContainerProps) {
   const { t } = useTranslation();
@@ -114,6 +118,31 @@ export function GameContainer({
   const isFinalRun = !isExplorationPhase || explorationTotal === 0;
   const isRootNetworkScene =
     !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
+  const isBriefingScene = currentScene?.type === "briefing";
+  const isDebriefScene = currentScene?.type === "debrief";
+  const needsWorkDebrief =
+    isDebriefScene && ["D", "F"].includes(calculateGrade(session.score).grade);
+  const briefingTone = isDebriefScene
+    ? {
+        surface:
+          "bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_60%)]",
+        pill: "bg-emerald-100/80 dark:bg-emerald-950/40 border-emerald-200/70 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-200",
+        accentText: "text-emerald-700 dark:text-emerald-300",
+        accentBar: "bg-emerald-400/70 dark:bg-emerald-500/40",
+        glow: "bg-emerald-300/40 dark:bg-emerald-500/10",
+        highlight:
+          "font-semibold text-foreground bg-emerald-200/50 dark:bg-emerald-500/15 ring-1 ring-emerald-200/60 dark:ring-emerald-500/20 rounded px-1",
+      }
+    : {
+        surface:
+          "bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.18),transparent_60%)]",
+        pill: "bg-sky-100/80 dark:bg-sky-950/40 border-sky-200/70 dark:border-sky-800/60 text-sky-800 dark:text-sky-200",
+        accentText: "text-sky-700 dark:text-sky-300",
+        accentBar: "bg-sky-400/70 dark:bg-sky-500/40",
+        glow: "bg-sky-300/40 dark:bg-sky-500/10",
+        highlight:
+          "font-semibold text-foreground bg-sky-200/50 dark:bg-sky-500/15 ring-1 ring-sky-200/60 dark:ring-sky-500/20 rounded px-1",
+      };
 
   const sceneTitle = currentScene
     ? currentScene.titleKey
@@ -362,6 +391,7 @@ export function GameContainer({
         scenario={scenario}
         onPlayAgain={onRestart}
         onSelectNewScenario={onAdvance}
+        isLastScenario={isLastScenario}
       />
     );
   }
@@ -431,26 +461,87 @@ export function GameContainer({
               </Card>
             )}
 
-            {(currentScene.type === "briefing" || currentScene.type === "debrief") && (
-              <Card className="p-6 space-y-5">
-                <div className="space-y-4">
-                  {currentScene.sections?.map((section, index) => {
-                    const sectionTitle = section.titleKey ? t(section.titleKey) : section.title;
-                    const sectionBody = section.bodyKey ? t(section.bodyKey) : section.body;
-                    return (
-                      <div key={index} className="space-y-1">
-                        <h3 className="font-medium text-foreground">{sectionTitle}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {sectionBody}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="pt-2 border-t border-border">
-                  <Button onClick={handleContinue} data-testid="button-briefing-continue">
-                    {t("common.continue")}
-                  </Button>
+            {(isBriefingScene || isDebriefScene) && (
+              <Card
+                className={cn(
+                  "relative overflow-hidden border-border/60 p-6 md:p-8 shadow-[0_18px_60px_-40px_hsl(var(--foreground)/0.45)]",
+                  briefingTone.surface
+                )}
+              >
+                <div
+                  className={cn(
+                    "pointer-events-none absolute -top-24 right-10 h-44 w-44 rounded-full blur-3xl",
+                    briefingTone.glow
+                  )}
+                />
+                <div className="relative space-y-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div
+                      className={cn(
+                        "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em]",
+                        briefingTone.pill
+                      )}
+                    >
+                      {isDebriefScene ? t("debrief.title") : t("briefing.title")}
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {currentScene.sections?.map((section, index) => {
+                      const scenarioDebriefKeyPrefix = `debrief.${scenario.id}`;
+                      const didWellBodyKey = `${scenarioDebriefKeyPrefix}.didWell.body`;
+                      const needsWorkBodyKey = `${scenarioDebriefKeyPrefix}.needsWork.body`;
+                      const overrideDidWell =
+                        needsWorkDebrief && section.titleKey === "debrief.sections.didWell.title";
+
+                      const sectionTitleKey = overrideDidWell
+                        ? "debrief.sections.needsWork.title"
+                        : section.titleKey;
+                      const sectionBodyKey =
+                        overrideDidWell && section.bodyKey === didWellBodyKey
+                          ? needsWorkBodyKey
+                          : section.bodyKey;
+
+                      const sectionTitle = sectionTitleKey ? t(sectionTitleKey) : section.title;
+                      const sectionBody = sectionBodyKey ? t(sectionBodyKey) : section.body;
+                      const sectionNumber = String(index + 1).padStart(2, "0");
+                      return (
+                        <div
+                          key={index}
+                          className="relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 p-4 shadow-[0_12px_30px_-24px_hsl(var(--foreground)/0.5)]"
+                        >
+                          <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-foreground/5" />
+                          <div className="relative space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-semibold uppercase tracking-[0.3em]",
+                                  briefingTone.accentText
+                                )}
+                              >
+                                {sectionNumber}
+                              </span>
+                              <span className={cn("h-1.5 w-10 rounded-full", briefingTone.accentBar)} />
+                            </div>
+                            <h3 className="text-base font-semibold text-foreground">
+                              {sectionTitle}
+                            </h3>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {sectionBody
+                                ? renderRichText(sectionBody, {
+                                    strongClassName: briefingTone.highlight,
+                                  })
+                                : null}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="pt-2 border-t border-border/60">
+                    <Button onClick={handleContinue} data-testid="button-briefing-continue">
+                      {t("common.continue")}
+                    </Button>
+                  </div>
                 </div>
               </Card>
             )}

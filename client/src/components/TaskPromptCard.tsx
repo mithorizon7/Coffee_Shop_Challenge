@@ -22,6 +22,7 @@ import {
   translateTaskRiskHint,
   translateTaskTitle,
 } from "@/lib/translateContent";
+import { renderRichText } from "@/lib/richText";
 
 interface TaskPromptCardProps {
   task: Task;
@@ -109,13 +110,15 @@ export function TaskPromptCard({
           </div>
 
           <p className="text-muted-foreground mb-4" data-testid="task-description">
-            {description}
+            {renderRichText(description)}
           </p>
 
           {showHints && riskHint && (
             <div className="flex items-start gap-2 p-3 rounded-2xl bg-amber-100/60 dark:bg-amber-950/40 mb-4">
               <Info className="w-4 h-4 text-amber-700 dark:text-amber-300 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800 dark:text-amber-200">{riskHint}</p>
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                {renderRichText(riskHint)}
+              </p>
             </div>
           )}
 

@@ -198,6 +198,7 @@ export default function Home() {
         onExit={handleExitGame}
         onRestart={handleRestartGame}
         onAdvance={handleAdvanceScenario}
+        isLastScenario={scenarioIndex >= orderedScenarios.length - 1}
         exploration={{
           phase: explorationPhase,
           rootNetworkSceneId,

@@ -1,5 +1,6 @@
 import {
   Trophy,
+  Home,
   ArrowRight,
   RotateCcw,
   Lightbulb,
@@ -28,6 +29,7 @@ interface CompletionScreenProps {
   scenario: Scenario;
   onPlayAgain: () => void;
   onSelectNewScenario: () => void;
+  isLastScenario?: boolean;
 }
 
 export function CompletionScreen({
@@ -35,6 +37,7 @@ export function CompletionScreen({
   scenario,
   onPlayAgain,
   onSelectNewScenario,
+  isLastScenario = false,
 }: CompletionScreenProps) {
   const { t } = useTranslation();
   const grade = calculateGrade(session.score);
@@ -42,6 +45,9 @@ export function CompletionScreen({
   const decisionProcessKeys = getDecisionProcessKeys();
   const rogueKeys = getRogueHotspotKeys();
   const scenarioTitle = translateScenarioTitle(t, scenario.id, scenario.title);
+  const ctaLabel = isLastScenario
+    ? t("completion.returnHome")
+    : t("completion.tryAnotherScenario");
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="app-shell py-10 px-4">
@@ -86,6 +92,16 @@ export function CompletionScreen({
             {session.badges.length > 0 && <BadgeDisplay badges={session.badges} />}
           </div>
         </Card>
+
+        {isLastScenario && (
+          <Card className="p-6 border-primary/30 bg-primary/10">
+            <h3 className="font-medium text-foreground flex items-center gap-2 mb-3">
+              <CheckCircle className="w-5 h-5 text-primary" />
+              {t("completion.allChallengesTitle")}
+            </h3>
+            <p className="text-sm text-muted-foreground">{t("completion.allChallengesBody")}</p>
+          </Card>
+        )}
 
         <Card className="p-6">
           <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
@@ -160,8 +176,12 @@ export function CompletionScreen({
             {t("scenario.playAgain")}
           </Button>
           <Button onClick={onSelectNewScenario} data-testid="button-new-scenario">
-            {t("completion.tryAnotherScenario")}
-            <ArrowRight className="w-4 h-4 ml-2" />
+            {ctaLabel}
+            {isLastScenario ? (
+              <Home className="w-4 h-4 ml-2" />
+            ) : (
+              <ArrowRight className="w-4 h-4 ml-2" />
+            )}
           </Button>
         </div>
       </div>

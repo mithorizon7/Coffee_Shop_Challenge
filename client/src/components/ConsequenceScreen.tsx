@@ -26,6 +26,7 @@ import {
   translateConsequenceWhyRisky,
   translateCascadingEffect,
 } from "@/lib/translateContent";
+import { renderRichText } from "@/lib/richText";
 
 interface ConsequenceScreenProps {
   consequence: Consequence;
@@ -153,6 +154,14 @@ export function ConsequenceScreen({
   const rationaleKey = rationaleTypeKeys[consequence.type] ?? "scoring.rationale.type.default";
   const safetyPoints = consequence.safetyPointsChange;
   const riskPoints = consequence.riskPointsChange;
+  const highlightClass = cn(
+    "font-semibold text-foreground rounded px-1 ring-1 ring-inset",
+    consequence.severity === "success"
+      ? "bg-emerald-200/60 ring-emerald-200/60 dark:bg-emerald-500/15 dark:ring-emerald-500/20"
+      : consequence.severity === "warning"
+        ? "bg-amber-200/60 ring-amber-200/60 dark:bg-amber-500/15 dark:ring-amber-500/20"
+        : "bg-rose-200/60 ring-rose-200/60 dark:bg-rose-500/15 dark:ring-rose-500/20"
+  );
 
   return (
     <motion.div
@@ -187,7 +196,7 @@ export function ConsequenceScreen({
                   className="text-muted-foreground text-sm leading-relaxed"
                   data-testid="consequence-what-happened"
                 >
-                  {whatHappened}
+                  {renderRichText(whatHappened, { strongClassName: highlightClass })}
                 </p>
               </div>
 
@@ -204,7 +213,7 @@ export function ConsequenceScreen({
                   className="text-muted-foreground text-sm leading-relaxed"
                   data-testid="consequence-why-risky"
                 >
-                  {whyRisky}
+                  {renderRichText(whyRisky, { strongClassName: highlightClass })}
                 </p>
               </div>
             </div>
@@ -217,7 +226,9 @@ export function ConsequenceScreen({
                     ? t("consequence.whyWorked")
                     : t("consequence.saferAlternative")}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{saferAlternative}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {renderRichText(saferAlternative, { strongClassName: highlightClass })}
+                </p>
               </div>
 
               {technicalExplanation && (
@@ -227,7 +238,7 @@ export function ConsequenceScreen({
                     {t("consequence.technicalDetails")}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    {technicalExplanation}
+                    {renderRichText(technicalExplanation, { strongClassName: highlightClass })}
                   </p>
                 </div>
               )}

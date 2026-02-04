@@ -319,6 +319,9 @@
     "finalScore": "Final Score",
     "whatToRemember": "What To Remember Next Time",
     "tryAnotherScenario": "Next challenge",
+    "returnHome": "Return to home",
+    "allChallengesTitle": "All challenges complete",
+    "allChallengesBody": "You've finished the full series. Revisit any scenario to practice, or review your progress to see how your habits improved.",
     "tipsTitle": "What To Remember Next Time",
     "decisionProcess": {
       "title": "Your Repeatable Decision Process",
@@ -1011,7 +1014,7 @@
         "cons_hotel_trap": {
           "title": "Evil Twin Attack",
           "whatHappened": "You connected to 'GrandMetro-Guest' - notice the hyphen instead of the underscore? This subtle difference means you joined a fake network, probably set up by someone in a nearby room or even in the parking lot. A fake login portal captured your room number, name, and any passwords you entered.",
-          "whyRisky": "Hotels are prime hunting grounds for attackers because business travelers often carry valuable corporate data and are tired from travel, making them less vigilant. The attacker deliberately chose a name almost identical to the real network - 'GrandMetro-Guest' versus 'GrandMetro_Guest' - knowing that exhausted travelers glance at network names rather than reading them carefully. Once connected, everything you do online passes through the attacker's equipment. They can read unencrypted traffic, capture login credentials from fake portals, and even modify web pages you're viewing.",
+          "whyRisky": "**Hotels are prime hunting grounds for attackers** because business travelers often carry **valuable corporate data** and are **tired from travel**, making them less vigilant. The attacker deliberately chose a name almost identical to the real network - 'GrandMetro-Guest' versus 'GrandMetro_Guest' - knowing that exhausted travelers glance at network names rather than reading them carefully. Once connected, everything you do online passes through the attacker's equipment. They can read unencrypted traffic, capture login credentials from fake portals, and even modify web pages you're viewing.",
           "saferAlternative": "Always verify the exact network name with hotel staff - don't assume. Look for subtle differences in capitalization, punctuation, or spelling. When tired from travel, that's precisely when you should be most careful, not less.",
           "technicalExplanation": "Evil twin attacks are especially effective in hotels because guests expect to see multiple similar-sounding networks. The attacker's equipment acts as a man-in-the-middle, potentially stripping HTTPS encryption or presenting convincing fake login pages. Your room number and name are now linked to your browsing activity.",
           "cascading": [
@@ -1323,7 +1326,7 @@
         "cons_airport_trap": {
           "title": "Attacker's Network",
           "whatHappened": "You connected to 'Airport_Free_WiFi' - a network with a suspiciously generic name and unusually strong signal. This was a portable hotspot in an attacker's backpack, set up specifically to target stressed travelers like you.",
-          "whyRisky": "Airports are hunting grounds for cybercriminals because travelers are the perfect victims: stressed, tired, rushed, and often handling high-value transactions. The time pressure you felt is exactly what attackers count on. This generic-sounding network ('Airport_Free_WiFi') had a stronger signal than the real network because the attacker is sitting nearby with a high-power antenna. Your device saw it as the 'best' option and may have even auto-connected. Now, every password you type, every file you download, every email you send passes through equipment controlled by someone who wants to steal it. They specifically target business travelers because corporate credentials are worth thousands of dollars on the black market.",
+          "whyRisky": "**Airports are hunting grounds for cybercriminals** because travelers are the perfect victims: **stressed, tired, rushed**, and often handling **high-value transactions**. The time pressure you felt is exactly what attackers count on. This generic-sounding network ('Airport_Free_WiFi') had a stronger signal than the real network because the attacker is sitting nearby with a high-power antenna. Your device saw it as the 'best' option and may have even auto-connected. Now, every password you type, every file you download, every email you send passes through equipment controlled by someone who wants to steal it. They specifically target business travelers because corporate credentials are worth thousands of dollars on the black market.",
           "saferAlternative": "Even under time pressure, take 30 seconds to verify the official network name. Look for posted signs, check the airport's official website using mobile data, or ask at an information desk. The real network is 'MetroAirport_Free' - notice the airport's actual name, not generic 'Airport'.",
           "technicalExplanation": "Attackers use high-gain directional antennas to broadcast a stronger signal than legitimate networks. Your device's 'auto-connect to strongest signal' feature works against you. The attacker runs specialized software to capture all traffic, harvest credentials, and inject malicious content into web pages.",
           "cascading": [
@@ -1400,35 +1403,35 @@
     },
     "coffee_shop_beginner": {
       "bestChoice": {
-        "body": "Ask staff for the official network and use the password-protected option. If you cannot verify, avoid sensitive tasks or use a VPN."
+        "body": "**Ask staff** for the official network and use the **password-protected** option. If you cannot verify, **avoid sensitive tasks** or **use a VPN**."
       },
       "protect": {
-        "body": "Your work email, banking credentials, and personal data. These can be used to reset other accounts."
+        "body": "**Work email**, **banking credentials**, and **personal data**. These can be used to reset other accounts."
       },
       "tradeoff": {
-        "body": "Verification or waiting takes a minute, and postponing tasks can be inconvenient, but it lowers risk."
+        "body": "**Verification or waiting** takes a minute, and postponing tasks can be inconvenient, but it **lowers risk**."
       }
     },
     "hotel_intermediate": {
       "bestChoice": {
-        "body": "Confirm the official SSID at the front desk. Prefer the premium network or use a VPN on the free network. Decline app installs."
+        "body": "**Confirm the official SSID** at the front desk. Prefer the **premium network** or **use a VPN** on the free network. **Decline app installs**."
       },
       "protect": {
-        "body": "Work email, presentation files, and hotel account details like room number and last name."
+        "body": "**Work email**, **presentation files**, and hotel account details like **room number** and **last name**."
       },
       "tradeoff": {
-        "body": "Premium access costs money and VPN setup takes time, but both reduce exposure on shared hotel networks."
+        "body": "**Premium access costs money** and **VPN setup takes time**, but both **reduce exposure** on shared hotel networks."
       }
     },
     "airport_advanced": {
       "bestChoice": {
-        "body": "Use your mobile hotspot for urgent work. If you must use Wi-Fi, verify the official network name and enable a VPN."
+        "body": "**Use your mobile hotspot** for urgent work. If you must use Wi-Fi, **verify the official network name** and **enable a VPN**."
       },
       "protect": {
-        "body": "Contract credentials, corporate accounts, and the signed document."
+        "body": "**Contract credentials**, **corporate accounts**, and the **signed document**."
       },
       "tradeoff": {
-        "body": "Mobile data uses battery and may cost data, and waiting in line reduces time, but both cut Wi-Fi risk."
+        "body": "**Mobile data uses battery** and may cost data, and **waiting in line reduces time**, but both **cut Wi-Fi risk**."
       }
     }
   },
@@ -1439,6 +1442,9 @@
       "didWell": {
         "title": "What you did well"
       },
+      "needsWork": {
+        "title": "Where you were exposed"
+      },
       "doDifferently": {
         "title": "What you'd do differently next time"
       },
@@ -1448,35 +1454,44 @@
     },
     "coffee_shop_beginner": {
       "didWell": {
-        "body": "If you verified the network, used a VPN, or postponed banking, you made strong safety choices."
+        "body": "If you **verified the network**, **used a VPN**, or **postponed banking**, you made strong safety choices."
+      },
+      "needsWork": {
+        "body": "This run included risky choices that exposed your data. Focus on **verifying the network name**, **avoiding open networks**, and **using a VPN** or **postponing sensitive tasks** when you cannot verify."
       },
       "doDifferently": {
-        "body": "Next time, verify first before connecting and avoid open networks for email or banking. Some choices are good enough but not best; for high-stakes tasks, aim for a verified network plus VPN or mobile data."
+        "body": "Next time, **verify first** before connecting and **avoid open networks** for email or banking. Some choices are good enough but not best; for high-stakes tasks, aim for a **verified network plus VPN or mobile data**."
       },
       "habit": {
-        "body": "Enable 2FA on work accounts, make \"verify the network name\" your default habit, and use a VPN on public Wi-Fi."
+        "body": "**Enable 2FA** on work accounts, make **verify the network name** your default habit, and **use a VPN** on public Wi-Fi."
       }
     },
     "hotel_intermediate": {
       "didWell": {
-        "body": "If you verified the SSID, avoided installing apps, or used a VPN, you lowered risk."
+        "body": "If you **verified the SSID**, **avoided installing apps**, or **used a VPN**, you lowered risk."
+      },
+      "needsWork": {
+        "body": "This run included high-risk choices that raised your exposure. Prioritize **verifying the official SSID**, **avoiding app installs from captive portals**, and **using VPN or premium Wi-Fi** for sensitive work."
       },
       "doDifferently": {
-        "body": "Treat open hotel Wi-Fi as risky; use VPN or mobile data for sensitive work. Some options are acceptable but not optimal when the stakes are high."
+        "body": "Treat **open hotel Wi-Fi** as risky; **use VPN or mobile data** for sensitive work. Some options are acceptable but not optimal when the stakes are high."
       },
       "habit": {
-        "body": "Enable 2FA on work accounts, never install captive portal apps, and always verify the network name on each stay."
+        "body": "**Enable 2FA** on work accounts, **never install captive portal apps**, and **always verify the network name** on each stay."
       }
     },
     "airport_advanced": {
       "didWell": {
-        "body": "If you used mobile data or a VPN, you reduced risk under intense time pressure."
+        "body": "If you **used mobile data** or **a VPN**, you reduced risk under intense time pressure."
+      },
+      "needsWork": {
+        "body": "This run left you exposed under time pressure. Default to **mobile data or VPN**, **verify the official SSID character by character**, and **avoid shortcuts** like unverified premium networks."
       },
       "doDifferently": {
-        "body": "Do not chase the strongest signal; verify names character by character when stakes are high. Premium or verified Wi-Fi can be good enough, but mobile data or VPN is the safer standard for critical tasks."
+        "body": "**Do not chase the strongest signal**; **verify names character by character** when stakes are high. Premium or verified Wi-Fi can be good enough, but **mobile data or VPN** is the safer standard for critical tasks."
       },
       "habit": {
-        "body": "Enable 2FA on work accounts, default to mobile data for high-stakes tasks, and disable auto-join for public Wi-Fi."
+        "body": "**Enable 2FA** on work accounts, **default to mobile data** for high-stakes tasks, and **disable auto-join** for public Wi-Fi."
       }
     }
   },
