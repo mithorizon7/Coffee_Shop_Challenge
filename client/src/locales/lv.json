@@ -319,6 +319,9 @@
     "finalScore": "Gala Rezultāts",
     "whatToRemember": "Ko Atcerēties Nākamreiz",
     "tryAnotherScenario": "Nākamais izaicinājums",
+    "returnHome": "Atgriezties sākumā",
+    "allChallengesTitle": "Visi izaicinājumi pabeigti",
+    "allChallengesBody": "Tu pabeidzi visu sēriju. Vari atkārtot jebkuru scenāriju treniņam vai apskatīt progresu, lai redzētu, kā uzlabojās tavi ieradumi.",
     "tipsTitle": "Ko Atcerēties Nākamreiz",
     "decisionProcess": {
       "title": "Tavs Atkārtojamais Lēmumu Process",
@@ -1439,6 +1442,9 @@
       "didWell": {
         "title": "Ko tu izdarīji labi"
       },
+      "needsWork": {
+        "title": "Kur biji pakļauts riskam"
+      },
       "doDifferently": {
         "title": "Ko nākamreiz darītu citādi"
       },
@@ -1449,6 +1455,9 @@
     "coffee_shop_beginner": {
       "didWell": {
         "body": "Ja tu pārbaudīji tīklu, izmantoji VPN vai atliki bankas darbības, tu pieņēmi drošus lēmumus."
+      },
+      "needsWork": {
+        "body": "Šajā reizē bija riskantas izvēles, kas apdraudēja datus. Vispirms pārbaudi tīkla nosaukumu, izvairies no atvērtiem tīkliem un izmanto VPN vai atliek sensitīvus uzdevumus, ja tīkls nav apstiprināts."
       },
       "doDifferently": {
         "body": "Nākamreiz vispirms pārbaudi tīklu un izvairies no atvērtajiem tīkliem e-pastam vai bankai. Dažas izvēles ir pietiekami labas, bet ne labākās; augstu likmju uzdevumos mērķē uz verificētu tīklu un VPN vai mobilajiem datiem."
@@ -1461,6 +1470,9 @@
       "didWell": {
         "body": "Ja tu pārbaudīji SSID, neinstalēji lietotnes vai izmantoji VPN, tu samazināji risku."
       },
+      "needsWork": {
+        "body": "Šajā reizē bija augsta riska izvēles, kas palielināja ievainojamību. Prioritāte: pārbaudi oficiālo SSID, neinstalē captive portal lietotnes un izmanto VPN vai premium Wi-Fi sensitīvam darbam."
+      },
       "doDifferently": {
         "body": "Uzskati atvērto viesnīcas Wi-Fi par riskantu; sensitīvam darbam izmanto VPN vai mobilo internetu. Dažas izvēles ir pieņemamas, bet ne optimālas, ja likmes ir augstas."
       },
@@ -1471,6 +1483,9 @@
     "airport_advanced": {
       "didWell": {
         "body": "Ja izmantoji mobilo internetu vai VPN, tu samazināji risku spiedīgā situācijā."
+      },
+      "needsWork": {
+        "body": "Šajā reizē steiga palielināja risku. Pēc noklusējuma izmanto mobilos datus vai VPN, pārbaudi SSID pa burtiem un izvairies no nepārbaudītiem premium tīkliem."
       },
       "doDifferently": {
         "body": "Nedzenies pēc spēcīgākā signāla; augstu likmju situācijās pārbaudi nosaukumu pa burtiem. Premium vai verificēts Wi-Fi var būt pietiekami labs, taču kritiskām darbībām drošāks standarts ir mobilie dati vai VPN."

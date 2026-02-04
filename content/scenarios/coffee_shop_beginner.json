@@ -116,7 +116,7 @@
       "id": "verified_network",
       "type": "network_selection",
       "title": "Staff Confirmation",
-      "description": "The barista confirms: 'Our official network is DailyGrind_Guest. The password is on your receipt!' They also mention they've seen some fake networks pop up recently.",
+      "description": "The barista confirms: 'Our official network is DailyGrind_Guest. The password is on your receipt!' You still see several networks, but now you know which one is official. They also mention they've seen some fake networks pop up recently.",
       "location": "The Daily Grind Coffee Shop",
       "networks": [
         {
@@ -143,11 +143,37 @@
           "isTrap": true,
           "riskLevel": "dangerous",
           "description": "SUSPICIOUS - Not the official network!"
+        },
+        {
+          "id": "net_open",
+          "actionId": "connect_net_open",
+          "ssid": "DailyGrind_Open",
+          "signalStrength": 4,
+          "isSecured": false,
+          "securityType": "open",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Coffee shop guest network - no password required"
+        },
+        {
+          "id": "net_neighbor",
+          "actionId": "connect_net_neighbor",
+          "ssid": "Bookstore_Next_Door",
+          "signalStrength": 2,
+          "isSecured": true,
+          "securityType": "wpa2",
+          "isLegitimate": true,
+          "isTrap": false,
+          "riskLevel": "suspicious",
+          "description": "Neighboring business network"
         }
       ],
       "choices": [
         { "actionId": "connect_net_official", "nextSceneId": "autojoin_prompt_verified" },
-        { "actionId": "connect_net_fake", "nextSceneId": "consequence_trap" }
+        { "actionId": "connect_net_fake", "nextSceneId": "consequence_trap" },
+        { "actionId": "connect_net_open", "nextSceneId": "consequence_open" },
+        { "actionId": "connect_net_neighbor", "nextSceneId": "consequence_neighbor" }
       ]
     },
     {
