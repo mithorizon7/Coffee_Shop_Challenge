@@ -202,9 +202,7 @@ export function processAction(
     .find((network) => network.isMobileData);
   const shouldSelectMobile =
     !!mobileNetwork &&
-    (action?.type === "switch_network" ||
-      action?.id?.toLowerCase().includes("mobile") ||
-      action?.id?.toLowerCase().includes("hotspot"));
+    (action?.id?.toLowerCase().includes("mobile") || action?.id?.toLowerCase().includes("hotspot"));
   if (shouldSelectMobile) {
     selectedNetworkId = mobileNetwork.id;
   }

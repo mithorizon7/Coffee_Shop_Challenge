@@ -69,20 +69,6 @@ export function GameContainer({
   const timeoutNotifiedRef = useRef<Record<string, boolean>>({});
   const rootSnapshotRef = useRef<GameSession | null>(null);
   const { toast } = useToast();
-  const isExplorationPhase = exploration?.phase === "explore";
-  const rootNetworkIds = exploration?.rootNetworkIds ?? [];
-  const rootNetworkSceneId = exploration?.rootNetworkSceneId ?? null;
-  const exploredNetworkIds = exploration?.exploredNetworkIds ?? [];
-  const explorationTotal = rootNetworkIds.length;
-  const explorationCount = exploredNetworkIds.length;
-  const allNetworksExplored =
-    isExplorationPhase &&
-    explorationTotal > 0 &&
-    rootNetworkIds.every((id) => exploredNetworkIds.includes(id));
-  const isFinalRun = !isExplorationPhase || explorationTotal === 0;
-  const isRootNetworkScene =
-    !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
-
   const updateSessionMutation = useMutation({
     mutationFn: async (updates: Partial<GameSession>) => {
       const response = await apiRequest("PATCH", `/api/sessions/${session.id}`, updates);
@@ -115,6 +101,19 @@ export function GameContainer({
   const currentSceneId = currentScene?.id;
   const showWarnings = session.difficulty === "beginner";
   const isAdvanced = session.difficulty === "advanced";
+  const isExplorationPhase = exploration?.phase === "explore";
+  const rootNetworkIds = exploration?.rootNetworkIds ?? [];
+  const rootNetworkSceneId = exploration?.rootNetworkSceneId ?? null;
+  const exploredNetworkIds = exploration?.exploredNetworkIds ?? [];
+  const explorationTotal = rootNetworkIds.length;
+  const explorationCount = exploredNetworkIds.length;
+  const allNetworksExplored =
+    isExplorationPhase &&
+    explorationTotal > 0 &&
+    rootNetworkIds.every((id) => exploredNetworkIds.includes(id));
+  const isFinalRun = !isExplorationPhase || explorationTotal === 0;
+  const isRootNetworkScene =
+    !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
 
   const sceneTitle = currentScene
     ? currentScene.titleKey
