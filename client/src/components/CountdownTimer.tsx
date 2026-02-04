@@ -60,17 +60,17 @@ export function CountdownTimer({ totalSeconds, isActive, sceneId, onTimeUp }: Co
   const timeString = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
   const getTimerColor = useCallback(() => {
-    if (secondsRemaining <= 15) return "text-red-600 dark:text-red-400";
-    if (secondsRemaining <= 30) return "text-amber-600 dark:text-amber-400";
+    if (secondsRemaining <= 15) return "text-rose-700 dark:text-rose-300";
+    if (secondsRemaining <= 30) return "text-amber-700 dark:text-amber-300";
     return "text-foreground";
   }, [secondsRemaining]);
 
   const getBackgroundColor = useCallback(() => {
     if (secondsRemaining <= 15)
-      return "bg-red-100 dark:bg-red-950 border-red-300 dark:border-red-800";
+      return "bg-rose-100/70 dark:bg-rose-950/40 border-rose-300/60 dark:border-rose-800/60";
     if (secondsRemaining <= 30)
-      return "bg-amber-100 dark:bg-amber-950 border-amber-300 dark:border-amber-800";
-    return "bg-muted border-border";
+      return "bg-amber-100/70 dark:bg-amber-950/40 border-amber-300/60 dark:border-amber-800/60";
+    return "bg-background/70 border-border/60";
   }, [secondsRemaining]);
 
   return (
@@ -87,7 +87,7 @@ export function CountdownTimer({ totalSeconds, isActive, sceneId, onTimeUp }: Co
           repeatType: "loop",
         }}
         className={cn(
-          "flex items-center gap-2 px-3 py-1.5 rounded-md border",
+          "flex items-center gap-2 px-3 py-1.5 rounded-full border backdrop-blur",
           getBackgroundColor()
         )}
         data-testid="countdown-timer"

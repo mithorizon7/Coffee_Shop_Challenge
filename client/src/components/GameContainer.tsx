@@ -266,11 +266,13 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
 
   if (!currentScene) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">{t("game.sceneNotFound")}</p>
-        <Button onClick={onExit} className="mt-4">
-          {t("game.returnToMenu")}
-        </Button>
+      <div className="app-shell flex items-center justify-center">
+        <div className="app-surface text-center py-12">
+          <p className="text-muted-foreground">{t("game.sceneNotFound")}</p>
+          <Button onClick={onExit} className="mt-4">
+            {t("game.returnToMenu")}
+          </Button>
+        </div>
       </div>
     );
   }
@@ -287,9 +289,9 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-3">
+    <div className="app-shell">
+      <header className="app-surface sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <Button variant="ghost" size="sm" onClick={onExit} data-testid="button-exit">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -319,7 +321,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="app-surface max-w-5xl mx-auto px-4 py-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentScene.id}
@@ -328,12 +330,14 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="mb-6">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                <MapPin className="w-4 h-4" />
+            <div className="mb-6 space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur">
+                <MapPin className="w-3.5 h-3.5" />
                 <span>{sceneLocation}</span>
               </div>
-              <h1 className="font-display text-2xl font-bold text-foreground mb-2">{sceneTitle}</h1>
+              <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">
+                {sceneTitle}
+              </h1>
               <p className="text-muted-foreground leading-relaxed" data-testid="scene-description">
                 {sceneDescription}
               </p>
@@ -377,7 +381,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
               currentScene.type === "captive_portal") &&
               currentScene.networks && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur">
                     <Wifi className="w-4 h-4" />
                     <span>{t("network.availableNetworks")}</span>
                   </div>
@@ -400,7 +404,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
                   </div>
 
                   {currentScene.actions && currentScene.actions.length > 0 && (
-                    <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
+                    <div className="flex flex-wrap gap-3 pt-4 border-t border-border/60">
                       {currentScene.actions.map((action) => {
                         const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
                         const actionDescription = action.descriptionKey
@@ -428,7 +432,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
               !currentScene.networks &&
               currentScene.actions && (
                 <div className="space-y-6">
-                  <Card className="p-6 bg-muted/30">
+                  <Card className="p-6 bg-muted/40">
                     <div className="flex items-start gap-3 mb-4">
                       <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
@@ -506,7 +510,7 @@ export function GameContainer({ initialSession, scenario, onExit, onRestart }: G
             )}
 
             {session.vpnEnabled && (
-              <div className="fixed bottom-4 right-4 bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg pointer-events-none">
+              <div className="fixed bottom-4 right-4 bg-emerald-600/90 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 shadow-[0_18px_40px_-26px_rgba(16,185,129,0.7)] border border-emerald-300/40 backdrop-blur pointer-events-none">
                 <Shield className="w-4 h-4" />
                 {t("game.vpnActive")}
               </div>

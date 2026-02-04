@@ -37,27 +37,27 @@ interface ConsequenceScreenProps {
 
 const severityConfig = {
   success: {
-    bg: "bg-green-50 dark:bg-green-950",
-    border: "border-green-200 dark:border-green-800",
-    iconBg: "bg-green-100 dark:bg-green-900",
-    iconColor: "text-green-600 dark:text-green-400",
-    headerBg: "bg-green-100 dark:bg-green-900",
+    bg: "bg-emerald-100/70 dark:bg-emerald-950/40",
+    border: "border-emerald-200/70 dark:border-emerald-800/60",
+    iconBg: "bg-emerald-100/80 dark:bg-emerald-900/40",
+    iconColor: "text-emerald-700 dark:text-emerald-300",
+    headerBg: "bg-emerald-100/70 dark:bg-emerald-950/40",
     Icon: CheckCircle,
   },
   warning: {
-    bg: "bg-amber-50 dark:bg-amber-950",
-    border: "border-amber-200 dark:border-amber-800",
-    iconBg: "bg-amber-100 dark:bg-amber-900",
-    iconColor: "text-amber-600 dark:text-amber-400",
-    headerBg: "bg-amber-100 dark:bg-amber-900",
+    bg: "bg-amber-100/70 dark:bg-amber-950/40",
+    border: "border-amber-200/70 dark:border-amber-800/60",
+    iconBg: "bg-amber-100/80 dark:bg-amber-900/40",
+    iconColor: "text-amber-700 dark:text-amber-300",
+    headerBg: "bg-amber-100/70 dark:bg-amber-950/40",
     Icon: AlertCircle,
   },
   danger: {
-    bg: "bg-red-50 dark:bg-red-950",
-    border: "border-red-200 dark:border-red-800",
-    iconBg: "bg-red-100 dark:bg-red-900",
-    iconColor: "text-red-600 dark:text-red-400",
-    headerBg: "bg-red-100 dark:bg-red-900",
+    bg: "bg-rose-100/70 dark:bg-rose-950/40",
+    border: "border-rose-200/70 dark:border-rose-800/60",
+    iconBg: "bg-rose-100/80 dark:bg-rose-900/40",
+    iconColor: "text-rose-700 dark:text-rose-300",
+    headerBg: "bg-rose-100/70 dark:bg-rose-950/40",
     Icon: AlertTriangle,
   },
 };
@@ -156,9 +156,9 @@ export function ConsequenceScreen({
       className="space-y-6"
     >
       <Card className={cn("overflow-hidden", config.border)}>
-        <div className={cn("p-4 flex items-center gap-4", config.headerBg)}>
+        <div className={cn("p-5 flex items-center gap-4", config.headerBg)}>
           <div
-            className={cn("w-12 h-12 rounded-full flex items-center justify-center", config.iconBg)}
+            className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", config.iconBg)}
           >
             <SeverityIcon className={cn("w-6 h-6", config.iconColor)} />
           </div>
@@ -172,7 +172,7 @@ export function ConsequenceScreen({
             <div className="space-y-4">
               <div>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
                     1
                   </div>
                   {t("consequence.whatHappened")}
@@ -187,7 +187,7 @@ export function ConsequenceScreen({
 
               <div>
                 <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
                     2
                   </div>
                   {consequence.severity === "success"
@@ -215,7 +215,7 @@ export function ConsequenceScreen({
               </div>
 
               {technicalExplanation && (
-                <div className="p-4 rounded-lg bg-muted/50">
+                <div className="p-4 rounded-2xl bg-muted/40">
                   <h3 className="font-medium text-foreground flex items-center gap-2 mb-2">
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     {t("consequence.technicalDetails")}
@@ -247,7 +247,7 @@ export function ConsequenceScreen({
                   return (
                     <div
                       key={effect.order}
-                      className="flex items-start gap-3 p-3 rounded-lg bg-muted/30"
+                      className="flex items-start gap-3 p-3 rounded-2xl bg-muted/40"
                     >
                       <div
                         className={cn(

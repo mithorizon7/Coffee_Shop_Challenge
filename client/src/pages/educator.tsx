@@ -45,8 +45,8 @@ export default function EducatorDashboard() {
 
   if (authLoading || statusLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+      <div className="app-shell flex items-center justify-center">
+        <div className="app-surface text-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">{t("educator.loading")}</p>
         </div>
@@ -56,8 +56,8 @@ export default function EducatorDashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="p-8 max-w-md mx-4 text-center">
+      <div className="app-shell flex items-center justify-center">
+        <Card className="app-surface p-8 max-w-md mx-4 text-center">
           <BookOpen className="w-16 h-16 mx-auto mb-4 text-primary" />
           <h1 className="font-display text-2xl font-bold mb-2">
             {t("educator.accessRequiredTitle")}
@@ -81,8 +81,8 @@ export default function EducatorDashboard() {
 
   if (isAuthenticated && status && !status.isEducator) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="p-8 max-w-md mx-4 text-center">
+      <div className="app-shell flex items-center justify-center">
+        <Card className="app-surface p-8 max-w-md mx-4 text-center">
           <ShieldX className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="font-display text-2xl font-bold mb-2">
             {t("educator.accessRestrictedTitle")}
@@ -101,8 +101,8 @@ export default function EducatorDashboard() {
 
   if (analyticsLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+      <div className="app-shell flex items-center justify-center">
+        <div className="app-surface text-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">{t("educator.loadingAnalytics")}</p>
         </div>
@@ -122,19 +122,19 @@ export default function EducatorDashboard() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "beginner":
-        return "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300";
+        return "bg-emerald-100/70 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200";
       case "intermediate":
-        return "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300";
+        return "bg-amber-100/70 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200";
       case "advanced":
-        return "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300";
+        return "bg-rose-100/70 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200";
       default:
-        return "bg-muted text-muted-foreground";
+        return "bg-muted/60 text-muted-foreground";
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
+    <div className="app-shell">
+      <header className="app-surface border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
           <Link href="/">
             <Button variant="ghost" size="sm" data-testid="button-back-home">
@@ -171,14 +171,14 @@ export default function EducatorDashboard() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="app-surface max-w-6xl mx-auto px-4 py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
           <div>
-            <h1 className="font-display text-3xl font-bold text-foreground mb-2">
+            <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
               {t("educator.title")}
             </h1>
             <p className="text-muted-foreground">{t("educator.subtitle")}</p>
@@ -199,10 +199,10 @@ export default function EducatorDashboard() {
             analytics && (
               <>
                 <div className="grid md:grid-cols-5 gap-4">
-                  <Card className="p-4">
+                  <Card className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                        <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <div className="w-11 h-11 rounded-2xl bg-sky-100/70 dark:bg-sky-950/40 flex items-center justify-center">
+                        <Users className="w-5 h-5 text-sky-700 dark:text-sky-300" />
                       </div>
                       <div>
                         <p
@@ -218,10 +218,10 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-4">
+                  <Card className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-                        <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                      <div className="w-11 h-11 rounded-2xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center">
+                        <Target className="w-5 h-5 text-amber-700 dark:text-amber-300" />
                       </div>
                       <div>
                         <p
@@ -237,10 +237,10 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-4">
+                  <Card className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                        <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      <div className="w-11 h-11 rounded-2xl bg-emerald-100/70 dark:bg-emerald-950/40 flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-emerald-700 dark:text-emerald-300" />
                       </div>
                       <div>
                         <p
@@ -256,10 +256,10 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-4">
+                  <Card className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
-                        <Trophy className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                      <div className="w-11 h-11 rounded-2xl bg-teal-100/70 dark:bg-teal-950/40 flex items-center justify-center">
+                        <Trophy className="w-5 h-5 text-teal-700 dark:text-teal-300" />
                       </div>
                       <div>
                         <p
@@ -275,10 +275,10 @@ export default function EducatorDashboard() {
                     </div>
                   </Card>
 
-                  <Card className="p-4">
+                  <Card className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900 flex items-center justify-center">
-                        <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                      <div className="w-11 h-11 rounded-2xl bg-rose-100/70 dark:bg-rose-950/40 flex items-center justify-center">
+                        <AlertTriangle className="w-5 h-5 text-rose-700 dark:text-rose-300" />
                       </div>
                       <div>
                         <p
@@ -451,10 +451,10 @@ export default function EducatorDashboard() {
                                 <span
                                   className={
                                     learner.averageAccuracy >= 70
-                                      ? "text-green-600 dark:text-green-400 font-medium"
+                                      ? "text-emerald-600 dark:text-emerald-400 font-medium"
                                       : learner.averageAccuracy >= 50
                                         ? "text-amber-600 dark:text-amber-400 font-medium"
-                                        : "text-red-600 dark:text-red-400 font-medium"
+                                        : "text-rose-600 dark:text-rose-400 font-medium"
                                   }
                                 >
                                   {learner.averageAccuracy}%

@@ -21,24 +21,24 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
         <TooltipTrigger asChild>
           <div className="flex items-center gap-4 cursor-help" data-testid="score-tracker-compact">
             <div className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <motion.span
                 key={score.safetyPoints}
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                className="text-sm font-medium text-green-600 dark:text-green-400"
+                className="text-sm font-medium text-emerald-600 dark:text-emerald-400"
                 data-testid="score-safety-compact"
               >
                 {score.safetyPoints}
               </motion.span>
             </div>
             <div className="flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
               <motion.span
                 key={score.riskPoints}
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                className="text-sm font-medium text-red-600 dark:text-red-400"
+                className="text-sm font-medium text-rose-600 dark:text-rose-400"
                 data-testid="score-risk-compact"
               >
                 {score.riskPoints}
@@ -51,18 +51,18 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
           <div className="space-y-2 text-sm">
             <p className="font-medium">{t("scoring.howItWorks")}</p>
             <div className="flex items-start gap-2">
-              <Shield className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
               <p>
-                <span className="font-medium text-green-600 dark:text-green-400">
+                <span className="font-medium text-emerald-600 dark:text-emerald-400">
                   {t("game.safetyPoints")}:
                 </span>{" "}
                 {t("scoring.safetyExplain")}
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
               <p>
-                <span className="font-medium text-red-600 dark:text-red-400">
+                <span className="font-medium text-rose-600 dark:text-rose-400">
                   {t("game.riskPoints")}:
                 </span>{" "}
                 {t("scoring.riskExplain")}
@@ -78,7 +78,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
   }
 
   return (
-    <div className="space-y-4 p-4 rounded-lg bg-card border border-card-border">
+    <div className="space-y-4 p-5 rounded-2xl bg-card/70 border border-card-border/70 shadow-[0_18px_40px_-32px_hsl(var(--foreground)/0.45)]">
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-foreground flex items-center gap-2">
           <Target className="w-4 h-4" />
@@ -96,13 +96,13 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
       <div className="space-y-3">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+            <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
               <Shield className="w-4 h-4" />
               {t("game.safetyPoints")}
             </span>
             <motion.span
               key={score.safetyPoints}
-              initial={{ scale: 1.3, color: "rgb(22 163 74)" }}
+              initial={{ scale: 1.3, color: "rgb(5 150 105)" }}
               animate={{ scale: 1 }}
               className="font-semibold"
               data-testid="score-safety"
@@ -110,18 +110,18 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
               {score.safetyPoints}
             </motion.span>
           </div>
-          <Progress value={safetyPercentage} className="h-2 bg-muted [&>div]:bg-green-500" />
+          <Progress value={safetyPercentage} className="h-2 bg-muted [&>div]:bg-emerald-500" />
         </div>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-1.5 text-red-600 dark:text-red-400">
+            <span className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
               <AlertTriangle className="w-4 h-4" />
               {t("game.riskPoints")}
             </span>
             <motion.span
               key={score.riskPoints}
-              initial={{ scale: 1.3, color: "rgb(220 38 38)" }}
+              initial={{ scale: 1.3, color: "rgb(225 29 72)" }}
               animate={{ scale: 1 }}
               className="font-semibold"
               data-testid="score-risk"
@@ -129,7 +129,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
               {score.riskPoints}
             </motion.span>
           </div>
-          <Progress value={100 - safetyPercentage} className="h-2 bg-muted [&>div]:bg-red-500" />
+          <Progress value={100 - safetyPercentage} className="h-2 bg-muted [&>div]:bg-rose-500" />
         </div>
       </div>
 

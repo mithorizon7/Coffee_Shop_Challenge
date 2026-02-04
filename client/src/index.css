@@ -4,57 +4,58 @@
 
 /* LIGHT MODE */
 :root {
-  --button-outline: rgba(0, 0, 0, 0.1);
-  --badge-outline: rgba(0, 0, 0, 0.05);
-  --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(0, 0, 0, 0.03);
-  --elevate-2: rgba(0, 0, 0, 0.08);
-  --background: 0 0% 100%;
-  --foreground: 220 15% 12%;
-  --border: 220 8% 92%;
-  --card: 0 0% 98%;
-  --card-foreground: 220 15% 12%;
-  --card-border: 220 8% 95%;
-  --sidebar: 220 6% 96%;
-  --sidebar-foreground: 220 15% 12%;
-  --sidebar-border: 220 8% 93%;
-  --sidebar-primary: 217 91% 42%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 220 10% 91%;
-  --sidebar-accent-foreground: 220 15% 15%;
-  --sidebar-ring: 217 91% 42%;
-  --popover: 220 8% 94%;
-  --popover-foreground: 220 15% 12%;
-  --popover-border: 220 10% 91%;
-  --primary: 217 91% 42%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 220 10% 90%;
-  --secondary-foreground: 220 15% 15%;
-  --muted: 220 12% 92%;
-  --muted-foreground: 220 10% 35%;
-  --accent: 220 15% 88%;
-  --accent-foreground: 220 15% 18%;
-  --destructive: 0 84% 45%;
+  --button-outline: rgba(76, 54, 38, 0.2);
+  --badge-outline: rgba(76, 54, 38, 0.12);
+  --opaque-button-border-intensity: -12;
+  --elevate-1: rgba(76, 54, 38, 0.05);
+  --elevate-2: rgba(76, 54, 38, 0.1);
+  --background: 36 33% 96%;
+  --foreground: 24 20% 12%;
+  --border: 28 16% 84%;
+  --card: 34 32% 97%;
+  --card-foreground: 24 20% 12%;
+  --card-border: 28 18% 86%;
+  --sidebar: 34 25% 94%;
+  --sidebar-foreground: 24 20% 12%;
+  --sidebar-border: 28 16% 84%;
+  --sidebar-primary: 18 64% 46%;
+  --sidebar-primary-foreground: 36 33% 96%;
+  --sidebar-accent: 32 22% 90%;
+  --sidebar-accent-foreground: 24 20% 18%;
+  --sidebar-ring: 18 64% 46%;
+  --popover: 34 28% 95%;
+  --popover-foreground: 24 20% 12%;
+  --popover-border: 28 18% 85%;
+  --primary: 18 64% 46%;
+  --primary-foreground: 36 33% 96%;
+  --secondary: 32 26% 88%;
+  --secondary-foreground: 24 20% 18%;
+  --muted: 32 22% 90%;
+  --muted-foreground: 24 12% 40%;
+  --accent: 174 28% 80%;
+  --accent-foreground: 194 35% 20%;
+  --destructive: 0 70% 45%;
   --destructive-foreground: 0 0% 98%;
-  --input: 220 13% 75%;
-  --ring: 217 91% 42%;
-  --chart-1: 217 91% 42%;
-  --chart-2: 262 83% 48%;
-  --chart-3: 173 58% 39%;
-  --chart-4: 43 96% 46%;
-  --chart-5: 27 87% 55%;
-  --font-sans: Open Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
-  --radius: 0.5rem;
-  --shadow-2xs: 0px 2px 0px 0px hsl(220 10% 50% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(220 10% 50% / 0);
-  --shadow-sm: 0px 2px 0px 0px hsl(220 10% 50% / 0), 0px 1px 2px -1px hsl(220 10% 50% / 0);
-  --shadow: 0px 2px 0px 0px hsl(220 10% 50% / 0), 0px 1px 2px -1px hsl(220 10% 50% / 0);
-  --shadow-md: 0px 2px 0px 0px hsl(220 10% 50% / 0), 0px 2px 4px -1px hsl(220 10% 50% / 0);
-  --shadow-lg: 0px 2px 0px 0px hsl(220 10% 50% / 0), 0px 4px 6px -1px hsl(220 10% 50% / 0);
-  --shadow-xl: 0px 2px 0px 0px hsl(220 10% 50% / 0), 0px 8px 10px -1px hsl(220 10% 50% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(220 10% 50% / 0);
+  --input: 30 15% 74%;
+  --ring: 18 64% 46%;
+  --chart-1: 18 64% 46%;
+  --chart-2: 174 35% 38%;
+  --chart-3: 42 85% 50%;
+  --chart-4: 120 28% 45%;
+  --chart-5: 0 65% 50%;
+  --font-sans: "Outfit", "IBM Plex Sans", sans-serif;
+  --font-display: "Libre Baskerville", "Source Serif 4", serif;
+  --font-serif: "Source Serif 4", "Libre Baskerville", serif;
+  --font-mono: "IBM Plex Mono", "Fira Code", monospace;
+  --radius: 1rem;
+  --shadow-2xs: 0 1px 0 hsl(24 20% 12% / 0.04);
+  --shadow-xs: 0 1px 2px hsl(24 20% 12% / 0.08);
+  --shadow-sm: 0 6px 16px -12px hsl(24 20% 12% / 0.35);
+  --shadow: 0 8px 24px -16px hsl(24 20% 12% / 0.4);
+  --shadow-md: 0 14px 36px -22px hsl(24 20% 12% / 0.45);
+  --shadow-lg: 0 20px 50px -30px hsl(24 20% 12% / 0.5);
+  --shadow-xl: 0 30px 70px -40px hsl(24 20% 12% / 0.55);
+  --shadow-2xl: 0 40px 90px -50px hsl(24 20% 12% / 0.6);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -102,53 +103,53 @@
 }
 
 .dark {
-  --button-outline: rgba(255, 255, 255, 0.1);
-  --badge-outline: rgba(255, 255, 255, 0.05);
-  --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(255, 255, 255, 0.04);
-  --elevate-2: rgba(255, 255, 255, 0.09);
-  --background: 220 15% 8%;
-  --foreground: 220 8% 95%;
-  --border: 220 12% 18%;
-  --card: 220 12% 10%;
-  --card-foreground: 220 8% 95%;
-  --card-border: 220 12% 14%;
-  --sidebar: 220 15% 12%;
-  --sidebar-foreground: 220 8% 92%;
-  --sidebar-border: 220 12% 16%;
-  --sidebar-primary: 217 91% 52%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 220 15% 18%;
-  --sidebar-accent-foreground: 220 8% 90%;
-  --sidebar-ring: 217 91% 52%;
-  --popover: 220 15% 14%;
-  --popover-foreground: 220 8% 92%;
-  --popover-border: 220 12% 18%;
-  --primary: 217 91% 48%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 220 12% 20%;
-  --secondary-foreground: 220 8% 88%;
-  --muted: 220 12% 22%;
-  --muted-foreground: 220 10% 65%;
-  --accent: 220 15% 24%;
-  --accent-foreground: 220 8% 85%;
-  --destructive: 0 84% 48%;
+  --button-outline: rgba(255, 255, 255, 0.16);
+  --badge-outline: rgba(255, 255, 255, 0.1);
+  --opaque-button-border-intensity: 12;
+  --elevate-1: rgba(255, 255, 255, 0.05);
+  --elevate-2: rgba(255, 255, 255, 0.1);
+  --background: 20 20% 7%;
+  --foreground: 30 24% 92%;
+  --border: 20 14% 22%;
+  --card: 20 18% 10%;
+  --card-foreground: 30 24% 92%;
+  --card-border: 20 16% 20%;
+  --sidebar: 20 18% 12%;
+  --sidebar-foreground: 30 24% 92%;
+  --sidebar-border: 20 16% 20%;
+  --sidebar-primary: 18 64% 56%;
+  --sidebar-primary-foreground: 24 20% 12%;
+  --sidebar-accent: 20 14% 18%;
+  --sidebar-accent-foreground: 30 24% 90%;
+  --sidebar-ring: 18 64% 56%;
+  --popover: 20 16% 12%;
+  --popover-foreground: 30 24% 92%;
+  --popover-border: 20 16% 22%;
+  --primary: 18 64% 56%;
+  --primary-foreground: 24 20% 12%;
+  --secondary: 20 16% 20%;
+  --secondary-foreground: 30 22% 90%;
+  --muted: 20 14% 18%;
+  --muted-foreground: 24 12% 65%;
+  --accent: 174 30% 24%;
+  --accent-foreground: 174 30% 90%;
+  --destructive: 0 70% 50%;
   --destructive-foreground: 0 0% 98%;
-  --input: 220 15% 35%;
-  --ring: 217 91% 52%;
-  --chart-1: 217 91% 65%;
-  --chart-2: 262 83% 70%;
-  --chart-3: 173 58% 60%;
-  --chart-4: 43 96% 65%;
-  --chart-5: 27 87% 68%;
-  --shadow-2xs: 0px 2px 0px 0px hsl(220 15% 5% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(220 15% 5% / 0);
-  --shadow-sm: 0px 2px 0px 0px hsl(220 15% 5% / 0), 0px 1px 2px -1px hsl(220 15% 5% / 0);
-  --shadow: 0px 2px 0px 0px hsl(220 15% 5% / 0), 0px 1px 2px -1px hsl(220 15% 5% / 0);
-  --shadow-md: 0px 2px 0px 0px hsl(220 15% 5% / 0), 0px 2px 4px -1px hsl(220 15% 5% / 0);
-  --shadow-lg: 0px 2px 0px 0px hsl(220 15% 5% / 0), 0px 4px 6px -1px hsl(220 15% 5% / 0);
-  --shadow-xl: 0px 2px 0px 0px hsl(220 15% 5% / 0), 0px 8px 10px -1px hsl(220 15% 5% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(220 15% 5% / 0);
+  --input: 20 16% 28%;
+  --ring: 18 64% 56%;
+  --chart-1: 18 64% 56%;
+  --chart-2: 174 35% 45%;
+  --chart-3: 42 85% 55%;
+  --chart-4: 120 32% 45%;
+  --chart-5: 0 65% 55%;
+  --shadow-2xs: 0 1px 0 hsl(20 20% 2% / 0.4);
+  --shadow-xs: 0 1px 2px hsl(20 20% 2% / 0.6);
+  --shadow-sm: 0 6px 16px -12px hsl(20 20% 2% / 0.7);
+  --shadow: 0 10px 28px -18px hsl(20 20% 2% / 0.75);
+  --shadow-md: 0 16px 40px -24px hsl(20 20% 2% / 0.8);
+  --shadow-lg: 0 24px 60px -32px hsl(20 20% 2% / 0.85);
+  --shadow-xl: 0 32px 80px -40px hsl(20 20% 2% / 0.9);
+  --shadow-2xl: 0 42px 100px -50px hsl(20 20% 2% / 0.95);
 
   /* Fallback for older browsers */
   --sidebar-primary-border: hsl(var(--sidebar-primary));
@@ -198,8 +199,109 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    background-image:
+      radial-gradient(900px 520px at 8% -10%, hsl(var(--primary) / 0.18), transparent 60%),
+      radial-gradient(900px 620px at 108% 8%, hsl(var(--accent) / 0.2), transparent 55%),
+      linear-gradient(
+        180deg,
+        hsl(var(--background)) 0%,
+        hsl(var(--background)) 55%,
+        hsl(var(--secondary) / 0.4) 100%
+      );
+    background-attachment: fixed;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+    opacity: 0.18;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(
+      70% 60% at 50% 0%,
+      transparent 0%,
+      hsl(var(--background) / 0.2) 55%,
+      hsl(var(--background) / 0.6) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-screen bg-background text-foreground relative overflow-x-hidden;
+    isolation: isolate;
+    z-index: 0;
+  }
+
+  .app-shell::before {
+    content: "";
+    position: absolute;
+    width: 48rem;
+    height: 48rem;
+    top: -20rem;
+    right: -18rem;
+    background: radial-gradient(circle at 30% 30%, hsl(var(--primary) / 0.22), transparent 70%);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-shell::after {
+    content: "";
+    position: absolute;
+    width: 40rem;
+    height: 40rem;
+    bottom: -24rem;
+    left: -16rem;
+    background: radial-gradient(circle at 60% 40%, hsl(var(--accent) / 0.28), transparent 70%);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-surface {
+    @apply relative z-10;
+  }
+
+  .glass-panel {
+    @apply bg-card/75 border border-card-border/70 shadow-[0_24px_60px_-45px_hsl(var(--foreground)/0.6)] backdrop-blur-xl;
+  }
+
+  .soft-divider {
+    @apply border-t border-border/60;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
   }
 }
 

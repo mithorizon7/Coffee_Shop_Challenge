@@ -46,8 +46,8 @@ export function NetworkCard({
   return (
     <Card
       className={cn(
-        "p-4 cursor-pointer transition-all duration-150 hover-elevate active-elevate-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md",
-        isSelected && "ring-2 ring-primary"
+        "p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/80 hover:border-primary/30 hover:shadow-[0_18px_40px_-30px_hsl(var(--foreground)/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+        isSelected && "ring-2 ring-primary/60 bg-primary/5"
       )}
       onClick={() => onSelect(network)}
       role="button"
@@ -64,11 +64,11 @@ export function NetworkCard({
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+          <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-muted/60 flex items-center justify-center">
             {network.isSecured ? (
-              <Lock className="w-5 h-5 text-muted-foreground" />
+              <Lock className="w-5 h-5 text-foreground/70" />
             ) : (
-              <Wifi className="w-5 h-5 text-muted-foreground" />
+              <Wifi className="w-5 h-5 text-foreground/70" />
             )}
           </div>
 
@@ -111,7 +111,7 @@ export function NetworkCard({
               key={i}
               className={cn(
                 "w-1 rounded-full transition-colors",
-                active ? "bg-foreground" : "bg-muted"
+                active ? "bg-primary" : "bg-muted"
               )}
               style={{ height: `${(i + 1) * 4}px` }}
             />

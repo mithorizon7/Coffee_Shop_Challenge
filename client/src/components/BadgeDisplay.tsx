@@ -21,29 +21,29 @@ const badgeIcons: Record<string, typeof Shield> = {
 
 const badgeColors: Record<string, { bg: string; text: string; border: string }> = {
   security_aware: {
-    bg: "bg-blue-50 dark:bg-blue-950",
-    text: "text-blue-600 dark:text-blue-400",
-    border: "border-blue-200 dark:border-blue-800",
+    bg: "bg-sky-100/70 dark:bg-sky-950/40",
+    text: "text-sky-700 dark:text-sky-300",
+    border: "border-sky-200/70 dark:border-sky-800/60",
   },
   vpn_master: {
-    bg: "bg-purple-50 dark:bg-purple-950",
-    text: "text-purple-600 dark:text-purple-400",
-    border: "border-purple-200 dark:border-purple-800",
+    bg: "bg-teal-100/70 dark:bg-teal-950/40",
+    text: "text-teal-700 dark:text-teal-300",
+    border: "border-teal-200/70 dark:border-teal-800/60",
   },
   network_detective: {
-    bg: "bg-amber-50 dark:bg-amber-950",
-    text: "text-amber-600 dark:text-amber-400",
-    border: "border-amber-200 dark:border-amber-800",
+    bg: "bg-amber-100/70 dark:bg-amber-950/40",
+    text: "text-amber-700 dark:text-amber-300",
+    border: "border-amber-200/70 dark:border-amber-800/60",
   },
   patient_professional: {
-    bg: "bg-green-50 dark:bg-green-950",
-    text: "text-green-600 dark:text-green-400",
-    border: "border-green-200 dark:border-green-800",
+    bg: "bg-emerald-100/70 dark:bg-emerald-950/40",
+    text: "text-emerald-700 dark:text-emerald-300",
+    border: "border-emerald-200/70 dark:border-emerald-800/60",
   },
   perfect_score: {
-    bg: "bg-yellow-50 dark:bg-yellow-950",
-    text: "text-yellow-600 dark:text-yellow-400",
-    border: "border-yellow-200 dark:border-yellow-800",
+    bg: "bg-amber-100/70 dark:bg-amber-950/40",
+    text: "text-amber-700 dark:text-amber-300",
+    border: "border-amber-200/70 dark:border-amber-800/60",
   },
 };
 
@@ -76,12 +76,12 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: index * 0.1, type: "spring", stiffness: 500 }}
-                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full"
+                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full transition-transform duration-200 hover:-translate-y-0.5"
                   aria-label={`${badgeName}. ${badgeDescription}`}
                 >
                   <div
                     className={cn(
-                      "w-7 h-7 rounded-full flex items-center justify-center",
+                      "w-7 h-7 rounded-full flex items-center justify-center shadow-[0_10px_26px_-20px_hsl(var(--foreground)/0.4)]",
                       colors.bg
                     )}
                   >
@@ -120,7 +120,7 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
               className={cn(
-                "flex items-center gap-3 p-3 rounded-lg border",
+                "flex items-center gap-3 p-3 rounded-2xl border",
                 colors.bg,
                 colors.border
               )}
@@ -128,7 +128,7 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
             >
               <div
                 className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center bg-background/50"
+                  "w-10 h-10 rounded-2xl flex items-center justify-center bg-background/60"
                 )}
               >
                 <IconComponent className={cn("w-5 h-5", colors.text)} />

@@ -266,15 +266,15 @@ export function calculateGrade(score: Score): {
   const ratio = score.safetyPoints / Math.max(1, score.safetyPoints + score.riskPoints);
 
   if (ratio >= 0.9) {
-    return { grade: "A", labelKey: "grades.A", color: "text-green-600 dark:text-green-400" };
+    return { grade: "A", labelKey: "grades.A", color: "text-emerald-600 dark:text-emerald-400" };
   } else if (ratio >= 0.75) {
-    return { grade: "B", labelKey: "grades.B", color: "text-blue-600 dark:text-blue-400" };
+    return { grade: "B", labelKey: "grades.B", color: "text-sky-600 dark:text-sky-400" };
   } else if (ratio >= 0.6) {
-    return { grade: "C", labelKey: "grades.C", color: "text-yellow-600 dark:text-yellow-400" };
+    return { grade: "C", labelKey: "grades.C", color: "text-amber-600 dark:text-amber-400" };
   } else if (ratio >= 0.4) {
     return { grade: "D", labelKey: "grades.D", color: "text-orange-600 dark:text-orange-400" };
   } else {
-    return { grade: "F", labelKey: "grades.F", color: "text-red-600 dark:text-red-400" };
+    return { grade: "F", labelKey: "grades.F", color: "text-rose-600 dark:text-rose-400" };
   }
 }
 

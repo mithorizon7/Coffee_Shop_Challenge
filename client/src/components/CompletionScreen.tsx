@@ -44,18 +44,14 @@ export function CompletionScreen({
   const scenarioTitle = translateScenarioTitle(t, scenario.id, scenario.title);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-background py-8 px-4"
-    >
-      <div className="space-y-6 max-w-3xl mx-auto">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="app-shell py-10 px-4">
+      <div className="app-surface space-y-6 max-w-3xl mx-auto">
         <div className="text-center">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, delay: 0.2 }}
-            className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4"
+            className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center mx-auto mb-4 shadow-[0_18px_40px_-26px_hsl(var(--primary)/0.8)]"
           >
             <Trophy className="w-10 h-10 text-primary" />
           </motion.div>
@@ -114,7 +110,7 @@ export function CompletionScreen({
 
         <Card className="p-6">
           <h3 className="font-medium text-foreground flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-green-500" />
+            <CheckCircle className="w-5 h-5 text-emerald-600" />
             {t("decisionProcess.title")}
           </h3>
           <p className="text-sm text-muted-foreground mb-4">{t("decisionProcess.subtitle")}</p>
@@ -125,7 +121,7 @@ export function CompletionScreen({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 + index * 0.1 }}
-                className="p-3 rounded-lg bg-muted/50"
+                className="p-3 rounded-2xl bg-muted/40"
               >
                 <div className="flex items-center gap-2 mb-1">
                   <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
@@ -139,7 +135,7 @@ export function CompletionScreen({
           </div>
         </Card>
 
-        <Card className="p-6 border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/30">
+        <Card className="p-6 border-amber-200/70 dark:border-amber-800/60 bg-amber-100/50 dark:bg-amber-950/30">
           <h3 className="font-medium text-foreground flex items-center gap-2 mb-3">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
             {t(rogueKeys.titleKey)}

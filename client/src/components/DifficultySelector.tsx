@@ -36,9 +36,9 @@ const difficultyConfig: Record<
       "scenario.difficultyFeatures.beginner2",
       "scenario.difficultyFeatures.beginner3",
     ],
-    color: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-50 dark:bg-green-950",
-    borderColor: "border-green-200 dark:border-green-800",
+    color: "text-emerald-700 dark:text-emerald-300",
+    bgColor: "bg-emerald-100/70 dark:bg-emerald-950/40",
+    borderColor: "border-emerald-200/70 dark:border-emerald-800/60",
   },
   intermediate: {
     icon: Scale,
@@ -49,9 +49,9 @@ const difficultyConfig: Record<
       "scenario.difficultyFeatures.intermediate2",
       "scenario.difficultyFeatures.intermediate3",
     ],
-    color: "text-amber-600 dark:text-amber-400",
-    bgColor: "bg-amber-50 dark:bg-amber-950",
-    borderColor: "border-amber-200 dark:border-amber-800",
+    color: "text-amber-700 dark:text-amber-300",
+    bgColor: "bg-amber-100/70 dark:bg-amber-950/40",
+    borderColor: "border-amber-200/70 dark:border-amber-800/60",
   },
   advanced: {
     icon: Target,
@@ -62,9 +62,9 @@ const difficultyConfig: Record<
       "scenario.difficultyFeatures.advanced2",
       "scenario.difficultyFeatures.advanced3",
     ],
-    color: "text-red-600 dark:text-red-400",
-    bgColor: "bg-red-50 dark:bg-red-950",
-    borderColor: "border-red-200 dark:border-red-800",
+    color: "text-rose-700 dark:text-rose-300",
+    bgColor: "bg-rose-100/70 dark:bg-rose-950/40",
+    borderColor: "border-rose-200/70 dark:border-rose-800/60",
   },
 };
 
@@ -93,7 +93,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
   const orderedDifficulties: DifficultyLevel[] = ["beginner", "intermediate", "advanced"];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {orderedDifficulties.map((difficulty) => {
         const config = difficultyConfig[difficulty];
         const DifficultyIcon = config.icon;
@@ -102,18 +102,20 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
         if (scenariosForDifficulty.length === 0) return null;
 
         return (
-          <div key={difficulty} className="space-y-3">
+          <div key={difficulty} className="space-y-4">
             <div className="flex items-start gap-3">
               <div
                 className={cn(
-                  "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                  "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
                   config.bgColor
                 )}
               >
                 <DifficultyIcon className={cn("w-5 h-5", config.color)} />
               </div>
               <div className="flex-1">
-                <h3 className="font-display font-semibold text-foreground">{t(config.labelKey)}</h3>
+                <h3 className="font-display text-lg font-semibold text-foreground">
+                  {t(config.labelKey)}
+                </h3>
                 <p className="text-sm text-muted-foreground">{t(config.descriptionKey)}</p>
                 <ul className="mt-2 space-y-1">
                   {config.featureKeys.map((featureKey, index) => (
@@ -124,9 +126,9 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                       <span
                         className={cn(
                           "w-1.5 h-1.5 rounded-full flex-shrink-0",
-                          difficulty === "beginner" && "bg-green-500 dark:bg-green-400",
+                          difficulty === "beginner" && "bg-emerald-500 dark:bg-emerald-400",
                           difficulty === "intermediate" && "bg-amber-500 dark:bg-amber-400",
-                          difficulty === "advanced" && "bg-red-500 dark:bg-red-400"
+                          difficulty === "advanced" && "bg-rose-500 dark:bg-rose-400"
                         )}
                       />
                       {t(featureKey)}
@@ -136,7 +138,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
               </div>
             </div>
 
-            <div className="space-y-2 ml-[3.25rem]">
+            <div className="space-y-3 ml-0 sm:ml-[3.75rem]">
               {scenariosForDifficulty.map((scenario) => {
                 const title = translateScenarioTitle(t, scenario.id, scenario.title);
                 const description = translateScenarioDescription(
@@ -151,7 +153,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                   <Card
                     key={scenario.id}
                     className={cn(
-                      "p-4 transition-all duration-150 hover-elevate active-elevate-2",
+                      "p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/80 hover:shadow-[0_18px_40px_-30px_hsl(var(--foreground)/0.45)]",
                       config.borderColor
                     )}
                     data-testid={`scenario-card-${scenario.id}`}
@@ -159,7 +161,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                     <button
                       type="button"
                       onClick={() => onSelect(scenario.id)}
-                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+                      className="group w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-2xl"
                       aria-describedby={`scenario-desc-${scenario.id}`}
                       aria-label={t("scenario.startScenarioWithTime", {
                         title,
@@ -183,7 +185,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">{location}</p>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-foreground/70" />
                       </div>
                     </button>
                   </Card>

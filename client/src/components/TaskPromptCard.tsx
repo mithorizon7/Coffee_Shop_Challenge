@@ -42,24 +42,24 @@ const taskIcons: Record<string, typeof Mail> = {
 
 const sensitivityColors: Record<string, { bg: string; text: string; border: string }> = {
   low: {
-    bg: "bg-green-50 dark:bg-green-950",
-    text: "text-green-700 dark:text-green-300",
-    border: "border-green-200 dark:border-green-800",
+    bg: "bg-emerald-100/70 dark:bg-emerald-950/40",
+    text: "text-emerald-800 dark:text-emerald-200",
+    border: "border-emerald-200/70 dark:border-emerald-800/60",
   },
   medium: {
-    bg: "bg-amber-50 dark:bg-amber-950",
-    text: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-200 dark:border-amber-800",
+    bg: "bg-amber-100/70 dark:bg-amber-950/40",
+    text: "text-amber-800 dark:text-amber-200",
+    border: "border-amber-200/70 dark:border-amber-800/60",
   },
   high: {
-    bg: "bg-orange-50 dark:bg-orange-950",
-    text: "text-orange-700 dark:text-orange-300",
-    border: "border-orange-200 dark:border-orange-800",
+    bg: "bg-orange-100/70 dark:bg-orange-950/40",
+    text: "text-orange-800 dark:text-orange-200",
+    border: "border-orange-200/70 dark:border-orange-800/60",
   },
   critical: {
-    bg: "bg-red-50 dark:bg-red-950",
-    text: "text-red-700 dark:text-red-300",
-    border: "border-red-200 dark:border-red-800",
+    bg: "bg-rose-100/70 dark:bg-rose-950/40",
+    text: "text-rose-800 dark:text-rose-200",
+    border: "border-rose-200/70 dark:border-rose-800/60",
   },
 };
 
@@ -85,11 +85,11 @@ export function TaskPromptCard({
     : translateTaskRiskHint(t, scenarioId, task.id, task.riskHint || "");
 
   return (
-    <Card className="p-6">
+    <Card className="p-7">
       <div className="flex items-start gap-4">
         <div
           className={cn(
-            "w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0",
+            "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
             sensitivity.bg
           )}
         >
@@ -113,9 +113,9 @@ export function TaskPromptCard({
           </p>
 
           {showHints && riskHint && (
-            <div className="flex items-start gap-2 p-3 rounded-md bg-amber-50 dark:bg-amber-950 mb-4">
-              <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-700 dark:text-amber-300">{riskHint}</p>
+            <div className="flex items-start gap-2 p-3 rounded-2xl bg-amber-100/60 dark:bg-amber-950/40 mb-4">
+              <Info className="w-4 h-4 text-amber-700 dark:text-amber-300 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-800 dark:text-amber-200">{riskHint}</p>
             </div>
           )}
 

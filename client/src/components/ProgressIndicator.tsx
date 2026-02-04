@@ -33,7 +33,7 @@ export function ProgressIndicator({
   const displayScenes = mainScenes.slice(0, 5);
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto py-2">
+    <div className="flex items-center gap-2 overflow-x-auto rounded-full border border-border/60 bg-background/70 px-3 py-2 shadow-sm backdrop-blur">
       {displayScenes.map((scene, index) => {
         const isCompleted = completedSceneIds.includes(scene.id);
         const isCurrent =
@@ -47,10 +47,13 @@ export function ProgressIndicator({
             <div className="flex items-center gap-2">
               <div
                 className={cn(
-                  "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-colors",
-                  isPast && "bg-primary text-primary-foreground",
-                  isCurrent && !isPast && "bg-primary/20 text-primary border-2 border-primary",
-                  !isPast && !isCurrent && "bg-muted text-muted-foreground"
+                  "w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors border",
+                  isPast &&
+                    "bg-primary text-primary-foreground border-primary/40 shadow-[0_10px_25px_-20px_hsl(var(--primary)/0.7)]",
+                  isCurrent &&
+                    !isPast &&
+                    "bg-primary/10 text-primary border-primary/50 shadow-[0_8px_20px_-16px_hsl(var(--primary)/0.6)]",
+                  !isPast && !isCurrent && "bg-muted/60 text-muted-foreground border-border/60"
                 )}
               >
                 {isPast ? <Check className="w-3.5 h-3.5" /> : <span>{index + 1}</span>}
