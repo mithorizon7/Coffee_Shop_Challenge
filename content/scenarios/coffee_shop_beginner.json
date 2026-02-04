@@ -55,7 +55,6 @@
           "securityType": "wpa2",
           "isLegitimate": true,
           "isTrap": false,
-          "verifiedByStaff": true,
           "riskLevel": "safe",
           "description": "Official coffee shop network"
         },
