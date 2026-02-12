@@ -1,4 +1,4 @@
-import { ArrowRight, Clock, MapPin, Wifi } from "lucide-react";
+import { ArrowRight, Clock, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { ScenarioListItem } from "@shared/schema";

@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
 import { getAllScenarios, getAvailableBadges } from "../shared/scenarios";
@@ -26,34 +26,54 @@ function isValidSessionId(id: string): boolean {
 // Simple in-memory rate limiter for session creation
 const sessionCreationLimiter = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 10; // max 10 sessions per minute per IP
+const RATE_LIMIT_MAX_REQUESTS = 30; // max 30 session starts per minute per user/IP
 
-function checkRateLimit(ip: string): boolean {
+function getClientIp(req: Request): string {
+  const forwardedFor = req.headers["x-forwarded-for"];
+  if (typeof forwardedFor === "string" && forwardedFor.length > 0) {
+    return forwardedFor.split(",")[0].trim();
+  }
+  if (Array.isArray(forwardedFor) && forwardedFor.length > 0) {
+    return forwardedFor[0].trim();
+  }
+  return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+function getSessionRateLimitKey(req: Request): string {
+  const userId = (req as any).user?.claims?.sub;
+  if (typeof userId === "string" && userId.length > 0) {
+    return `user:${userId}`;
+  }
+  return `ip:${getClientIp(req)}`;
+}
+
+function checkRateLimit(key: string): { allowed: boolean; retryAfterSeconds: number } {
   const now = Date.now();
-  const record = sessionCreationLimiter.get(ip);
+  const record = sessionCreationLimiter.get(key);
 
   if (!record || now > record.resetAt) {
-    sessionCreationLimiter.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return true;
+    sessionCreationLimiter.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, retryAfterSeconds: 0 };
   }
 
   if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return false;
+    const retryAfterSeconds = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
+    return { allowed: false, retryAfterSeconds };
   }
 
   record.count++;
-  return true;
+  return { allowed: true, retryAfterSeconds: 0 };
 }
 
 // Clean up old rate limit entries periodically
 setInterval(
   () => {
     const now = Date.now();
-    for (const [ip, record] of sessionCreationLimiter.entries()) {
+    sessionCreationLimiter.forEach((record, ip) => {
       if (now > record.resetAt) {
         sessionCreationLimiter.delete(ip);
       }
-    }
+    });
   },
   5 * 60 * 1000
 ); // Every 5 minutes
@@ -144,9 +164,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/sessions", async (req, res) => {
     try {
       // Rate limiting
-      const clientIp = req.ip || req.socket.remoteAddress || "unknown";
-      if (!checkRateLimit(clientIp)) {
-        return res.status(429).json({ error: "Too many requests. Please try again later." });
+      const limitKey = getSessionRateLimitKey(req);
+      const rateLimit = checkRateLimit(limitKey);
+      if (!rateLimit.allowed) {
+        res.setHeader("Retry-After", rateLimit.retryAfterSeconds.toString());
+        return res.status(429).json({
+          error: "Too many session starts. Please try again shortly.",
+          retryAfterSeconds: rateLimit.retryAfterSeconds,
+        });
       }
 
       const parseResult = createSessionSchema.safeParse(req.body);

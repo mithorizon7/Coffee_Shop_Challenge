@@ -53,6 +53,8 @@ interface GameContainerProps {
   };
 }
 
+const EMPTY_IDS: string[] = [];
+
 export function GameContainer({
   initialSession,
   scenario,
@@ -106,10 +108,10 @@ export function GameContainer({
   const showWarnings = session.difficulty === "beginner";
   const isAdvanced = session.difficulty === "advanced";
   const isExplorationPhase = exploration?.phase === "explore";
-  const rootNetworkIds = exploration?.rootNetworkIds ?? [];
+  const rootNetworkIds = exploration?.rootNetworkIds ?? EMPTY_IDS;
   const rootNetworkIdSet = useMemo(() => new Set(rootNetworkIds), [rootNetworkIds]);
   const rootNetworkSceneId = exploration?.rootNetworkSceneId ?? null;
-  const exploredNetworkIds = exploration?.exploredNetworkIds ?? [];
+  const exploredNetworkIds = exploration?.exploredNetworkIds ?? EMPTY_IDS;
   const explorationTotal = rootNetworkIds.length;
   const explorationCount = exploredNetworkIds.length;
   const allNetworksExplored =
@@ -146,8 +148,7 @@ export function GameContainer({
     isDebriefScene && ["D", "F"].includes(calculateGrade(session.score).grade);
   const briefingTone = isDebriefScene
     ? {
-        surface:
-          "bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_60%)]",
+        surface: "bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_60%)]",
         pill: "bg-emerald-100/80 dark:bg-emerald-950/40 border-emerald-200/70 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-200",
         accentText: "text-emerald-700 dark:text-emerald-300",
         accentBar: "bg-emerald-400/70 dark:bg-emerald-500/40",
@@ -156,8 +157,7 @@ export function GameContainer({
           "font-semibold text-foreground bg-emerald-200/50 dark:bg-emerald-500/15 ring-1 ring-emerald-200/60 dark:ring-emerald-500/20 rounded px-1",
       }
     : {
-        surface:
-          "bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.18),transparent_60%)]",
+        surface: "bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.18),transparent_60%)]",
         pill: "bg-sky-100/80 dark:bg-sky-950/40 border-sky-200/70 dark:border-sky-800/60 text-sky-800 dark:text-sky-200",
         accentText: "text-sky-700 dark:text-sky-300",
         accentBar: "bg-sky-400/70 dark:bg-sky-500/40",
@@ -547,7 +547,9 @@ export function GameContainer({
                               >
                                 {sectionNumber}
                               </span>
-                              <span className={cn("h-1.5 w-10 rounded-full", briefingTone.accentBar)} />
+                              <span
+                                className={cn("h-1.5 w-10 rounded-full", briefingTone.accentBar)}
+                              />
                             </div>
                             <h3 className="text-base font-semibold text-foreground">
                               {sectionTitle}

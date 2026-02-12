@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import type { Scenario, Badge } from "@shared/schema";
+import { badgeSchema, scenarioSchema, type Scenario, type Badge } from "@shared/schema";
 import { setScenarios, setBadges, getAvailableBadges } from "@shared/scenarios";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
@@ -27,15 +27,21 @@ export function loadScenariosFromJSON(): Scenario[] {
       const filePath = path.join(SCENARIOS_DIR, file);
       try {
         const content = fs.readFileSync(filePath, "utf-8");
-        const scenario = JSON.parse(content) as Scenario;
+        const parsedScenario = JSON.parse(content);
+        const validation = scenarioSchema.safeParse(parsedScenario);
 
-        // Basic validation
-        if (scenario.id && scenario.title && scenario.scenes) {
-          scenarios.push(scenario);
-          console.log(`Loaded scenario: ${scenario.id} (${scenario.title})`);
-        } else {
-          console.warn(`Invalid scenario format in ${file}: missing required fields`);
+        if (!validation.success) {
+          const details = validation.error.issues
+            .slice(0, 3)
+            .map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`)
+            .join("; ");
+          console.warn(`Invalid scenario format in ${file}: ${details}`);
+          continue;
         }
+
+        const scenario = validation.data;
+        scenarios.push(scenario);
+        console.log(`Loaded scenario: ${scenario.id} (${scenario.title})`);
       } catch (err) {
         console.error(`Error loading scenario from ${file}:`, err);
       }
@@ -64,13 +70,26 @@ export function loadBadgesFromJSON(): Badge[] {
   try {
     if (fs.existsSync(badgesPath)) {
       const content = fs.readFileSync(badgesPath, "utf-8");
-      const badges = JSON.parse(content) as Badge[];
-
-      // Basic validation
-      const validBadges = badges.filter((b) => b.id && b.name && b.description);
-      if (validBadges.length !== badges.length) {
-        console.warn(`Some badges in badges.json are missing required fields`);
+      const parsedBadges = JSON.parse(content);
+      if (!Array.isArray(parsedBadges)) {
+        console.warn("Invalid badges.json format: expected an array");
+        return getAvailableBadges();
       }
+
+      const validBadges: Badge[] = [];
+      parsedBadges.forEach((badge, index) => {
+        const validation = badgeSchema.safeParse(badge);
+        if (validation.success) {
+          validBadges.push(validation.data);
+          return;
+        }
+
+        const details = validation.error.issues
+          .slice(0, 2)
+          .map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`)
+          .join("; ");
+        console.warn(`Invalid badge at index ${index}: ${details}`);
+      });
 
       console.log(`Loaded ${validBadges.length} badges from JSON`);
       return validBadges;
