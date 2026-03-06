@@ -73,6 +73,52 @@
     "educationalDebriefs": "Educational Debriefs",
     "educationalDebriefsDesc": "Every choice explained with technical context and safer alternatives."
   },
+  "onboarding": {
+    "entry": {
+      "title": "Start with this quick game plan",
+      "body": "Aim for your first win: finish the beginner challenge with low risk and learn why your choices scored the way they did.",
+      "step1": "Start with the beginner scenario and read the briefing before you click through.",
+      "step2": "At each network choice, verify the official SSID before connecting.",
+      "step3": "For sensitive tasks, use VPN or postpone until you trust the network.",
+      "startCta": "Start guided run",
+      "restoreCta": "Show starter guide",
+      "dismissCta": "Hide starter guide"
+    },
+    "scenarioGuide": {
+      "title": "What success looks like in this round",
+      "body": "Use this micro-checklist while you play.",
+      "item1": "Pick the safest network, not just the strongest signal.",
+      "item2": "Use staff verification when names are close or confusing.",
+      "item3": "Keep risk points low by avoiding rushed or high-exposure actions.",
+      "dismissCta": "Hide this guide"
+    },
+    "inSession": {
+      "helpButton": "Decision help",
+      "hideHelpButton": "Hide help",
+      "title": "Decision checklist",
+      "subtitle": "Use this quick checklist whenever you're unsure on public Wi-Fi.",
+      "goalTitle": "First-session goal",
+      "goalBody": "Finish the scenario with low risk points and understand why each choice changed your score.",
+      "showTips": "Show contextual tips",
+      "hideTips": "Hide contextual tips",
+      "reviewChecklistCta": "Review checklist",
+      "context": {
+        "networkTitle": "Before you connect",
+        "networkBody": "Signal strength is not trust. Prioritize official naming and staff verification first.",
+        "taskTitle": "Before you proceed",
+        "taskBody": "Match the task sensitivity with your protection. High-risk tasks should use VPN or wait.",
+        "portalTitle": "Portal caution",
+        "portalBody": "Never install profiles, certificates, or apps from captive portals."
+      }
+    },
+    "adaptive": {
+      "riskSingle": "Risk increased on that choice. Check the safer alternative before your next action.",
+      "riskStreak": "Two risky outcomes in a row. Slow down and use the checklist before continuing.",
+      "backtrack": "Retrying helps. Compare what changed before you choose again.",
+      "backtrackStuck": "Multiple retries detected. Reopen the checklist and verify network identity first.",
+      "fading": "Nice progress. Tips are now lighter because your recent decisions are safer."
+    }
+  },
   "scenario": {
     "difficulty": {
       "beginner": "Beginner",

@@ -8,6 +8,9 @@ import {
   Loader2,
   BarChart3,
   GraduationCap,
+  Sparkles,
+  Target,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,6 +25,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import { orderedDifficulties } from "@/lib/difficultyConfig";
 import { translateScenarioTitle } from "@/lib/translateContent";
+import { readLearnerOnboardingState, updateLearnerOnboardingState } from "@/lib/onboardingState";
 
 type ViewState = "landing" | "scenario_intro" | "loading_scenario" | "playing";
 type ExplorationPhase = "explore" | "final";
@@ -36,10 +40,19 @@ export default function Home() {
   const [exploredNetworkIds, setExploredNetworkIds] = useState<string[]>([]);
   const [rootNetworkSceneId, setRootNetworkSceneId] = useState<string | null>(null);
   const [rootNetworkIds, setRootNetworkIds] = useState<string[]>([]);
+  const [learnerOnboardingState, setLearnerOnboardingState] = useState(() =>
+    readLearnerOnboardingState()
+  );
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [viewState]);
+
+  useEffect(() => {
+    if (viewState !== "playing") {
+      setLearnerOnboardingState(readLearnerOnboardingState());
+    }
   }, [viewState]);
 
   const {
@@ -74,6 +87,25 @@ export default function Home() {
     setScenarioIndex(0);
     setViewState("scenario_intro");
   };
+
+  const setOnboardingState = (updates: Parameters<typeof updateLearnerOnboardingState>[0]) => {
+    setLearnerOnboardingState(updateLearnerOnboardingState(updates));
+  };
+
+  const dismissFirstRunChecklist = () => {
+    setOnboardingState({ firstRunChecklistDismissed: true });
+  };
+
+  const restoreFirstRunChecklist = () => {
+    setOnboardingState({ firstRunChecklistDismissed: false });
+  };
+
+  const showFirstRunChecklist =
+    !learnerOnboardingState.firstSuccessCompleted &&
+    !learnerOnboardingState.firstRunChecklistDismissed;
+  const canRestoreFirstRunChecklist =
+    !learnerOnboardingState.firstSuccessCompleted &&
+    learnerOnboardingState.firstRunChecklistDismissed;
 
   const startScenarioSession = async (scenario: Scenario, startAtSceneId?: string) => {
     const session = await createSessionMutation.mutateAsync({
@@ -280,18 +312,34 @@ export default function Home() {
             )}
 
             {currentScenarioPreview && (
-              <ScenarioIntro
-                scenario={currentScenarioPreview}
-                index={scenarioIndex}
-                total={orderedScenarios.length}
-                onStart={() => handleStartScenario(currentScenarioPreview.id)}
-                onBack={() => setViewState("landing")}
-                nextScenarioTitle={
-                  nextScenarioPreview
-                    ? translateScenarioTitle(t, nextScenarioPreview.id, nextScenarioPreview.title)
-                    : undefined
-                }
-              />
+              <div className="space-y-4">
+                {canRestoreFirstRunChecklist && (
+                  <div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={restoreFirstRunChecklist}
+                      data-testid="button-restore-starter-guide"
+                    >
+                      {t("onboarding.entry.restoreCta")}
+                    </Button>
+                  </div>
+                )}
+                <ScenarioIntro
+                  scenario={currentScenarioPreview}
+                  index={scenarioIndex}
+                  total={orderedScenarios.length}
+                  onStart={() => handleStartScenario(currentScenarioPreview.id)}
+                  onBack={() => setViewState("landing")}
+                  showLearnerGuide={showFirstRunChecklist}
+                  onDismissGuide={dismissFirstRunChecklist}
+                  nextScenarioTitle={
+                    nextScenarioPreview
+                      ? translateScenarioTitle(t, nextScenarioPreview.id, nextScenarioPreview.title)
+                      : undefined
+                  }
+                />
+              </div>
             )}
           </motion.div>
         </main>
@@ -370,6 +418,63 @@ export default function Home() {
                   </Button>
                   <p className="text-sm text-muted-foreground">{t("home.difficultyLevels")}</p>
                 </div>
+                {canRestoreFirstRunChecklist && (
+                  <div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={restoreFirstRunChecklist}
+                      data-testid="button-restore-starter-guide-home"
+                    >
+                      {t("onboarding.entry.restoreCta")}
+                    </Button>
+                  </div>
+                )}
+                {showFirstRunChecklist && (
+                  <Card className="p-5 border-dashed border-primary/40 bg-primary/5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          <p className="text-sm font-medium text-foreground">
+                            {t("onboarding.entry.title")}
+                          </p>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {t("onboarding.entry.body")}
+                        </p>
+                        <ul className="space-y-2 text-sm text-foreground">
+                          <li className="flex items-start gap-2">
+                            <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span>{t("onboarding.entry.step1")}</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span>{t("onboarding.entry.step2")}</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span>{t("onboarding.entry.step3")}</span>
+                          </li>
+                        </ul>
+                        <div className="pt-1">
+                          <Button variant="secondary" onClick={handleStartChallenge}>
+                            {t("onboarding.entry.startCta")}
+                          </Button>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={dismissFirstRunChecklist}
+                        aria-label={t("onboarding.entry.dismissCta")}
+                        data-testid="button-dismiss-starter-guide"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                )}
               </div>
             </Card>
 

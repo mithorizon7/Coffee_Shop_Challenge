@@ -73,6 +73,52 @@
     "educationalDebriefs": "Izglītojoši Pārskati",
     "educationalDebriefsDesc": "Katra izvēle izskaidrota ar tehnisku kontekstu un drošākām alternatīvām."
   },
+  "onboarding": {
+    "entry": {
+      "title": "Sāc ar šo īso spēles plānu",
+      "body": "Tavs pirmais mērķis: pabeidz iesācēja izaicinājumu ar zemu risku un saproti, kāpēc izvēles mainīja punktus.",
+      "step1": "Sāc ar iesācēja scenāriju un vispirms izlasi brīfingu.",
+      "step2": "Pie katras tīkla izvēles vispirms pārbaudi oficiālo SSID.",
+      "step3": "Jutīgiem uzdevumiem izmanto VPN vai atliek darbību līdz uzticamam tīklam.",
+      "startCta": "Sākt vadītu gājienu",
+      "restoreCta": "Rādīt sākuma ceļvedi",
+      "dismissCta": "Paslēpt sākuma ceļvedi"
+    },
+    "scenarioGuide": {
+      "title": "Kā izskatās veiksmīgs rezultāts šajā kārtā",
+      "body": "Izmanto šo īso kontrolsarakstu spēles laikā.",
+      "item1": "Izvēlies drošāko tīklu, nevis tikai spēcīgāko signālu.",
+      "item2": "Ja tīklu nosaukumi ir līdzīgi, pārbaudi tos pie personāla.",
+      "item3": "Saglabā zemu riska punktu skaitu, izvairoties no steigā pieņemtiem lēmumiem.",
+      "dismissCta": "Paslēpt šo ceļvedi"
+    },
+    "inSession": {
+      "helpButton": "Palīdzība lēmumiem",
+      "hideHelpButton": "Paslēpt palīdzību",
+      "title": "Lēmumu kontrolsaraksts",
+      "subtitle": "Izmanto šo īso sarakstu, kad neesi drošs publiskā Wi-Fi tīklā.",
+      "goalTitle": "Pirmās sesijas mērķis",
+      "goalBody": "Pabeidz scenāriju ar zemu riska punktu skaitu un saproti, kāpēc katra izvēle mainīja rezultātu.",
+      "showTips": "Rādīt konteksta padomus",
+      "hideTips": "Paslēpt konteksta padomus",
+      "reviewChecklistCta": "Skatīt kontrolsarakstu",
+      "context": {
+        "networkTitle": "Pirms pieslēgšanās",
+        "networkBody": "Signāla stiprums nenozīmē uzticamību. Vispirms pārbaudi oficiālo nosaukumu un apstiprinājumu no personāla.",
+        "taskTitle": "Pirms turpināšanas",
+        "taskBody": "Pielāgo aizsardzību uzdevuma jutīgumam. Augsta riska uzdevumiem izmanto VPN vai pagaidi.",
+        "portalTitle": "Portāla piesardzība",
+        "portalBody": "Nekad neinstalē profilus, sertifikātus vai lietotnes no captive portāliem."
+      }
+    },
+    "adaptive": {
+      "riskSingle": "Šī izvēle palielināja risku. Pirms nākamās darbības pārskati drošāko alternatīvu.",
+      "riskStreak": "Divi riskanti rezultāti pēc kārtas. Samazini tempu un izmanto kontrolsarakstu.",
+      "backtrack": "Atkārtots mēģinājums palīdz. Salīdzini, kas mainījās, pirms izvēlies vēlreiz.",
+      "backtrackStuck": "Atklāti vairāki atkārtoti mēģinājumi. Atver kontrolsarakstu un pārbaudi tīkla identitāti.",
+      "fading": "Labs progress. Padomi tagad ir īsāki, jo pēdējie lēmumi bija drošāki."
+    }
+  },
   "scenario": {
     "difficulty": {
       "beginner": "Iesācējs",

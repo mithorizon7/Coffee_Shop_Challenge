@@ -1,6 +1,15 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { MapPin, Wifi, ArrowLeft, Shield, Info, Sparkles } from "lucide-react";
+import {
+  MapPin,
+  Wifi,
+  ArrowLeft,
+  Shield,
+  Info,
+  Sparkles,
+  LifeBuoy,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import captivePortalImage from "@assets/ChatGPT_Image_Dec_17,_2025,_04_26_45_PM_1766006848813.png";
@@ -19,6 +28,7 @@ import {
   processAction,
   completeSession,
   calculateGrade,
+  getDecisionProcessKeys,
 } from "@/lib/gameEngine";
 import {
   translateActionDescription,
@@ -35,6 +45,7 @@ import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { renderRichText } from "@/lib/richText";
+import { readLearnerOnboardingState, updateLearnerOnboardingState } from "@/lib/onboardingState";
 
 interface GameContainerProps {
   initialSession: GameSession;
@@ -69,12 +80,31 @@ export function GameContainer({
 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [sessionSnapshots, setSessionSnapshots] = useState<GameSession[]>([]);
+  const [learnerOnboardingState, setLearnerOnboardingState] = useState(() =>
+    readLearnerOnboardingState()
+  );
+  const [helpPanelOpen, setHelpPanelOpen] = useState(false);
+  const [adaptiveHintKey, setAdaptiveHintKey] = useState<string | null>(null);
+  const [guidanceFaded, setGuidanceFaded] = useState(false);
   const { isAuthenticated } = useAuth();
   const progressSavedRef = useRef(false);
   const completionHandledRef = useRef(false);
   const timeoutNotifiedRef = useRef<Record<string, boolean>>({});
   const rootSnapshotRef = useRef<GameSession | null>(null);
+  const previousScoreRef = useRef(session.score);
+  const riskStreakRef = useRef(0);
+  const successStreakRef = useRef(0);
+  const retryCountRef = useRef(0);
+  const helpAutoOpenedRef = useRef(false);
   const { toast } = useToast();
+  const updateOnboardingState = useCallback(
+    (updates: Parameters<typeof updateLearnerOnboardingState>[0]) => {
+      const nextState = updateLearnerOnboardingState(updates);
+      setLearnerOnboardingState(nextState);
+      return nextState;
+    },
+    []
+  );
   const updateSessionMutation = useMutation({
     mutationFn: async (updates: Partial<GameSession>) => {
       const response = await apiRequest("PATCH", `/api/sessions/${session.id}`, updates);
@@ -192,6 +222,35 @@ export function GameContainer({
       currentScene?.type === "captive_portal"
     );
   }, [currentScene?.type]);
+  const decisionChecklist = useMemo(() => getDecisionProcessKeys(), []);
+  const contextualHint = useMemo<{ titleKey: string; bodyKey: string } | null>(() => {
+    if (!currentScene) return null;
+
+    switch (currentScene.type) {
+      case "network_selection":
+        return {
+          titleKey: "onboarding.inSession.context.networkTitle",
+          bodyKey: "onboarding.inSession.context.networkBody",
+        };
+      case "task_prompt":
+        return {
+          titleKey: "onboarding.inSession.context.taskTitle",
+          bodyKey: "onboarding.inSession.context.taskBody",
+        };
+      case "captive_portal":
+        return {
+          titleKey: "onboarding.inSession.context.portalTitle",
+          bodyKey: "onboarding.inSession.context.portalBody",
+        };
+      default:
+        return null;
+    }
+  }, [currentScene]);
+  const contextualTipsEnabled =
+    !learnerOnboardingState.inSessionGuidanceDismissed &&
+    !learnerOnboardingState.firstSuccessCompleted &&
+    !guidanceFaded;
+  const showContextualHint = isDecisionScene && contextualTipsEnabled && !!contextualHint;
 
   const nextScene = currentScene?.nextSceneId
     ? scenario.scenes.find((scene) => scene.id === currentScene.nextSceneId)
@@ -231,6 +290,72 @@ export function GameContainer({
   }, [currentScene, session, isAuthenticated, isFinalRun, syncSession, saveProgressMutation]);
 
   useEffect(() => {
+    if (!session.completedAt || !isFinalRun || learnerOnboardingState.firstSuccessCompleted) return;
+    updateOnboardingState({ firstSuccessCompleted: true });
+  }, [
+    session.completedAt,
+    isFinalRun,
+    learnerOnboardingState.firstSuccessCompleted,
+    updateOnboardingState,
+  ]);
+
+  useEffect(() => {
+    if (helpAutoOpenedRef.current) return;
+    if (!isDecisionScene) return;
+    if (learnerOnboardingState.firstSuccessCompleted) return;
+    if (learnerOnboardingState.inSessionGuidanceDismissed) return;
+
+    setHelpPanelOpen(true);
+    helpAutoOpenedRef.current = true;
+  }, [
+    isDecisionScene,
+    learnerOnboardingState.firstSuccessCompleted,
+    learnerOnboardingState.inSessionGuidanceDismissed,
+  ]);
+
+  useEffect(() => {
+    const previousScore = previousScoreRef.current;
+    const safetyDelta = session.score.safetyPoints - previousScore.safetyPoints;
+    const riskDelta = session.score.riskPoints - previousScore.riskPoints;
+
+    if (riskDelta > 0) {
+      riskStreakRef.current += 1;
+      successStreakRef.current = 0;
+      setGuidanceFaded(false);
+
+      if (!learnerOnboardingState.inSessionGuidanceDismissed) {
+        setAdaptiveHintKey(
+          riskStreakRef.current >= 2
+            ? "onboarding.adaptive.riskStreak"
+            : "onboarding.adaptive.riskSingle"
+        );
+        setHelpPanelOpen(true);
+      }
+    } else if (safetyDelta > 0 && riskDelta <= 0) {
+      riskStreakRef.current = 0;
+      successStreakRef.current += 1;
+
+      if (
+        !learnerOnboardingState.inSessionGuidanceDismissed &&
+        !learnerOnboardingState.firstSuccessCompleted &&
+        successStreakRef.current >= 2
+      ) {
+        setGuidanceFaded(true);
+        setAdaptiveHintKey("onboarding.adaptive.fading");
+      }
+    } else if (riskDelta < 0 || safetyDelta < 0) {
+      riskStreakRef.current = 0;
+      successStreakRef.current = 0;
+    }
+
+    previousScoreRef.current = session.score;
+  }, [
+    session.score,
+    learnerOnboardingState.inSessionGuidanceDismissed,
+    learnerOnboardingState.firstSuccessCompleted,
+  ]);
+
+  useEffect(() => {
     if (!currentSceneId) return;
     timeoutNotifiedRef.current[currentSceneId] = false;
   }, [currentSceneId]);
@@ -265,9 +390,24 @@ export function GameContainer({
     }
   }, [session, syncSession, currentScene, toast, t]);
 
+  const handleHideContextualTips = useCallback(() => {
+    setAdaptiveHintKey(null);
+    setHelpPanelOpen(false);
+    setGuidanceFaded(true);
+    updateOnboardingState({ inSessionGuidanceDismissed: true });
+  }, [updateOnboardingState]);
+
+  const handleShowContextualTips = useCallback(() => {
+    setGuidanceFaded(false);
+    setAdaptiveHintKey(null);
+    updateOnboardingState({ inSessionGuidanceDismissed: false });
+  }, [updateOnboardingState]);
+
   const handleNetworkSelect = useCallback(
     (network: Network) => {
       if (isTransitioning) return;
+      retryCountRef.current = 0;
+      setAdaptiveHintKey(null);
       const explorationId = getExplorationId(network);
       if (isExplorationPhase && rootNetworkIdSet.has(explorationId)) {
         if (exploredNetworkIds.includes(explorationId)) return;
@@ -309,6 +449,8 @@ export function GameContainer({
   const handleAction = useCallback(
     (actionId: string) => {
       if (isTransitioning) return;
+      retryCountRef.current = 0;
+      setAdaptiveHintKey(null);
 
       setIsTransitioning(true);
       const currentSceneType = currentScene?.type;
@@ -333,6 +475,15 @@ export function GameContainer({
 
   const handleTryAnother = useCallback(() => {
     if (isTransitioning || sessionSnapshots.length === 0) return;
+    retryCountRef.current += 1;
+    if (!learnerOnboardingState.inSessionGuidanceDismissed) {
+      setAdaptiveHintKey(
+        retryCountRef.current >= 2
+          ? "onboarding.adaptive.backtrackStuck"
+          : "onboarding.adaptive.backtrack"
+      );
+      setHelpPanelOpen(true);
+    }
 
     setIsTransitioning(true);
     const previousSession = sessionSnapshots[sessionSnapshots.length - 1];
@@ -342,12 +493,26 @@ export function GameContainer({
       syncSession(previousSession);
       setIsTransitioning(false);
     }, 300);
-  }, [sessionSnapshots, isTransitioning, syncSession]);
+  }, [
+    sessionSnapshots,
+    isTransitioning,
+    syncSession,
+    learnerOnboardingState.inSessionGuidanceDismissed,
+  ]);
 
   const handleExplorationRestart = useCallback(() => {
     if (isTransitioning) return;
     const snapshot = rootSnapshotRef.current;
     if (!snapshot) return;
+    retryCountRef.current += 1;
+    if (!learnerOnboardingState.inSessionGuidanceDismissed) {
+      setAdaptiveHintKey(
+        retryCountRef.current >= 2
+          ? "onboarding.adaptive.backtrackStuck"
+          : "onboarding.adaptive.backtrack"
+      );
+      setHelpPanelOpen(true);
+    }
 
     setIsTransitioning(true);
     setTimeout(() => {
@@ -355,10 +520,11 @@ export function GameContainer({
       syncSession(snapshot);
       setIsTransitioning(false);
     }, 300);
-  }, [isTransitioning, syncSession]);
+  }, [isTransitioning, syncSession, learnerOnboardingState.inSessionGuidanceDismissed]);
 
   const handleContinue = useCallback(() => {
     if (isTransitioning) return;
+    setAdaptiveHintKey(null);
 
     setIsTransitioning(true);
     const scene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
@@ -442,6 +608,22 @@ export function GameContainer({
             </div>
 
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setHelpPanelOpen((previous) => !previous);
+                  setAdaptiveHintKey(null);
+                }}
+                aria-expanded={helpPanelOpen}
+                aria-controls="decision-help-panel"
+                data-testid="button-decision-help"
+              >
+                <LifeBuoy className="w-4 h-4 mr-2" />
+                {helpPanelOpen
+                  ? t("onboarding.inSession.hideHelpButton")
+                  : t("onboarding.inSession.helpButton")}
+              </Button>
               {isAdvanced && isDecisionScene && currentScene && (
                 <CountdownTimer
                   totalSeconds={scenario.timerSeconds || 120}
@@ -477,6 +659,117 @@ export function GameContainer({
                 {sceneDescription}
               </p>
             </div>
+
+            {(showContextualHint || adaptiveHintKey || helpPanelOpen) && (
+              <div className="mb-6 space-y-3">
+                {showContextualHint && contextualHint && (
+                  <Card className="p-4 border-primary/30 bg-primary/5">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-2xl bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
+                        <Info className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-foreground">
+                          {t(contextualHint.titleKey)}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{t(contextualHint.bodyKey)}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setHelpPanelOpen(true)}
+                          >
+                            {t("onboarding.inSession.reviewChecklistCta")}
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={handleHideContextualTips}>
+                            {t("onboarding.inSession.hideTips")}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+
+                {adaptiveHintKey && !learnerOnboardingState.inSessionGuidanceDismissed && (
+                  <Card className="p-4 border-amber-300/60 dark:border-amber-700/50 bg-amber-100/60 dark:bg-amber-950/30">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-2xl bg-amber-200/70 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 flex items-center justify-center flex-shrink-0">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm text-foreground">{t(adaptiveHintKey)}</p>
+                        <Button variant="ghost" size="sm" onClick={() => setHelpPanelOpen(true)}>
+                          {t("onboarding.inSession.reviewChecklistCta")}
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+
+                {helpPanelOpen && (
+                  <Card
+                    id="decision-help-panel"
+                    className="p-5 border-dashed border-border/70 bg-background/70"
+                  >
+                    <div className="space-y-4">
+                      <div>
+                        <h2 className="font-medium text-foreground">
+                          {t("onboarding.inSession.title")}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          {t("onboarding.inSession.subtitle")}
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl bg-muted/40 p-3">
+                        <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-1">
+                          {t("onboarding.inSession.goalTitle")}
+                        </p>
+                        <p className="text-sm text-foreground">
+                          {t("onboarding.inSession.goalBody")}
+                        </p>
+                      </div>
+
+                      <ul className="grid gap-2 sm:grid-cols-2">
+                        {decisionChecklist.map((item) => (
+                          <li
+                            key={item.step}
+                            className="rounded-xl border border-border/60 bg-background/60 p-3 text-sm"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-semibold flex items-center justify-center">
+                                {item.step}
+                              </span>
+                              <span className="font-medium text-foreground">
+                                {t(item.titleKey)}
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1 pl-7">
+                              {t(item.descriptionKey)}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="flex flex-wrap gap-2">
+                        {learnerOnboardingState.inSessionGuidanceDismissed ? (
+                          <Button variant="outline" size="sm" onClick={handleShowContextualTips}>
+                            {t("onboarding.inSession.showTips")}
+                          </Button>
+                        ) : (
+                          <Button variant="outline" size="sm" onClick={handleHideContextualTips}>
+                            {t("onboarding.inSession.hideTips")}
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => setHelpPanelOpen(false)}>
+                          {t("onboarding.inSession.hideHelpButton")}
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+              </div>
+            )}
 
             {currentScene.type === "arrival" && (
               <Card className="p-6 text-center">

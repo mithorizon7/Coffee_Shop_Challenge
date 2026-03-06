@@ -1,4 +1,4 @@
-import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { ArrowRight, Clock, MapPin, Sparkles, Target, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { ScenarioListItem } from "@shared/schema";
@@ -17,6 +17,8 @@ interface ScenarioIntroProps {
   total: number;
   onStart: () => void;
   onBack?: () => void;
+  showLearnerGuide?: boolean;
+  onDismissGuide?: () => void;
   nextScenarioTitle?: string;
 }
 
@@ -26,6 +28,8 @@ export function ScenarioIntro({
   total,
   onStart,
   onBack,
+  showLearnerGuide = false,
+  onDismissGuide,
   nextScenarioTitle,
 }: ScenarioIntroProps) {
   const { t } = useTranslation();
@@ -47,6 +51,48 @@ export function ScenarioIntro({
 
   return (
     <div className="space-y-10">
+      {showLearnerGuide && (
+        <Card className="p-5 border-dashed border-primary/40 bg-primary/5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <p className="text-sm font-medium text-foreground">
+                  {t("onboarding.scenarioGuide.title")}
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground">{t("onboarding.scenarioGuide.body")}</p>
+              <ul className="space-y-2 text-sm text-foreground">
+                <li className="flex items-start gap-2">
+                  <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("onboarding.scenarioGuide.item1")}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("onboarding.scenarioGuide.item2")}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("onboarding.scenarioGuide.item3")}</span>
+                </li>
+              </ul>
+            </div>
+
+            {onDismissGuide && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onDismissGuide}
+                aria-label={t("onboarding.scenarioGuide.dismissCta")}
+                data-testid="button-dismiss-scenario-guide"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        </Card>
+      )}
+
       <div className="grid gap-8 lg:grid-cols-[1.35fr_0.65fr] items-start">
         <Card className="p-7 md:p-10 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
