@@ -34,6 +34,7 @@ export interface IStorage {
 
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 const CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+const MAX_ACTIVE_GAME_SESSIONS = 5000;
 
 export class HybridStorage implements IStorage {
   private gameSessions: Map<string, GameSession>;
@@ -48,6 +49,7 @@ export class HybridStorage implements IStorage {
     this.cleanupInterval = setInterval(() => {
       this.cleanupStaleSessions();
     }, CLEANUP_INTERVAL_MS);
+    this.cleanupInterval.unref?.();
   }
 
   private cleanupStaleSessions(): void {
@@ -83,6 +85,20 @@ export class HybridStorage implements IStorage {
   }
 
   async createGameSession(session: GameSession): Promise<GameSession> {
+    if (this.gameSessions.size >= MAX_ACTIVE_GAME_SESSIONS) {
+      this.cleanupStaleSessions();
+    }
+
+    if (this.gameSessions.size >= MAX_ACTIVE_GAME_SESSIONS) {
+      // Drop the oldest session to keep memory bounded under sustained abuse.
+      const oldest = Array.from(this.gameSessions.values()).sort(
+        (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime()
+      )[0];
+      if (oldest) {
+        this.gameSessions.delete(oldest.id);
+      }
+    }
+
     this.gameSessions.set(session.id, session);
     return session;
   }

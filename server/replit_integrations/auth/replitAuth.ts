@@ -18,13 +18,68 @@ const getOidcConfig = memoize(
   { maxAge: 3600 * 1000 }
 );
 
+const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;
+const SESSION_TTL_MS = SESSION_TTL_SECONDS * 1000;
+
+function getAllowedDomains(): Set<string> {
+  const raw = process.env.REPLIT_DOMAINS ?? "";
+  const domains = raw
+    .split(",")
+    .map((domain) => domain.trim().toLowerCase())
+    .filter(Boolean);
+
+  return new Set(domains);
+}
+
+function normalizeHostname(hostname: string): string {
+  return hostname.trim().toLowerCase();
+}
+
+function isDevHost(hostname: string): boolean {
+  return hostname === "localhost" || hostname.startsWith("127.") || hostname === "::1";
+}
+
+function formatHostForUrl(hostname: string): string {
+  if (hostname.includes(":") && !(hostname.startsWith("[") && hostname.endsWith("]"))) {
+    return `[${hostname}]`;
+  }
+  return hostname;
+}
+
+function isLikelyValidHostname(hostname: string): boolean {
+  if (hostname.length === 0 || hostname.length > 253) return false;
+  return /^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/i.test(
+    hostname
+  );
+}
+
+function resolveAuthDomain(hostname: string): string {
+  const normalized = normalizeHostname(hostname);
+  const allowedDomains = getAllowedDomains();
+
+  if (allowedDomains.size > 0) {
+    if (allowedDomains.has(normalized)) return normalized;
+    throw new Error("Invalid host for authentication");
+  }
+
+  if (process.env.NODE_ENV !== "production" && isDevHost(normalized)) {
+    return normalized;
+  }
+
+  if (!isLikelyValidHostname(normalized)) {
+    throw new Error("Invalid host for authentication");
+  }
+
+  return normalized;
+}
+
 export function getSession() {
-  const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
+  const sessionTtl = SESSION_TTL_MS;
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
     createTableIfMissing: false,
-    ttl: sessionTtl,
+    ttl: SESSION_TTL_SECONDS,
     tableName: "sessions",
   });
   return session({
@@ -34,8 +89,9 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: sessionTtl,
+      sameSite: "lax",
     },
   });
 }
@@ -80,17 +136,25 @@ export async function setupAuth(app: Express) {
 
   // Keep track of registered strategies
   const registeredStrategies = new Set<string>();
+  const MAX_REGISTERED_STRATEGIES = 20;
 
   // Helper function to ensure strategy exists for a domain
   const ensureStrategy = (domain: string) => {
-    const strategyName = `replitauth:${domain}`;
+    const authDomain = resolveAuthDomain(domain);
+    const authHost = formatHostForUrl(authDomain);
+    const callbackProtocol = isDevHost(authDomain) ? "http" : "https";
+    const callbackURL = `${callbackProtocol}://${authHost}/api/callback`;
+    const strategyName = `replitauth:${authDomain}`;
     if (!registeredStrategies.has(strategyName)) {
+      if (registeredStrategies.size >= MAX_REGISTERED_STRATEGIES) {
+        throw new Error("Too many authentication host strategies registered");
+      }
       const strategy = new Strategy(
         {
           name: strategyName,
           config,
           scope: "openid email profile offline_access",
-          callbackURL: `https://${domain}/api/callback`,
+          callbackURL,
         },
         verify
       );
@@ -103,27 +167,45 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    ensureStrategy(req.hostname);
-    passport.authenticate(`replitauth:${req.hostname}`, {
-      prompt: "login consent",
-      scope: ["openid", "email", "profile", "offline_access"],
-    })(req, res, next);
+    try {
+      const authDomain = resolveAuthDomain(req.hostname);
+      ensureStrategy(authDomain);
+      passport.authenticate(`replitauth:${authDomain}`, {
+        prompt: "login consent",
+        scope: ["openid", "email", "profile", "offline_access"],
+      })(req, res, next);
+    } catch {
+      res.status(400).json({ message: "Invalid host for authentication" });
+    }
   });
 
   app.get("/api/callback", (req, res, next) => {
-    ensureStrategy(req.hostname);
-    passport.authenticate(`replitauth:${req.hostname}`, {
-      successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
-    })(req, res, next);
+    try {
+      const authDomain = resolveAuthDomain(req.hostname);
+      ensureStrategy(authDomain);
+      passport.authenticate(`replitauth:${authDomain}`, {
+        successReturnToOrRedirect: "/",
+        failureRedirect: "/api/login",
+      })(req, res, next);
+    } catch {
+      res.status(400).json({ message: "Invalid host for authentication" });
+    }
   });
 
   app.get("/api/logout", (req, res) => {
     req.logout(() => {
+      let authDomain: string;
+      try {
+        authDomain = resolveAuthDomain(req.hostname);
+      } catch {
+        return res.status(400).json({ message: "Invalid host for authentication" });
+      }
+      const logoutHost = formatHostForUrl(authDomain);
+      const logoutProtocol = isDevHost(authDomain) ? "http" : "https";
       res.redirect(
         client.buildEndSessionUrl(config, {
           client_id: process.env.REPL_ID!,
-          post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
+          post_logout_redirect_uri: `${logoutProtocol}://${logoutHost}`,
         }).href
       );
     });

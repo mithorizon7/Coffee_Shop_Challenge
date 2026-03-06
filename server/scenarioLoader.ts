@@ -138,7 +138,16 @@ export function reloadScenarios(): Scenario[] {
  * Get scenario file path for editing reference.
  */
 export function getScenarioFilePath(scenarioId: string): string | null {
-  const files = fs.readdirSync(SCENARIOS_DIR).filter((f) => f.endsWith(".json"));
+  if (!fs.existsSync(SCENARIOS_DIR)) {
+    return null;
+  }
+
+  let files: string[] = [];
+  try {
+    files = fs.readdirSync(SCENARIOS_DIR).filter((f) => f.endsWith(".json"));
+  } catch {
+    return null;
+  }
 
   for (const file of files) {
     const filePath = path.join(SCENARIOS_DIR, file);

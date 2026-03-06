@@ -9,21 +9,24 @@ import { storage } from "./storage";
 const app = express();
 const httpServer = createServer(app);
 
-declare module "http" {
-  interface IncomingMessage {
-    rawBody: unknown;
+app.disable("x-powered-by");
+app.use(express.json({ limit: "256kb" }));
+app.use(express.urlencoded({ extended: false, limit: "256kb" }));
+
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+
+  if (req.secure) {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   }
-}
 
-app.use(
-  express.json({
-    verify: (req, _res, buf) => {
-      req.rawBody = buf;
-    },
-  })
-);
-
-app.use(express.urlencoded({ extended: false }));
+  next();
+});
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -36,35 +39,14 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
-// Maximum characters to log from response body to prevent memory issues
-const MAX_LOG_BODY_LENGTH = 500;
-
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
 
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        const bodyStr = JSON.stringify(capturedJsonResponse);
-        // Truncate large response bodies to prevent memory issues
-        const truncatedBody =
-          bodyStr.length > MAX_LOG_BODY_LENGTH
-            ? bodyStr.slice(0, MAX_LOG_BODY_LENGTH) + "...[truncated]"
-            : bodyStr;
-        logLine += ` :: ${truncatedBody}`;
-      }
-
-      log(logLine);
+      log(`${req.method} ${path} ${res.statusCode} in ${duration}ms`);
     }
   });
 
@@ -82,9 +64,11 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
+    const safeMessage =
+      status >= 500 && process.env.NODE_ENV === "production" ? "Internal Server Error" : message;
 
     console.error(`[Error] ${status}: ${message}`, err.stack || err);
-    res.status(status).json({ message });
+    res.status(status).json({ message: safeMessage });
   });
 
   // importantly only setup vite in development and after
