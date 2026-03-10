@@ -12,6 +12,7 @@ interface NetworkCardProps {
   isSelected?: boolean;
   description?: string;
   isDisabled?: boolean;
+  disabledLabel?: string;
 }
 
 export function NetworkCard({
@@ -21,6 +22,7 @@ export function NetworkCard({
   isSelected = false,
   description,
   isDisabled = false,
+  disabledLabel,
 }: NetworkCardProps) {
   const { t } = useTranslation();
 
@@ -91,8 +93,13 @@ export function NetworkCard({
             {showDescription && (
               <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{description}</p>
             )}
-            {(showWarning || showVerified) && (
+            {(showWarning || showVerified || (isDisabled && disabledLabel)) && (
               <div className="flex items-center gap-2 mt-2 flex-wrap">
+                {isDisabled && disabledLabel && (
+                  <Badge variant="outline" className="text-xs text-muted-foreground">
+                    {disabledLabel}
+                  </Badge>
+                )}
                 {showWarning && (
                   <span className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-300">
                     <AlertTriangle className="w-3 h-3" />

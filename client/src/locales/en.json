@@ -61,6 +61,16 @@
     "failedToLoadScenarios": "Failed to load scenarios",
     "loadingScenarios": "Loading scenarios...",
     "loadingScenario": "Loading scenario...",
+    "howItWorks": "How this works",
+    "howItWorksBody": "You learn by making one decision at a time, seeing what happened, and applying that lesson on the next choice.",
+    "howItWorksStep1Title": "Start with the beginner round",
+    "howItWorksStep1Body": "It gives you the clearest guidance and teaches the scoring model first.",
+    "howItWorksStep2Title": "Make one choice at a time",
+    "howItWorksStep2Body": "The page will always show your current goal before you act.",
+    "howItWorksStep3Title": "Use the result immediately",
+    "howItWorksStep3Body": "Each outcome explains what was safe or risky so you can use it on the next decision.",
+    "firstWinTitle": "Best first win",
+    "firstWinBody": "Finish the coffee shop beginner round, then review your grade and the safer alternatives you were shown.",
     "whatYouWillLearn": "What You'll Learn",
     "learn1": "How to identify legitimate vs. fake Wi-Fi networks",
     "learn2": "When to use VPN protection on public networks",
@@ -92,7 +102,18 @@
       "item3": "Keep risk points low by avoiding rushed or high-exposure actions.",
       "dismissCta": "Hide this guide"
     },
+    "scenarioFlow": {
+      "title": "How this round works",
+      "body": "You do not need to guess the order. The round always follows the same short learning loop.",
+      "step1Title": "Inspect the setting first",
+      "step1Body": "Start by checking the available network or situation before doing the task.",
+      "step2Title": "Choose one response",
+      "step2Body": "Pick the safest option you would use in real life, not just the fastest one.",
+      "step3Title": "Read the result and apply it",
+      "step3Body": "The next screen explains what happened so you can use that lesson on the next pass."
+    },
     "inSession": {
+      "helpButtonBeginner": "What should I do?",
       "helpButton": "Decision help",
       "hideHelpButton": "Hide help",
       "title": "Decision checklist",
@@ -102,6 +123,37 @@
       "showTips": "Show contextual tips",
       "hideTips": "Hide contextual tips",
       "reviewChecklistCta": "Review checklist",
+      "live": {
+        "phaseTitle": "Phase",
+        "currentTitle": "Do this now",
+        "nextTitle": "What happens next",
+        "practiceLabel": "Practice round",
+        "practiceBody": "Compare the options first so the final scored run is based on understanding, not guessing.",
+        "finalLabel": "Final scored run",
+        "finalBody": "This pass reflects the choice you would make in real life and is the one that counts for your result.",
+        "objective": {
+          "arrival": "Press the start button to move into the network choices for this scenario.",
+          "briefing": "Read the short briefing so you know the pressure or task you are about to handle.",
+          "networkExplore": "Choose one network to inspect. In practice mode, try each network once.",
+          "networkFinal": "Choose the single network you would actually trust to use.",
+          "portal": "Decide whether the portal request is safe enough to continue on this network.",
+          "task": "Choose how to handle this task on the network you already selected.",
+          "consequence": "Read the outcome carefully before deciding your next move.",
+          "debrief": "Review the key lesson here, then continue when you are ready."
+        },
+        "next": {
+          "arrival": "The next screen will show the available networks or the first situation to evaluate.",
+          "briefing": "After you continue, you will make the first real decision of the round.",
+          "networkExplore": "After you choose, the site will show what that network led to.",
+          "networkFinal": "After you choose, the result will count toward your final outcome.",
+          "portal": "The next screen will explain why the portal choice was safe or risky.",
+          "task": "The next screen will show the consequence of that action right away.",
+          "consequenceRetry": "Use \"Try another network\" to compare another option before the graded run.",
+          "consequenceFinal": "Start the final scored run once you have compared the options.",
+          "consequenceContinue": "Continue when you are ready for the next step in the scenario.",
+          "debrief": "You will move to the next step or finish the round."
+        }
+      },
       "context": {
         "networkTitle": "Before you connect",
         "networkBody": "Signal strength is not trust. Prioritize official naming and staff verification first.",
@@ -308,6 +360,7 @@
     "readyToStart": "Scenario ready. Start when you're ready.",
     "findNetworks": "Find Networks",
     "portalOptions": "Portal Options",
+    "chooseNextAction": "Choose your next action",
     "sensitivity": "{level} Sensitivity",
     "noBadgesYet": "Complete challenges to earn badges",
     "badgesEarned": "Badges Earned",
@@ -1575,7 +1628,9 @@
     "title": "Explore the options",
     "body": "Try each network to see what happens. You will explore the risks first, then make a final choice for your grade.",
     "progress": "Explored {count} of {total} networks",
+    "alreadyChecked": "Already checked",
     "tryAnotherNetwork": "Try another network",
+    "reviewNextPrompt": "Use \"Try another network\" to compare the next option before you start the final scored run.",
     "finalPrompt": "Now that you have explored the network options and their risks, make a final pass and choose the network you would use for real. This final run is graded.",
     "startFinalRun": "Start final run"
   }

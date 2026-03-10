@@ -478,41 +478,77 @@ export default function Home() {
               </div>
             </Card>
 
-            <Card className="p-6 md:p-8 bg-muted/40 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
-              <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
-              <div className="relative space-y-4">
-                <h3 className="font-display font-semibold text-foreground">
-                  {t("home.whatYouWillLearn")}
-                </h3>
-                <ul className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>{t("home.learn1")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>{t("home.learn2")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>{t("home.learn3")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>{t("home.learn4")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>{t("home.learn5")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>{t("home.learn6")}</span>
-                  </li>
-                </ul>
-              </div>
-            </Card>
+            <div className="space-y-4">
+              <Card className="p-6 md:p-8 bg-muted/30 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
+                <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+                <div className="relative space-y-4">
+                  <h3 className="font-display font-semibold text-foreground">
+                    {t("home.howItWorks")}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{t("home.howItWorksBody")}</p>
+                  <ol className="space-y-3">
+                    {[1, 2, 3].map((step) => (
+                      <li key={step} className="flex items-start gap-3">
+                        <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                          {step}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            {t(`home.howItWorksStep${step}Title`)}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {t(`home.howItWorksStep${step}Body`)}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                  <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                      {t("home.firstWinTitle")}
+                    </p>
+                    <p className="mt-2 text-sm text-foreground">{t("home.firstWinBody")}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6 md:p-8 bg-muted/40 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
+                <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+                <div className="relative space-y-4">
+                  <h3 className="font-display font-semibold text-foreground">
+                    {t("home.whatYouWillLearn")}
+                  </h3>
+                  <ul className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span>{t("home.learn1")}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span>{t("home.learn2")}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span>{t("home.learn3")}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span>{t("home.learn4")}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span>{t("home.learn5")}</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <span>{t("home.learn6")}</span>
+                    </li>
+                  </ul>
+                </div>
+              </Card>
+            </div>
           </div>
         </motion.div>
       </main>

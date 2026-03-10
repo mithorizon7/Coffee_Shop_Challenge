@@ -11,7 +11,6 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Task, Action } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -122,33 +121,41 @@ export function TaskPromptCard({
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3">
-            {actions.map((action) => {
-              const actionLabel = action.labelKey
-                ? t(action.labelKey)
-                : translateActionLabel(t, scenarioId, action.id, action.label);
-              const actionDescription = action.descriptionKey
-                ? t(action.descriptionKey)
-                : translateActionDescription(t, scenarioId, action.id, action.description || "");
-              return (
-                <Tooltip key={action.id}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => onAction(action.id)}
-                      data-testid={`action-${action.id}`}
-                    >
-                      {actionLabel}
-                    </Button>
-                  </TooltipTrigger>
-                  {actionDescription && (
-                    <TooltipContent>
-                      <p>{actionDescription}</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              );
-            })}
+          <div className="space-y-3">
+            <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+              {t("game.chooseNextAction")}
+            </p>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {actions.map((action) => {
+                const actionLabel = action.labelKey
+                  ? t(action.labelKey)
+                  : translateActionLabel(t, scenarioId, action.id, action.label);
+                const actionDescription = action.descriptionKey
+                  ? t(action.descriptionKey)
+                  : translateActionDescription(t, scenarioId, action.id, action.description || "");
+                return (
+                  <Button
+                    key={action.id}
+                    variant={
+                      action.isPrimary ? "default" : action.isDanger ? "destructive" : "outline"
+                    }
+                    onClick={() => onAction(action.id)}
+                    data-testid={`action-${action.id}`}
+                    className="h-auto w-full justify-start whitespace-normal px-4 py-3 text-left"
+                  >
+                    <span className="flex flex-col items-start gap-1">
+                      <span className="font-medium">{actionLabel}</span>
+                      {actionDescription && (
+                        <span className="text-xs font-normal text-muted-foreground">
+                          {actionDescription}
+                        </span>
+                      )}
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

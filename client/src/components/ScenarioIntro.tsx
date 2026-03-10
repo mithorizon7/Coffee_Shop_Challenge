@@ -138,6 +138,35 @@ export function ScenarioIntro({
         </Card>
 
         <div className="space-y-4">
+          <Card className="p-6 md:p-7 bg-muted/35">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-primary" />
+                <h3 className="font-display text-lg font-semibold text-foreground">
+                  {t("onboarding.scenarioFlow.title")}
+                </h3>
+              </div>
+              <p className="text-sm text-muted-foreground">{t("onboarding.scenarioFlow.body")}</p>
+              <ol className="space-y-3">
+                {[1, 2, 3].map((step) => (
+                  <li key={step} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                      {step}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {t(`onboarding.scenarioFlow.step${step}Title`)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {t(`onboarding.scenarioFlow.step${step}Body`)}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </Card>
+
           <Card className="p-6 md:p-7">
             <div className="flex items-start gap-4">
               <div

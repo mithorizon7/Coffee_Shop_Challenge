@@ -21,7 +21,7 @@ import { ProgressIndicator } from "./ProgressIndicator";
 import { BadgeDisplay } from "./BadgeDisplay";
 import { CountdownTimer } from "./CountdownTimer";
 import { useAuth } from "@/hooks/use-auth";
-import type { GameSession, Scenario, Network } from "@shared/schema";
+import type { GameSession, Scenario, Network, Action } from "@shared/schema";
 import {
   getCurrentSceneFromScenario,
   processNetworkSelection,
@@ -246,18 +246,91 @@ export function GameContainer({
         return null;
     }
   }, [currentScene]);
-  const contextualTipsEnabled =
-    !learnerOnboardingState.inSessionGuidanceDismissed &&
-    !learnerOnboardingState.firstSuccessCompleted &&
-    !guidanceFaded;
-  const showContextualHint = isDecisionScene && contextualTipsEnabled && !!contextualHint;
+  const phaseLabelKey =
+    isExplorationPhase && explorationTotal > 0
+      ? "onboarding.inSession.live.practiceLabel"
+      : "onboarding.inSession.live.finalLabel";
+  const phaseBodyKey =
+    isExplorationPhase && explorationTotal > 0
+      ? "onboarding.inSession.live.practiceBody"
+      : "onboarding.inSession.live.finalBody";
+  const liveObjectiveKey = useMemo(() => {
+    if (!currentScene) return "onboarding.inSession.live.objective.arrival";
 
+    if (currentScene.type === "briefing") {
+      return "onboarding.inSession.live.objective.briefing";
+    }
+    if (currentScene.type === "debrief") {
+      return "onboarding.inSession.live.objective.debrief";
+    }
+    if (currentScene.type === "network_selection") {
+      return isExplorationPhase && explorationTotal > 0
+        ? "onboarding.inSession.live.objective.networkExplore"
+        : "onboarding.inSession.live.objective.networkFinal";
+    }
+    if (currentScene.type === "captive_portal") {
+      return "onboarding.inSession.live.objective.portal";
+    }
+    if (currentScene.type === "task_prompt") {
+      return "onboarding.inSession.live.objective.task";
+    }
+    if (currentScene.type === "consequence") {
+      return "onboarding.inSession.live.objective.consequence";
+    }
+
+    return "onboarding.inSession.live.objective.arrival";
+  }, [currentScene, isExplorationPhase, explorationTotal]);
   const nextScene = currentScene?.nextSceneId
     ? scenario.scenes.find((scene) => scene.id === currentScene.nextSceneId)
     : undefined;
   const isTerminalConsequence =
     currentScene?.type === "consequence" &&
     (nextScene?.type === "debrief" || nextScene?.type === "completion");
+  const liveNextKey = useMemo(() => {
+    if (!currentScene) return "onboarding.inSession.live.next.arrival";
+
+    if (currentScene.type === "briefing") {
+      return "onboarding.inSession.live.next.briefing";
+    }
+    if (currentScene.type === "debrief") {
+      return "onboarding.inSession.live.next.debrief";
+    }
+    if (currentScene.type === "network_selection") {
+      return isExplorationPhase && explorationTotal > 0
+        ? "onboarding.inSession.live.next.networkExplore"
+        : "onboarding.inSession.live.next.networkFinal";
+    }
+    if (currentScene.type === "captive_portal") {
+      return "onboarding.inSession.live.next.portal";
+    }
+    if (currentScene.type === "task_prompt") {
+      return "onboarding.inSession.live.next.task";
+    }
+    if (currentScene.type === "consequence") {
+      if (isExplorationPhase && isTerminalConsequence && explorationTotal > 0) {
+        return allNetworksExplored
+          ? "onboarding.inSession.live.next.consequenceFinal"
+          : "onboarding.inSession.live.next.consequenceRetry";
+      }
+      return "onboarding.inSession.live.next.consequenceContinue";
+    }
+
+    return "onboarding.inSession.live.next.arrival";
+  }, [
+    currentScene,
+    isExplorationPhase,
+    isTerminalConsequence,
+    explorationTotal,
+    allNetworksExplored,
+  ]);
+  const helpButtonLabel = learnerOnboardingState.firstSuccessCompleted
+    ? t("onboarding.inSession.helpButton")
+    : t("onboarding.inSession.helpButtonBeginner");
+  const contextualTipsEnabled =
+    !learnerOnboardingState.inSessionGuidanceDismissed &&
+    !learnerOnboardingState.firstSuccessCompleted &&
+    !guidanceFaded;
+  const showContextualHint = isDecisionScene && contextualTipsEnabled && !!contextualHint;
 
   const syncSession = useCallback(
     (updatedSession: GameSession) => {
@@ -564,6 +637,46 @@ export function GameContainer({
     saveProgressMutation,
   ]);
 
+  const renderActionChoices = (actions: Action[]) => (
+    <div className="space-y-3">
+      <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+        {t("game.chooseNextAction")}
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {actions.map((action) => {
+          const actionLabel = action.labelKey
+            ? t(action.labelKey)
+            : translateActionLabel(t, scenario.id, action.id, action.label);
+          const actionDescription = action.descriptionKey
+            ? t(action.descriptionKey)
+            : translateActionDescription(t, scenario.id, action.id, action.description || "");
+
+          return (
+            <Button
+              key={action.id}
+              variant={action.isPrimary ? "default" : action.isDanger ? "destructive" : "outline"}
+              onClick={() => handleAction(action.id)}
+              data-testid={`action-${action.id}`}
+              className="h-auto w-full justify-start whitespace-normal px-4 py-3 text-left"
+            >
+              <span className="flex flex-col items-start gap-1">
+                <span className="flex items-center gap-2 font-medium">
+                  {action.type === "verify_staff" && <Shield className="w-4 h-4" />}
+                  <span>{actionLabel}</span>
+                </span>
+                {actionDescription && (
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {actionDescription}
+                  </span>
+                )}
+              </span>
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   if (!currentScene) {
     return (
       <div className="app-shell flex items-center justify-center">
@@ -620,9 +733,7 @@ export function GameContainer({
                 data-testid="button-decision-help"
               >
                 <LifeBuoy className="w-4 h-4 mr-2" />
-                {helpPanelOpen
-                  ? t("onboarding.inSession.hideHelpButton")
-                  : t("onboarding.inSession.helpButton")}
+                {helpPanelOpen ? t("onboarding.inSession.hideHelpButton") : helpButtonLabel}
               </Button>
               {isAdvanced && isDecisionScene && currentScene && (
                 <CountdownTimer
@@ -659,6 +770,45 @@ export function GameContainer({
                 {sceneDescription}
               </p>
             </div>
+
+            <Card className="mb-6 border-border/70 bg-muted/35 p-4 shadow-sm">
+              <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                      {t("onboarding.inSession.live.phaseTitle")}
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                      {t(phaseLabelKey)}
+                    </span>
+                    {isExplorationPhase && explorationTotal > 0 && (
+                      <span className="inline-flex items-center rounded-full border border-border/70 bg-background/70 px-2.5 py-1 text-xs text-muted-foreground">
+                        {t("exploration.progress", {
+                          count: explorationCount,
+                          total: explorationTotal,
+                        })}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground">{t(phaseBodyKey)}</p>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                      {t("onboarding.inSession.live.currentTitle")}
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {t(liveObjectiveKey)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+                  <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                    {t("onboarding.inSession.live.nextTitle")}
+                  </p>
+                  <p className="mt-2 text-sm text-foreground">{t(liveNextKey)}</p>
+                </div>
+              </div>
+            </Card>
 
             {(showContextualHint || adaptiveHintKey || helpPanelOpen) && (
               <div className="mb-6 space-y-3">
@@ -912,6 +1062,9 @@ export function GameContainer({
                           showWarnings={showWarnings}
                           isSelected={session.selectedNetworkId === network.id}
                           isDisabled={isExplorationLocked}
+                          disabledLabel={
+                            isExplorationLocked ? t("exploration.alreadyChecked") : undefined
+                          }
                           description={translateNetworkDescription(
                             t,
                             scenario.id,
@@ -924,25 +1077,8 @@ export function GameContainer({
                   </div>
 
                   {currentScene.actions && currentScene.actions.length > 0 && (
-                    <div className="flex flex-wrap gap-3 pt-4 border-t border-border/60">
-                      {currentScene.actions.map((action) => {
-                        const actionLabel = action.labelKey ? t(action.labelKey) : action.label;
-                        const actionDescription = action.descriptionKey
-                          ? t(action.descriptionKey)
-                          : action.description;
-                        return (
-                          <Button
-                            key={action.id}
-                            variant="outline"
-                            onClick={() => handleAction(action.id)}
-                            data-testid={`action-${action.id}`}
-                            title={actionDescription}
-                          >
-                            {action.type === "verify_staff" && <Shield className="w-4 h-4 mr-2" />}
-                            {actionLabel}
-                          </Button>
-                        );
-                      })}
+                    <div className="pt-4 border-t border-border/60">
+                      {renderActionChoices(currentScene.actions)}
                     </div>
                   )}
                 </div>
@@ -979,32 +1115,7 @@ export function GameContainer({
 
                   <Card className="p-6">
                     <h3 className="font-medium text-foreground mb-4">{t("game.portalOptions")}</h3>
-                    <div className="flex flex-wrap gap-3">
-                      {currentScene.actions.map((action) => {
-                        const actionLabel = action.labelKey
-                          ? t(action.labelKey)
-                          : translateActionLabel(t, scenario.id, action.id, action.label);
-                        const actionDescription = action.descriptionKey
-                          ? t(action.descriptionKey)
-                          : translateActionDescription(
-                              t,
-                              scenario.id,
-                              action.id,
-                              action.description || ""
-                            );
-                        return (
-                          <Button
-                            key={action.id}
-                            variant="outline"
-                            onClick={() => handleAction(action.id)}
-                            data-testid={`action-${action.id}`}
-                            title={actionDescription}
-                          >
-                            {actionLabel}
-                          </Button>
-                        );
-                      })}
-                    </div>
+                    {renderActionChoices(currentScene.actions)}
                   </Card>
                 </div>
               )}
@@ -1040,14 +1151,21 @@ export function GameContainer({
                       ? handleTryAnother
                       : undefined
                 }
+                tryAnotherLabel={
+                  isExplorationPhase && isTerminalConsequence && explorationTotal > 0
+                    ? t("exploration.tryAnotherNetwork")
+                    : undefined
+                }
                 continueLabel={
                   isExplorationPhase && isTerminalConsequence && allNetworksExplored
                     ? t("exploration.startFinalRun")
                     : undefined
                 }
                 footerMessage={
-                  isExplorationPhase && isTerminalConsequence && allNetworksExplored
-                    ? t("exploration.finalPrompt")
+                  isExplorationPhase && isTerminalConsequence && explorationTotal > 0
+                    ? allNetworksExplored
+                      ? t("exploration.finalPrompt")
+                      : t("exploration.reviewNextPrompt")
                     : undefined
                 }
               />
