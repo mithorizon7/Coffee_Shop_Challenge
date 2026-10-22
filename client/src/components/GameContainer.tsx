@@ -23,10 +23,10 @@ import { CountdownTimer } from "./CountdownTimer";
 import { useAuth } from "@/hooks/use-auth";
 import type { GameSession, Scenario, Network, Action } from "@shared/schema";
 import {
+  advanceSession,
   getCurrentSceneFromScenario,
   processNetworkSelection,
   processAction,
-  completeSession,
   calculateGrade,
   getDecisionProcessKeys,
 } from "@/lib/gameEngine";
@@ -65,6 +65,8 @@ interface GameContainerProps {
 }
 
 const EMPTY_IDS: string[] = [];
+const TRANSITION_DELAY_MS = 300;
+const MAX_PROGRESS_SAVE_RETRIES = 2;
 
 export function GameContainer({
   initialSession,
@@ -86,11 +88,14 @@ export function GameContainer({
   const [helpPanelOpen, setHelpPanelOpen] = useState(false);
   const [adaptiveHintKey, setAdaptiveHintKey] = useState<string | null>(null);
   const [guidanceFaded, setGuidanceFaded] = useState(false);
+  const [progressSaveFailed, setProgressSaveFailed] = useState(false);
+  const [completionSyncFailed, setCompletionSyncFailed] = useState(false);
   const { isAuthenticated } = useAuth();
   const progressSavedRef = useRef(false);
   const completionHandledRef = useRef(false);
   const timeoutNotifiedRef = useRef<Record<string, boolean>>({});
   const rootSnapshotRef = useRef<GameSession | null>(null);
+  const lastSyncedSessionRef = useRef<GameSession>(initialSession);
   const previousScoreRef = useRef(session.score);
   const riskStreakRef = useRef(0);
   const successStreakRef = useRef(0);
@@ -105,9 +110,50 @@ export function GameContainer({
     },
     []
   );
+  const cloneSession = useCallback(
+    (source: GameSession): GameSession => ({
+      ...source,
+      score: { ...source.score },
+      completedSceneIds: [...source.completedSceneIds],
+      badges: source.badges.map((badge) => ({ ...badge })),
+    }),
+    []
+  );
+  const buildSessionUpdatePayload = useCallback(
+    (updatedSession: GameSession) => ({
+      revision: lastSyncedSessionRef.current.revision ?? 0,
+      currentSceneId: updatedSession.currentSceneId,
+      selectedNetworkId: updatedSession.selectedNetworkId,
+      vpnEnabled: updatedSession.vpnEnabled,
+      score: updatedSession.score,
+      completedSceneIds: updatedSession.completedSceneIds,
+      badges: updatedSession.badges,
+      completedAt: updatedSession.completedAt,
+    }),
+    []
+  );
+  const showSessionSyncError = useCallback(() => {
+    toast({
+      title: t("errors.sessionSyncTitle"),
+      description: t("errors.sessionSyncBody"),
+      variant: "destructive",
+    });
+  }, [toast, t]);
+  const showProgressSaveError = useCallback(() => {
+    toast({
+      title: t("errors.progressSaveTitle"),
+      description: t("errors.progressSaveBody"),
+      variant: "destructive",
+    });
+  }, [toast, t]);
   const updateSessionMutation = useMutation({
-    mutationFn: async (updates: Partial<GameSession>) => {
-      const response = await apiRequest("PATCH", `/api/sessions/${session.id}`, updates);
+    retry: (failureCount, error) => failureCount < 1 && !/^4\d\d:/.test(error.message),
+    mutationFn: async (updatedSession: GameSession) => {
+      const response = await apiRequest(
+        "PATCH",
+        `/api/sessions/${updatedSession.id}`,
+        buildSessionUpdatePayload(updatedSession)
+      );
       return (await response.json()) as GameSession;
     },
     onSuccess: () => {
@@ -116,6 +162,9 @@ export function GameContainer({
   });
 
   const saveProgressMutation = useMutation({
+    retry: (failureCount, error) =>
+      failureCount < MAX_PROGRESS_SAVE_RETRIES && !/^4\d\d:/.test(error.message),
+    retryDelay: (attempt) => (attempt + 1) * 1500,
     mutationFn: async (completedSession: GameSession) => {
       const grade = calculateGrade(completedSession.score);
       const response = await apiRequest("POST", "/api/progress/complete", {
@@ -149,6 +198,8 @@ export function GameContainer({
     explorationTotal > 0 &&
     rootNetworkIds.every((id) => exploredNetworkIds.includes(id));
   const isFinalRun = !isExplorationPhase || explorationTotal === 0;
+  const isInteractionLocked =
+    isTransitioning || updateSessionMutation.isPending || saveProgressMutation.isPending;
   const isRootNetworkScene =
     !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
   const rootNetworkBySsid = useMemo(() => {
@@ -333,34 +384,77 @@ export function GameContainer({
   const showContextualHint = isDecisionScene && contextualTipsEnabled && !!contextualHint;
 
   const syncSession = useCallback(
-    (updatedSession: GameSession) => {
+    async (updatedSession: GameSession) => {
       setSession(updatedSession);
-      updateSessionMutation.mutate({
-        currentSceneId: updatedSession.currentSceneId,
-        selectedNetworkId: updatedSession.selectedNetworkId,
-        vpnEnabled: updatedSession.vpnEnabled,
-        score: updatedSession.score,
-        completedSceneIds: updatedSession.completedSceneIds,
-        badges: updatedSession.badges,
-        completedAt: updatedSession.completedAt,
-      });
+
+      try {
+        const serverSession = await updateSessionMutation.mutateAsync(updatedSession);
+        lastSyncedSessionRef.current = cloneSession(serverSession);
+        setSession(serverSession);
+        return serverSession;
+      } catch (error) {
+        if (error instanceof Error && error.message.startsWith("409:")) {
+          try {
+            const response = await apiRequest("GET", `/api/sessions/${updatedSession.id}`);
+            const latest = (await response.json()) as GameSession;
+            lastSyncedSessionRef.current = cloneSession(latest);
+            setSessionSnapshots([]);
+          } catch {
+            // Keep the last confirmed state if the recovery read also fails.
+          }
+        }
+        setSession(cloneSession(lastSyncedSessionRef.current));
+        throw error;
+      }
     },
-    [updateSessionMutation]
+    [cloneSession, updateSessionMutation]
+  );
+
+  const saveProgressIfNeeded = useCallback(
+    async (completedSession: GameSession) => {
+      if (!isAuthenticated || !isFinalRun || progressSavedRef.current) {
+        return;
+      }
+
+      progressSavedRef.current = true;
+      setProgressSaveFailed(false);
+
+      try {
+        await saveProgressMutation.mutateAsync(completedSession);
+      } catch {
+        progressSavedRef.current = false;
+        setProgressSaveFailed(true);
+        showProgressSaveError();
+      }
+    },
+    [isAuthenticated, isFinalRun, saveProgressMutation, showProgressSaveError]
   );
 
   useEffect(() => {
     if (currentScene?.type !== "completion") return;
     if (session.completedAt || completionHandledRef.current) return;
+    if (isInteractionLocked || completionSyncFailed) return;
 
     completionHandledRef.current = true;
-    const completedSession = completeSession(session);
-    syncSession(completedSession);
-
-    if (isAuthenticated && isFinalRun && !progressSavedRef.current) {
-      progressSavedRef.current = true;
-      saveProgressMutation.mutate(completedSession);
-    }
-  }, [currentScene, session, isAuthenticated, isFinalRun, syncSession, saveProgressMutation]);
+    void (async () => {
+      try {
+        const syncedSession = await syncSession(advanceSession(session, scenario));
+        await saveProgressIfNeeded(syncedSession);
+      } catch {
+        setCompletionSyncFailed(true);
+        showSessionSyncError();
+      }
+    })();
+  }, [
+    completionSyncFailed,
+    currentScene?.type,
+    isInteractionLocked,
+    saveProgressIfNeeded,
+    scenario,
+    session,
+    showSessionSyncError,
+    syncSession,
+  ]);
 
   useEffect(() => {
     if (!session.completedAt || !isFinalRun || learnerOnboardingState.firstSuccessCompleted) return;
@@ -435,8 +529,8 @@ export function GameContainer({
 
   useEffect(() => {
     if (!isRootNetworkScene) return;
-    rootSnapshotRef.current = JSON.parse(JSON.stringify(session));
-  }, [isRootNetworkScene, session]);
+    rootSnapshotRef.current = cloneSession(session);
+  }, [cloneSession, isRootNetworkScene, session]);
 
   useEffect(() => {
     if (!currentSceneId) return;
@@ -451,17 +545,22 @@ export function GameContainer({
         riskPoints: session.score.riskPoints + 15,
       },
     };
-    syncSession(updatedSession);
-
-    if (currentScene && !timeoutNotifiedRef.current[currentScene.id]) {
-      timeoutNotifiedRef.current[currentScene.id] = true;
-      toast({
-        title: t("timer.penaltyTitle"),
-        description: t("timer.penaltyBody", { points: 15 }),
-        variant: "destructive",
-      });
-    }
-  }, [session, syncSession, currentScene, toast, t]);
+    void (async () => {
+      try {
+        await syncSession(updatedSession);
+        if (currentScene && !timeoutNotifiedRef.current[currentScene.id]) {
+          timeoutNotifiedRef.current[currentScene.id] = true;
+          toast({
+            title: t("timer.penaltyTitle"),
+            description: t("timer.penaltyBody", { points: 15 }),
+            variant: "destructive",
+          });
+        }
+      } catch {
+        showSessionSyncError();
+      }
+    })();
+  }, [currentScene, session, showSessionSyncError, syncSession, t, toast]);
 
   const handleHideContextualTips = useCallback(() => {
     setAdaptiveHintKey(null);
@@ -478,37 +577,52 @@ export function GameContainer({
 
   const handleNetworkSelect = useCallback(
     (network: Network) => {
-      if (isTransitioning) return;
+      if (isInteractionLocked) return;
       retryCountRef.current = 0;
       setAdaptiveHintKey(null);
       const explorationId = getExplorationId(network);
-      if (isExplorationPhase && rootNetworkIdSet.has(explorationId)) {
-        if (exploredNetworkIds.includes(explorationId)) return;
-        exploration?.onNetworkExplored(explorationId);
+      if (
+        isExplorationPhase &&
+        rootNetworkIdSet.has(explorationId) &&
+        exploredNetworkIds.includes(explorationId)
+      ) {
+        return;
       }
 
       setIsTransitioning(true);
       const currentSceneType = currentScene?.type;
-
-      if (
+      const snapshot =
         currentSceneType === "network_selection" ||
         currentSceneType === "captive_portal" ||
         currentSceneType === "task_prompt"
-      ) {
-        setSessionSnapshots((prev) => [...prev, JSON.parse(JSON.stringify(session))]);
-      }
+          ? cloneSession(session)
+          : null;
 
       const { updatedSession } = processNetworkSelection(session, network, scenario);
 
-      setTimeout(() => {
-        syncSession(updatedSession);
-        setIsTransitioning(false);
-      }, 300);
+      window.setTimeout(() => {
+        void (async () => {
+          try {
+            await syncSession(updatedSession);
+            if (snapshot) {
+              setSessionSnapshots((prev) => [...prev, snapshot]);
+            }
+            if (isExplorationPhase && rootNetworkIdSet.has(explorationId)) {
+              exploration?.onNetworkExplored(explorationId);
+            }
+          } catch {
+            showSessionSyncError();
+          } finally {
+            setIsTransitioning(false);
+          }
+        })();
+      }, TRANSITION_DELAY_MS);
     },
     [
+      cloneSession,
       session,
       scenario,
-      isTransitioning,
+      isInteractionLocked,
       syncSession,
       currentScene?.type,
       isExplorationPhase,
@@ -516,38 +630,55 @@ export function GameContainer({
       exploration,
       getExplorationId,
       rootNetworkIdSet,
+      showSessionSyncError,
     ]
   );
 
   const handleAction = useCallback(
     (actionId: string) => {
-      if (isTransitioning) return;
+      if (isInteractionLocked) return;
       retryCountRef.current = 0;
       setAdaptiveHintKey(null);
 
       setIsTransitioning(true);
       const currentSceneType = currentScene?.type;
-
-      if (
+      const snapshot =
         currentSceneType === "network_selection" ||
         currentSceneType === "captive_portal" ||
         currentSceneType === "task_prompt"
-      ) {
-        setSessionSnapshots((prev) => [...prev, JSON.parse(JSON.stringify(session))]);
-      }
+          ? cloneSession(session)
+          : null;
 
       const { updatedSession } = processAction(session, actionId, scenario);
 
-      setTimeout(() => {
-        syncSession(updatedSession);
-        setIsTransitioning(false);
-      }, 300);
+      window.setTimeout(() => {
+        void (async () => {
+          try {
+            await syncSession(updatedSession);
+            if (snapshot) {
+              setSessionSnapshots((prev) => [...prev, snapshot]);
+            }
+          } catch {
+            showSessionSyncError();
+          } finally {
+            setIsTransitioning(false);
+          }
+        })();
+      }, TRANSITION_DELAY_MS);
     },
-    [session, scenario, isTransitioning, syncSession, currentScene?.type]
+    [
+      cloneSession,
+      currentScene?.type,
+      isInteractionLocked,
+      scenario,
+      session,
+      showSessionSyncError,
+      syncSession,
+    ]
   );
 
   const handleTryAnother = useCallback(() => {
-    if (isTransitioning || sessionSnapshots.length === 0) return;
+    if (isInteractionLocked || sessionSnapshots.length === 0) return;
     retryCountRef.current += 1;
     if (!learnerOnboardingState.inSessionGuidanceDismissed) {
       setAdaptiveHintKey(
@@ -561,20 +692,28 @@ export function GameContainer({
     setIsTransitioning(true);
     const previousSession = sessionSnapshots[sessionSnapshots.length - 1];
 
-    setTimeout(() => {
-      setSessionSnapshots((prev) => prev.slice(0, -1));
-      syncSession(previousSession);
-      setIsTransitioning(false);
-    }, 300);
+    window.setTimeout(() => {
+      void (async () => {
+        try {
+          await syncSession(previousSession);
+          setSessionSnapshots((prev) => prev.slice(0, -1));
+        } catch {
+          showSessionSyncError();
+        } finally {
+          setIsTransitioning(false);
+        }
+      })();
+    }, TRANSITION_DELAY_MS);
   }, [
+    isInteractionLocked,
     sessionSnapshots,
-    isTransitioning,
     syncSession,
     learnerOnboardingState.inSessionGuidanceDismissed,
+    showSessionSyncError,
   ]);
 
   const handleExplorationRestart = useCallback(() => {
-    if (isTransitioning) return;
+    if (isInteractionLocked) return;
     const snapshot = rootSnapshotRef.current;
     if (!snapshot) return;
     retryCountRef.current += 1;
@@ -588,53 +727,53 @@ export function GameContainer({
     }
 
     setIsTransitioning(true);
-    setTimeout(() => {
-      setSessionSnapshots([]);
-      syncSession(snapshot);
-      setIsTransitioning(false);
-    }, 300);
-  }, [isTransitioning, syncSession, learnerOnboardingState.inSessionGuidanceDismissed]);
+    window.setTimeout(() => {
+      void (async () => {
+        try {
+          await syncSession(snapshot);
+          setSessionSnapshots([]);
+        } catch {
+          showSessionSyncError();
+        } finally {
+          setIsTransitioning(false);
+        }
+      })();
+    }, TRANSITION_DELAY_MS);
+  }, [
+    isInteractionLocked,
+    learnerOnboardingState.inSessionGuidanceDismissed,
+    showSessionSyncError,
+    syncSession,
+  ]);
 
   const handleContinue = useCallback(() => {
-    if (isTransitioning) return;
+    if (isInteractionLocked) return;
     setAdaptiveHintKey(null);
 
     setIsTransitioning(true);
-    const scene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
+    const updatedSession = advanceSession(session, scenario);
 
-    if (scene?.nextSceneId) {
-      setTimeout(() => {
-        const completedSceneIds = session.completedSceneIds.includes(session.currentSceneId)
-          ? session.completedSceneIds
-          : [...session.completedSceneIds, session.currentSceneId];
-        const updatedSession = {
-          ...session,
-          completedSceneIds,
-          currentSceneId: scene.nextSceneId!,
-        };
-        syncSession(updatedSession);
-        setIsTransitioning(false);
-      }, 300);
-    } else {
-      setTimeout(() => {
-        const completedSession = completeSession(session);
-        syncSession(completedSession);
-        setIsTransitioning(false);
-
-        if (isAuthenticated && isFinalRun && !progressSavedRef.current) {
-          progressSavedRef.current = true;
-          saveProgressMutation.mutate(completedSession);
+    window.setTimeout(() => {
+      void (async () => {
+        try {
+          const syncedSession = await syncSession(updatedSession);
+          if (syncedSession.completedAt) {
+            await saveProgressIfNeeded(syncedSession);
+          }
+        } catch {
+          showSessionSyncError();
+        } finally {
+          setIsTransitioning(false);
         }
-      }, 300);
-    }
+      })();
+    }, TRANSITION_DELAY_MS);
   }, [
-    session,
+    isInteractionLocked,
+    saveProgressIfNeeded,
     scenario,
-    isTransitioning,
+    session,
+    showSessionSyncError,
     syncSession,
-    isAuthenticated,
-    isFinalRun,
-    saveProgressMutation,
   ]);
 
   const renderActionChoices = (actions: Action[]) => (
@@ -656,6 +795,7 @@ export function GameContainer({
               key={action.id}
               variant={action.isPrimary ? "default" : action.isDanger ? "destructive" : "outline"}
               onClick={() => handleAction(action.id)}
+              disabled={isInteractionLocked}
               data-testid={`action-${action.id}`}
               className="h-auto w-full justify-start whitespace-normal px-4 py-3 text-left"
             >
@@ -698,6 +838,27 @@ export function GameContainer({
         onPlayAgain={onRestart}
         onSelectNewScenario={onAdvance}
         isLastScenario={isLastScenario}
+        isBusy={isInteractionLocked || (!session.completedAt && !completionSyncFailed)}
+        saveError={
+          progressSaveFailed || completionSyncFailed
+            ? {
+                title: t(
+                  completionSyncFailed ? "errors.sessionSyncTitle" : "errors.progressSaveTitle"
+                ),
+                body: t(
+                  completionSyncFailed ? "errors.sessionSyncBody" : "errors.progressSaveBody"
+                ),
+                onRetry: () => {
+                  if (completionSyncFailed) {
+                    completionHandledRef.current = false;
+                    setCompletionSyncFailed(false);
+                  } else {
+                    void saveProgressIfNeeded(session);
+                  }
+                },
+              }
+            : undefined
+        }
       />
     );
   }
@@ -707,7 +868,13 @@ export function GameContainer({
       <header className="app-surface sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <Button variant="ghost" size="sm" onClick={onExit} data-testid="button-exit">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onExit}
+              disabled={isInteractionLocked}
+              data-testid="button-exit"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               {t("game.exit")}
             </Button>
@@ -738,7 +905,7 @@ export function GameContainer({
               {isAdvanced && isDecisionScene && currentScene && (
                 <CountdownTimer
                   totalSeconds={scenario.timerSeconds || 120}
-                  isActive={isDecisionScene && !isTransitioning}
+                  isActive={isDecisionScene && !isInteractionLocked}
                   sceneId={currentScene.id}
                   onTimeUp={handleTimeUp}
                 />
@@ -815,7 +982,7 @@ export function GameContainer({
                 {showContextualHint && contextualHint && (
                   <Card className="p-4 border-primary/30 bg-primary/5">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-2xl bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-2xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
                         <Info className="w-4 h-4" />
                       </div>
                       <div className="space-y-2">
@@ -843,7 +1010,7 @@ export function GameContainer({
                 {adaptiveHintKey && !learnerOnboardingState.inSessionGuidanceDismissed && (
                   <Card className="p-4 border-amber-300/60 dark:border-amber-700/50 bg-amber-100/60 dark:bg-amber-950/30">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-2xl bg-amber-200/70 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-2xl bg-amber-200/70 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 flex items-center justify-center shrink-0">
                         <CheckCircle2 className="w-4 h-4" />
                       </div>
                       <div className="space-y-2">
@@ -925,7 +1092,11 @@ export function GameContainer({
               <Card className="p-6 text-center">
                 <Wifi className="w-12 h-12 mx-auto mb-4 text-primary" />
                 <p className="text-muted-foreground mb-4">{t("game.readyToStart")}</p>
-                <Button onClick={handleContinue} data-testid="button-start-scenario">
+                <Button
+                  onClick={handleContinue}
+                  disabled={isInteractionLocked}
+                  data-testid="button-start-scenario"
+                >
                   {t("game.findNetworks")}
                 </Button>
               </Card>
@@ -1010,7 +1181,11 @@ export function GameContainer({
                     })}
                   </div>
                   <div className="pt-2 border-t border-border/60">
-                    <Button onClick={handleContinue} data-testid="button-briefing-continue">
+                    <Button
+                      onClick={handleContinue}
+                      disabled={isInteractionLocked}
+                      data-testid="button-briefing-continue"
+                    >
                       {t("common.continue")}
                     </Button>
                   </div>
@@ -1061,7 +1236,7 @@ export function GameContainer({
                           onSelect={handleNetworkSelect}
                           showWarnings={showWarnings}
                           isSelected={session.selectedNetworkId === network.id}
-                          isDisabled={isExplorationLocked}
+                          isDisabled={isInteractionLocked || isExplorationLocked}
                           disabledLabel={
                             isExplorationLocked ? t("exploration.alreadyChecked") : undefined
                           }
@@ -1090,7 +1265,7 @@ export function GameContainer({
                 <div className="space-y-6">
                   <Card className="p-6 bg-muted/40">
                     <div className="flex items-start gap-3 mb-4">
-                      <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <Info className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                       <div>
                         <h3 className="font-medium text-foreground mb-2">
                           {t("captivePortal.whatIs")}
@@ -1127,6 +1302,7 @@ export function GameContainer({
                 scenarioId={scenario.id}
                 onAction={handleAction}
                 showHints={showWarnings}
+                actionsDisabled={isInteractionLocked}
               />
             )}
 
@@ -1168,6 +1344,7 @@ export function GameContainer({
                       : t("exploration.reviewNextPrompt")
                     : undefined
                 }
+                actionsDisabled={isInteractionLocked}
               />
             )}
 

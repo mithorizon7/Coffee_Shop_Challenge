@@ -5,13 +5,14 @@ import { createServer } from "http";
 import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
 import { initializeContent } from "./scenarioLoader";
 import { storage } from "./storage";
+import { logError } from "./errorLogging";
+import { pool } from "./db";
+import { PRODUCTION_CSP } from "./requestSecurity";
 
 const app = express();
 const httpServer = createServer(app);
 
 app.disable("x-powered-by");
-app.use(express.json({ limit: "256kb" }));
-app.use(express.urlencoded({ extended: false, limit: "256kb" }));
 
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -20,6 +21,9 @@ app.use((req, res, next) => {
   res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  if (process.env.NODE_ENV === "production")
+    res.setHeader("Content-Security-Policy", PRODUCTION_CSP);
+  if (req.path.startsWith("/api/")) res.setHeader("Cache-Control", "no-store");
 
   if (req.secure) {
     res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
@@ -27,6 +31,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use(express.json({ limit: "256kb" }));
+app.use(express.urlencoded({ extended: false, limit: "256kb", parameterLimit: 100 }));
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -46,7 +53,8 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
-      log(`${req.method} ${path} ${res.statusCode} in ${duration}ms`);
+      const route = typeof req.route?.path === "string" ? req.route.path : "/api/*";
+      log(`${req.method} ${route} ${res.statusCode} in ${duration}ms`);
     }
   });
 
@@ -57,9 +65,15 @@ app.use((req, res, next) => {
   // Initialize scenario content from JSON files
   initializeContent();
 
+  await storage.initialize();
+
   await setupAuth(app);
   registerAuthRoutes(app);
   await registerRoutes(httpServer, app);
+
+  app.use("/api", (_req, res) => {
+    res.status(404).json({ error: "API route not found" });
+  });
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -67,7 +81,7 @@ app.use((req, res, next) => {
     const safeMessage =
       status >= 500 && process.env.NODE_ENV === "production" ? "Internal Server Error" : message;
 
-    console.error(`[Error] ${status}: ${message}`, err.stack || err);
+    logError(`HTTP error ${status}`, err);
     res.status(status).json({ message: safeMessage });
   });
 
@@ -101,7 +115,8 @@ app.use((req, res, next) => {
   const shutdown = () => {
     log("Shutting down gracefully...");
     storage.stopCleanup();
-    httpServer.close(() => {
+    httpServer.close(async () => {
+      await pool.end();
       log("Server closed");
       process.exit(0);
     });
@@ -114,4 +129,7 @@ app.use((req, res, next) => {
 
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);
-})();
+})().catch((error) => {
+  logError("Application startup failed", error);
+  process.exit(1);
+});

@@ -29,6 +29,7 @@ interface TaskPromptCardProps {
   scenarioId: string;
   onAction: (actionId: string) => void;
   showHints?: boolean;
+  actionsDisabled?: boolean;
 }
 
 const taskIcons: Record<string, typeof Mail> = {
@@ -69,6 +70,7 @@ export function TaskPromptCard({
   scenarioId,
   onAction,
   showHints = false,
+  actionsDisabled = false,
 }: TaskPromptCardProps) {
   const { t } = useTranslation();
   const IconComponent = taskIcons[task.type] || Globe;
@@ -89,7 +91,7 @@ export function TaskPromptCard({
       <div className="flex items-start gap-4">
         <div
           className={cn(
-            "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
+            "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
             sensitivity.bg
           )}
         >
@@ -114,7 +116,7 @@ export function TaskPromptCard({
 
           {showHints && riskHint && (
             <div className="flex items-start gap-2 p-3 rounded-2xl bg-amber-100/60 dark:bg-amber-950/40 mb-4">
-              <Info className="w-4 h-4 text-amber-700 dark:text-amber-300 flex-shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 text-amber-700 dark:text-amber-300 shrink-0 mt-0.5" />
               <p className="text-sm text-amber-800 dark:text-amber-200">
                 {renderRichText(riskHint)}
               </p>
@@ -141,6 +143,7 @@ export function TaskPromptCard({
                       action.isPrimary ? "default" : action.isDanger ? "destructive" : "outline"
                     }
                     onClick={() => onAction(action.id)}
+                    disabled={actionsDisabled}
                     data-testid={`action-${action.id}`}
                     className="h-auto w-full justify-start whitespace-normal px-4 py-3 text-left"
                   >

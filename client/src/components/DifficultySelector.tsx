@@ -52,7 +52,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
             <div className="flex items-start gap-3">
               <div
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
+                  "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
                   config.bgColor
                 )}
               >
@@ -71,7 +71,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                     >
                       <span
                         className={cn(
-                          "w-1.5 h-1.5 rounded-full flex-shrink-0",
+                          "w-1.5 h-1.5 rounded-full shrink-0",
                           difficulty === "beginner" && "bg-emerald-500 dark:bg-emerald-400",
                           difficulty === "intermediate" && "bg-amber-500 dark:bg-amber-400",
                           difficulty === "advanced" && "bg-rose-500 dark:bg-rose-400"
@@ -107,7 +107,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                     <button
                       type="button"
                       onClick={() => onSelect(scenario.id)}
-                      className="group w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-2xl"
+                      className="group w-full text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/60 rounded-2xl"
                       aria-describedby={`scenario-desc-${scenario.id}`}
                       aria-label={t("scenario.startScenarioWithTime", {
                         title,
@@ -131,7 +131,7 @@ export function DifficultySelector({ scenarios, onSelect }: DifficultySelectorPr
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">{location}</p>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-foreground/70" />
+                        <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-foreground/70" />
                       </div>
                     </button>
                   </Card>

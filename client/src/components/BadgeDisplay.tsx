@@ -76,7 +76,7 @@ export function BadgeDisplay({ badges, compact = false }: BadgeDisplayProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: index * 0.1, type: "spring", stiffness: 500 }}
-                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full transition-transform duration-200 hover:-translate-y-0.5"
+                  className="focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded-full transition-transform duration-200 hover:-translate-y-0.5"
                   aria-label={`${badgeName}. ${badgeDescription}`}
                 >
                   <div

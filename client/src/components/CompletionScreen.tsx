@@ -30,6 +30,8 @@ interface CompletionScreenProps {
   onPlayAgain: () => void;
   onSelectNewScenario: () => void;
   isLastScenario?: boolean;
+  isBusy?: boolean;
+  saveError?: { title: string; body: string; onRetry: () => void };
 }
 
 export function CompletionScreen({
@@ -38,6 +40,8 @@ export function CompletionScreen({
   onPlayAgain,
   onSelectNewScenario,
   isLastScenario = false,
+  isBusy = false,
+  saveError,
 }: CompletionScreenProps) {
   const { t } = useTranslation();
   const grade = calculateGrade(session.score);
@@ -45,9 +49,7 @@ export function CompletionScreen({
   const decisionProcessKeys = getDecisionProcessKeys();
   const rogueKeys = getRogueHotspotKeys();
   const scenarioTitle = translateScenarioTitle(t, scenario.id, scenario.title);
-  const ctaLabel = isLastScenario
-    ? t("completion.returnHome")
-    : t("completion.tryAnotherScenario");
+  const ctaLabel = isLastScenario ? t("completion.returnHome") : t("completion.tryAnotherScenario");
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="app-shell py-10 px-4">
@@ -69,6 +71,16 @@ export function CompletionScreen({
             {t("completion.finishedScenario", { title: scenarioTitle })}
           </p>
         </div>
+
+        {saveError && (
+          <Card className="p-4 space-y-3" role="alert">
+            <p className="font-medium">{saveError.title}</p>
+            <p className="text-sm text-muted-foreground">{saveError.body}</p>
+            <Button onClick={saveError.onRetry} disabled={isBusy}>
+              {t("scenario.tryAgain")}
+            </Button>
+          </Card>
+        )}
 
         <Card className="p-6">
           <div className="flex items-center justify-center gap-6 mb-6">
@@ -117,7 +129,7 @@ export function CompletionScreen({
                 transition={{ delay: 0.5 + index * 0.1 }}
                 className="flex items-start gap-2 text-sm text-muted-foreground"
               >
-                <TrendingUp className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                <TrendingUp className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>{t(tipKey)}</span>
               </motion.li>
             ))}
@@ -171,11 +183,16 @@ export function CompletionScreen({
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button variant="outline" onClick={onPlayAgain} data-testid="button-play-again">
+          <Button
+            variant="outline"
+            onClick={onPlayAgain}
+            disabled={isBusy}
+            data-testid="button-play-again"
+          >
             <RotateCcw className="w-4 h-4 mr-2" />
             {t("scenario.playAgain")}
           </Button>
-          <Button onClick={onSelectNewScenario} data-testid="button-new-scenario">
+          <Button onClick={onSelectNewScenario} disabled={isBusy} data-testid="button-new-scenario">
             {ctaLabel}
             {isLastScenario ? (
               <Home className="w-4 h-4 ml-2" />

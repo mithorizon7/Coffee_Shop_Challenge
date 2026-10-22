@@ -50,7 +50,7 @@ export function NetworkCard({
   return (
     <Card
       className={cn(
-        "p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/80 hover:border-primary/30 hover:shadow-[0_18px_40px_-30px_hsl(var(--foreground)/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+        "p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-background/80 hover:border-primary/30 hover:shadow-[0_18px_40px_-30px_hsl(var(--foreground)/0.45)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/60",
         isSelected && "ring-2 ring-primary/60 bg-primary/5",
         isDisabled && "cursor-not-allowed opacity-50 hover:translate-y-0 hover:shadow-none"
       )}
@@ -75,7 +75,7 @@ export function NetworkCard({
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-muted/60 flex items-center justify-center">
+          <div className="shrink-0 w-12 h-12 rounded-2xl bg-muted/60 flex items-center justify-center">
             {network.isSecured ? (
               <Lock className="w-5 h-5 text-foreground/70" />
             ) : (
@@ -118,7 +118,7 @@ export function NetworkCard({
         </div>
 
         <div
-          className="flex items-end gap-0.5 h-5 flex-shrink-0"
+          className="flex items-end gap-0.5 h-5 shrink-0"
           role="img"
           aria-label={t("network.signalStrengthAria", { strength: network.signalStrength })}
         >

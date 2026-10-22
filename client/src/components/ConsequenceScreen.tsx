@@ -37,6 +37,7 @@ interface ConsequenceScreenProps {
   continueLabel?: string;
   tryAnotherLabel?: string;
   footerMessage?: string;
+  actionsDisabled?: boolean;
 }
 
 const severityConfig = {
@@ -109,6 +110,7 @@ export function ConsequenceScreen({
   continueLabel,
   tryAnotherLabel,
   footerMessage,
+  actionsDisabled = false,
 }: ConsequenceScreenProps) {
   const { t } = useTranslation();
   const config = severityConfig[consequence.severity];
@@ -268,7 +270,7 @@ export function ConsequenceScreen({
                     >
                       <div
                         className={cn(
-                          "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                          "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
                           config.iconBg
                         )}
                       >
@@ -320,6 +322,7 @@ export function ConsequenceScreen({
               <Button
                 variant="outline"
                 onClick={onTryAnother}
+                disabled={actionsDisabled}
                 className="flex-1"
                 data-testid="button-try-another"
               >
@@ -328,7 +331,12 @@ export function ConsequenceScreen({
               </Button>
             )}
             {onContinue && (
-              <Button onClick={onContinue} className="flex-1" data-testid="button-continue">
+              <Button
+                onClick={onContinue}
+                disabled={actionsDisabled}
+                className="flex-1"
+                data-testid="button-continue"
+              >
                 {continueLabel ?? t("common.continue")}
               </Button>
             )}

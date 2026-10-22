@@ -2,6 +2,11 @@
 
 Source of truth checklist for a large/intense task.
 
+Current security status (2026-10-22): superseded by
+[the October security audit](security-audit-2026-10-22.md). Earlier sign-off and
+scan results below are historical. Current production verification and build-tool
+risk remain open; do not interpret March's checked gates as current approval.
+
 ## Metadata
 
 - Created: 2026-03-06T15:41:45-05:00
@@ -79,6 +84,26 @@ Source of truth checklist for a large/intense task.
   - Evidence: missing-origin requests were accepted as trusted in CSRF guard logic.
   - Owner: backend
   - Linked Fix: P-010
+- [x] F-011 [status:resolved] [P1] [confidence:0.94] Session PATCH accepted client-authored state jumps that were structurally valid but not legal gameplay transitions.
+  - Evidence: client could forge score, badges, completion flags, or jump to arbitrary valid scene IDs within a scenario because the server only validated shape and membership, not state progression.
+  - Owner: backend
+  - Linked Fix: P-011
+- [x] F-012 [status:resolved] [P1] [confidence:0.92] Client session sync/save flow could race progress completion ahead of session persistence and allow local/server divergence.
+  - Evidence: `syncSession` was fire-and-forget, completion saving could run before session PATCH finished, and learner actions stayed clickable while persistence was in flight.
+  - Owner: frontend
+  - Linked Fix: P-012
+- [x] F-013 [status:resolved] [P2] [confidence:0.85] Completed progress save lacked a robust retry/idempotency path after transient failures.
+  - Evidence: repeated completion-save attempts could fail after the first write and completed runs had no retry path if the client lost the response.
+  - Owner: full-stack
+  - Linked Fix: P-013
+- [x] F-014 [status:resolved] [P3] [confidence:0.80] Progress page fallback scenario title formatting used an escaped word-boundary regex and failed to title-case correctly.
+  - Evidence: `.replace(/\\b\\w/g, ...)` matched the literal sequence instead of word boundaries.
+  - Owner: frontend
+  - Linked Fix: P-014
+- [x] F-015 [status:resolved] [P3] [confidence:0.78] Home-page session start helper retained an unused direct scene-jump mutation path that widened the client mutation surface.
+  - Evidence: `startScenarioSession` accepted `startAtSceneId` and attempted a client-driven scene jump PATCH that no current flow used.
+  - Owner: frontend
+  - Linked Fix: P-014
 
 ## Fix Log
 
@@ -112,6 +137,18 @@ Source of truth checklist for a large/intense task.
 - [x] P-010 [status:resolved] Tightened trusted-origin checks to require matching Origin or Referer host for authenticated completion writes.
   - Addresses: F-010
   - Evidence: `isTrustedRequestOrigin` host-matching logic in `server/routes.ts`.
+- [x] P-011 [status:resolved] Moved gameplay transition logic into shared code and enforced server-side legal session progression plus bounded rollback history.
+  - Addresses: F-011
+  - Evidence: `shared/gameEngine.ts`, `resolveSessionUpdate`, forward-candidate derivation, and snapshot history handling in `server/routes.ts`.
+- [x] P-012 [status:resolved] Reworked client session persistence to await server acknowledgement, roll back on failure, and lock in-session controls while sync/save work is pending.
+  - Addresses: F-012
+  - Evidence: awaited `syncSession`, guarded handlers, disabled action surfaces, and completion/save ordering in `client/src/components/GameContainer.tsx`, `TaskPromptCard.tsx`, and `ConsequenceScreen.tsx`.
+- [x] P-013 [status:resolved] Made completion saving idempotent on the server and added bounded automatic retry on the client for transient save failures.
+  - Addresses: F-013
+  - Evidence: `completedProgressBySessionId` cache in `server/routes.ts` and retry scheduling in `client/src/components/GameContainer.tsx`.
+- [x] P-014 [status:resolved] Removed the stale direct scene-jump helper and corrected the progress-page fallback formatter.
+  - Addresses: F-014, F-015
+  - Evidence: `client/src/pages/home.tsx` and `client/src/pages/progress.tsx`.
 
 ## Validation Log
 
@@ -129,6 +166,30 @@ Source of truth checklist for a large/intense task.
   - Evidence: 2026-03-06 16:00 - pass (`found 0 vulnerabilities`)
 - [x] V-007 [status:observed] `npm audit --audit-level=moderate`
   - Evidence: 2026-03-06 16:00 - 5 moderate vulnerabilities in dev-only toolchain path (`vite`/`drizzle-kit` -> `esbuild` advisory).
+- [x] V-008 [status:pass] `npm run i18n:check`
+  - Evidence: 2026-03-10 11:10 - pass (1004 keys each locale)
+- [x] V-009 [status:pass] `npm run check`
+  - Evidence: 2026-03-10 11:16 - pass (`tsc` + scenario validation)
+- [x] V-010 [status:pass] `npm run lint`
+  - Evidence: 2026-03-10 11:16 - pass
+- [x] V-011 [status:pass] `npm run test`
+  - Evidence: 2026-03-10 11:16 - pass (`Smoke test passed.`)
+- [x] V-012 [status:pass] `npm run build`
+  - Evidence: 2026-03-10 11:16 - pass (client+server build successful; existing client chunk-size warning remains)
+- [x] V-013 [status:pass] `npm audit --omit=dev --audit-level=moderate`
+  - Evidence: 2026-03-10 11:22 - pass (`found 0 vulnerabilities`)
+- [x] V-014 [status:pass] `npm run check`
+  - Evidence: 2026-03-10 11:24 - pass (`tsc` + scenario validation)
+- [x] V-015 [status:pass] `npm run lint`
+  - Evidence: 2026-03-10 11:24 - pass
+- [x] V-016 [status:pass] `npm run test`
+  - Evidence: 2026-03-10 11:24 - pass (`Smoke test passed.`)
+- [x] V-017 [status:pass] `npm run i18n:check`
+  - Evidence: 2026-03-10 11:24 - pass (1004 keys each locale)
+- [x] V-018 [status:pass] `npm run build`
+  - Evidence: 2026-03-10 11:24 - pass (client+server build successful; existing client chunk-size warning remains)
+- [x] V-019 [status:pass] `npm audit --omit=dev --audit-level=moderate`
+  - Evidence: 2026-03-10 11:24 - pass (`found 0 vulnerabilities`)
 
 ## Residual Risks
 
@@ -145,3 +206,6 @@ Source of truth checklist for a large/intense task.
 
 - 2026-03-06T15:41:45-05:00: Checklist initialized.
 - 2026-03-06T16:00:30-05:00: Completed full audit pass; findings, fixes, validations, and residual risk sign-off recorded.
+- 2026-03-10T10:52:00-04:00: Reopened checklist for post-hardening follow-up audit focused on session integrity, client sync flow, and regression cleanup.
+- 2026-03-10T11:22:26-04:00: Completed follow-up audit pass; added transition-integrity enforcement, client sync/save hardening, idempotent completion save handling, and final validation rerun.
+- 2026-03-10T11:24:24-04:00: Re-ran the full validation matrix after final lifecycle hardening cleanup and confirmed clean post-last-edit sign-off.

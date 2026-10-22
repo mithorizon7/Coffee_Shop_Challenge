@@ -7,6 +7,7 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { authStorage } from "./storage";
+import { authOriginForHost, allowedHosts } from "../../requestSecurity";
 
 const getOidcConfig = memoize(
   async () => {
@@ -20,58 +21,6 @@ const getOidcConfig = memoize(
 
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;
 const SESSION_TTL_MS = SESSION_TTL_SECONDS * 1000;
-
-function getAllowedDomains(): Set<string> {
-  const raw = process.env.REPLIT_DOMAINS ?? "";
-  const domains = raw
-    .split(",")
-    .map((domain) => domain.trim().toLowerCase())
-    .filter(Boolean);
-
-  return new Set(domains);
-}
-
-function normalizeHostname(hostname: string): string {
-  return hostname.trim().toLowerCase();
-}
-
-function isDevHost(hostname: string): boolean {
-  return hostname === "localhost" || hostname.startsWith("127.") || hostname === "::1";
-}
-
-function formatHostForUrl(hostname: string): string {
-  if (hostname.includes(":") && !(hostname.startsWith("[") && hostname.endsWith("]"))) {
-    return `[${hostname}]`;
-  }
-  return hostname;
-}
-
-function isLikelyValidHostname(hostname: string): boolean {
-  if (hostname.length === 0 || hostname.length > 253) return false;
-  return /^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/i.test(
-    hostname
-  );
-}
-
-function resolveAuthDomain(hostname: string): string {
-  const normalized = normalizeHostname(hostname);
-  const allowedDomains = getAllowedDomains();
-
-  if (allowedDomains.size > 0) {
-    if (allowedDomains.has(normalized)) return normalized;
-    throw new Error("Invalid host for authentication");
-  }
-
-  if (process.env.NODE_ENV !== "production" && isDevHost(normalized)) {
-    return normalized;
-  }
-
-  if (!isLikelyValidHostname(normalized)) {
-    throw new Error("Invalid host for authentication");
-  }
-
-  return normalized;
-}
 
 export function getSession() {
   const sessionTtl = SESSION_TTL_MS;
@@ -100,10 +49,12 @@ function updateUserSession(
   user: any,
   tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers
 ) {
-  user.claims = tokens.claims();
+  user.claims = tokens.claims() ?? user.claims;
   user.access_token = tokens.access_token;
-  user.refresh_token = tokens.refresh_token;
-  user.expires_at = user.claims?.exp;
+  if (tokens.refresh_token) user.refresh_token = tokens.refresh_token;
+  user.expires_at = tokens.expires_in
+    ? Math.floor(Date.now() / 1000) + tokens.expires_in
+    : user.claims?.exp;
 }
 
 async function upsertUser(claims: any) {
@@ -117,6 +68,12 @@ async function upsertUser(claims: any) {
 }
 
 export async function setupAuth(app: Express) {
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
+    throw new Error("SESSION_SECRET must contain at least 32 characters");
+  }
+  if (process.env.NODE_ENV === "production" && allowedHosts().length === 0) {
+    throw new Error("REPLIT_DOMAINS must explicitly allow production authentication hosts");
+  }
   app.set("trust proxy", 1);
   app.use(getSession());
   app.use(passport.initialize());
@@ -130,8 +87,12 @@ export async function setupAuth(app: Express) {
   ) => {
     const user = {};
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
-    verified(null, user);
+    try {
+      await upsertUser(tokens.claims());
+      verified(null, user);
+    } catch (error) {
+      verified(error as Error);
+    }
   };
 
   // Keep track of registered strategies
@@ -139,12 +100,9 @@ export async function setupAuth(app: Express) {
   const MAX_REGISTERED_STRATEGIES = 20;
 
   // Helper function to ensure strategy exists for a domain
-  const ensureStrategy = (domain: string) => {
-    const authDomain = resolveAuthDomain(domain);
-    const authHost = formatHostForUrl(authDomain);
-    const callbackProtocol = isDevHost(authDomain) ? "http" : "https";
-    const callbackURL = `${callbackProtocol}://${authHost}/api/callback`;
-    const strategyName = `replitauth:${authDomain}`;
+  const ensureStrategy = (authOrigin: string) => {
+    const callbackURL = `${authOrigin}/api/callback`;
+    const strategyName = `replitauth:${authOrigin}`;
     if (!registeredStrategies.has(strategyName)) {
       if (registeredStrategies.size >= MAX_REGISTERED_STRATEGIES) {
         throw new Error("Too many authentication host strategies registered");
@@ -168,7 +126,7 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/login", (req, res, next) => {
     try {
-      const authDomain = resolveAuthDomain(req.hostname);
+      const authDomain = authOriginForHost(req.get("host") ?? "");
       ensureStrategy(authDomain);
       passport.authenticate(`replitauth:${authDomain}`, {
         prompt: "login consent",
@@ -181,7 +139,7 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/callback", (req, res, next) => {
     try {
-      const authDomain = resolveAuthDomain(req.hostname);
+      const authDomain = authOriginForHost(req.get("host") ?? "");
       ensureStrategy(authDomain);
       passport.authenticate(`replitauth:${authDomain}`, {
         successReturnToOrRedirect: "/",
@@ -193,21 +151,24 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/logout", (req, res) => {
-    req.logout(() => {
+    req.logout((error) => {
+      if (error) return res.status(500).json({ message: "Logout failed" });
       let authDomain: string;
       try {
-        authDomain = resolveAuthDomain(req.hostname);
+        authDomain = authOriginForHost(req.get("host") ?? "");
       } catch {
         return res.status(400).json({ message: "Invalid host for authentication" });
       }
-      const logoutHost = formatHostForUrl(authDomain);
-      const logoutProtocol = isDevHost(authDomain) ? "http" : "https";
-      res.redirect(
-        client.buildEndSessionUrl(config, {
-          client_id: process.env.REPL_ID!,
-          post_logout_redirect_uri: `${logoutProtocol}://${logoutHost}`,
-        }).href
-      );
+      req.session.destroy((destroyError) => {
+        if (destroyError) return res.status(500).json({ message: "Logout failed" });
+        res.clearCookie("connect.sid", { path: "/" });
+        res.redirect(
+          client.buildEndSessionUrl(config, {
+            client_id: process.env.REPL_ID!,
+            post_logout_redirect_uri: authDomain,
+          }).href
+        );
+      });
     });
   });
 }

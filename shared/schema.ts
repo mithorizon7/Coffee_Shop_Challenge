@@ -275,9 +275,10 @@ export const badgeSchema = z.object({
 
 export type Badge = z.infer<typeof badgeSchema>;
 
-// Game session state (in-memory, used during gameplay)
+// Game session state shared between the browser and durable gameplay storage.
 export const gameSessionSchema = z.object({
   id: z.string(),
+  revision: z.number().int().nonnegative().optional(),
   scenarioId: z.string(),
   currentSceneId: z.string(),
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
@@ -291,6 +292,26 @@ export const gameSessionSchema = z.object({
 });
 
 export type GameSession = z.infer<typeof gameSessionSchema>;
+
+export const activeGameSessions = pgTable(
+  "active_game_sessions",
+  {
+    id: varchar("id").primaryKey(),
+    record: jsonb("record").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [index("active_game_sessions_expiry").on(table.expiresAt)]
+);
+
+export const gameSessionLimits = pgTable(
+  "game_session_limits",
+  {
+    keyHash: varchar("key_hash").primaryKey(),
+    attempts: integer("attempts").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [index("game_session_limits_expiry").on(table.expiresAt)]
+);
 
 // API response types
 export const scenarioListItemSchema = z.object({

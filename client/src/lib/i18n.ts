@@ -51,6 +51,14 @@ i18n
     parseMissingKeyHandler: isDev ? (key) => `[MISSING:${key}]` : undefined,
   });
 
+function synchronizeDocumentLanguage() {
+  document.documentElement.lang = i18n.resolvedLanguage ?? "en";
+  document.documentElement.dir = i18n.dir();
+  document.title = i18n.t("nav.appName");
+}
+i18n.on("languageChanged", synchronizeDocumentLanguage);
+synchronizeDocumentLanguage();
+
 // Log missing keys in development
 if (isDev) {
   i18n.on("missingKey", (lngs, namespace, key) => {

@@ -107,28 +107,11 @@ export default function Home() {
     !learnerOnboardingState.firstSuccessCompleted &&
     learnerOnboardingState.firstRunChecklistDismissed;
 
-  const startScenarioSession = async (scenario: Scenario, startAtSceneId?: string) => {
-    const session = await createSessionMutation.mutateAsync({
+  const startScenarioSession = async (scenario: Scenario) => {
+    return await createSessionMutation.mutateAsync({
       scenarioId: scenario.id,
       difficulty: scenario.difficulty,
     });
-
-    if (!startAtSceneId) {
-      return session;
-    }
-
-    try {
-      const response = await apiRequest("PATCH", `/api/sessions/${session.id}`, {
-        currentSceneId: startAtSceneId,
-      });
-      if (response.ok) {
-        return (await response.json()) as GameSession;
-      }
-    } catch (error) {
-      console.error("Failed to jump to network selection:", error);
-    }
-
-    return session;
   };
 
   const handleStartScenario = async (scenarioId: string) => {
@@ -390,7 +373,7 @@ export default function Home() {
         >
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-stretch">
             <Card className="p-8 md:p-10 lg:p-12 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
               <div className="absolute -top-24 -right-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
               <div className="absolute -bottom-28 -left-16 h-56 w-56 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
               <div className="relative flex h-full flex-col justify-between gap-10">
@@ -445,15 +428,15 @@ export default function Home() {
                         </p>
                         <ul className="space-y-2 text-sm text-foreground">
                           <li className="flex items-start gap-2">
-                            <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <Target className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                             <span>{t("onboarding.entry.step1")}</span>
                           </li>
                           <li className="flex items-start gap-2">
-                            <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <Target className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                             <span>{t("onboarding.entry.step2")}</span>
                           </li>
                           <li className="flex items-start gap-2">
-                            <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <Target className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                             <span>{t("onboarding.entry.step3")}</span>
                           </li>
                         </ul>
@@ -480,7 +463,7 @@ export default function Home() {
 
             <div className="space-y-4">
               <Card className="p-6 md:p-8 bg-muted/30 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
                 <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
                 <div className="relative space-y-4">
                   <h3 className="font-display font-semibold text-foreground">
@@ -490,7 +473,7 @@ export default function Home() {
                   <ol className="space-y-3">
                     {[1, 2, 3].map((step) => (
                       <li key={step} className="flex items-start gap-3">
-                        <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                           {step}
                         </span>
                         <div>
@@ -514,7 +497,7 @@ export default function Home() {
               </Card>
 
               <Card className="p-6 md:p-8 bg-muted/40 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-br from-background/60 via-transparent to-background/20 pointer-events-none" />
                 <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
                 <div className="relative space-y-4">
                   <h3 className="font-display font-semibold text-foreground">
@@ -522,27 +505,27 @@ export default function Home() {
                   </h3>
                   <ul className="grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span>{t("home.learn1")}</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span>{t("home.learn2")}</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span>{t("home.learn3")}</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span>{t("home.learn4")}</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span>{t("home.learn5")}</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span>{t("home.learn6")}</span>
                     </li>
                   </ul>

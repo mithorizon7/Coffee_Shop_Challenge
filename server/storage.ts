@@ -10,7 +10,9 @@ import {
   completedSessions,
   users,
 } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
+import { PostgresGameSessionStore, type GameSessionStore } from "./gameSessionStore";
+import { logError } from "./errorLogging";
 import { eq, desc } from "drizzle-orm";
 import { scenarios } from "@shared/scenarios";
 
@@ -20,11 +22,12 @@ const IMPROVEMENT_THRESHOLD = 0.1; // 10% difference to detect improvement/decli
 const RISK_THRESHOLD = 10; // Risk points threshold for identifying common mistakes
 
 export interface IStorage {
-  getGameSession(id: string): Promise<GameSession | undefined>;
-  createGameSession(session: GameSession): Promise<GameSession>;
-  updateGameSession(id: string, updates: Partial<GameSession>): Promise<GameSession | undefined>;
+  createGameSession(session: GameSession, ownerId: string | null): Promise<GameSession>;
 
-  saveCompletedSession(session: InsertCompletedSession): Promise<CompletedSession>;
+  saveCompletedSession(
+    session: InsertCompletedSession,
+    sourceSessionId?: string
+  ): Promise<CompletedSession>;
   getCompletedSessionsByUser(userId: string): Promise<CompletedSession[]>;
   getUserProgress(userId: string): Promise<UserProgress>;
 
@@ -32,91 +35,52 @@ export interface IStorage {
   setUserEducatorStatus(userId: string, isEducator: boolean): Promise<void>;
 }
 
-const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
-const CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
-const MAX_ACTIVE_GAME_SESSIONS = 5000;
+const CLEANUP_INTERVAL_MS = 15 * 60 * 1000;
 
 export class HybridStorage implements IStorage {
-  private gameSessions: Map<string, GameSession>;
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor() {
-    this.gameSessions = new Map();
-    this.startCleanupInterval();
-  }
+  constructor(
+    public gameSessionStore: GameSessionStore = new PostgresGameSessionStore(pool),
+    private database: typeof db = db
+  ) {}
 
-  private startCleanupInterval(): void {
+  async initialize(): Promise<void> {
+    await this.gameSessionStore.initialize();
     this.cleanupInterval = setInterval(() => {
-      this.cleanupStaleSessions();
+      void this.gameSessionStore
+        .cleanup()
+        .catch((error) => logError("Session cleanup failed", error));
     }, CLEANUP_INTERVAL_MS);
     this.cleanupInterval.unref?.();
   }
 
-  private cleanupStaleSessions(): void {
-    const now = Date.now();
-    let cleaned = 0;
-    const entries = Array.from(this.gameSessions.entries());
-
-    for (const [id, session] of entries) {
-      const sessionAge = now - new Date(session.startedAt).getTime();
-      const isCompleted = !!session.completedAt;
-      const isStale = sessionAge > SESSION_TTL_MS;
-
-      if (isCompleted || isStale) {
-        this.gameSessions.delete(id);
-        cleaned++;
-      }
-    }
-
-    if (cleaned > 0) {
-      console.log(`[Storage] Cleaned up ${cleaned} stale game sessions`);
-    }
-  }
-
   stopCleanup(): void {
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-      this.cleanupInterval = null;
-    }
+    if (this.cleanupInterval) clearInterval(this.cleanupInterval);
+    this.cleanupInterval = null;
   }
 
-  async getGameSession(id: string): Promise<GameSession | undefined> {
-    return this.gameSessions.get(id);
+  async createGameSession(session: GameSession, ownerId: string | null): Promise<GameSession> {
+    return this.gameSessionStore.create(session, ownerId);
   }
 
-  async createGameSession(session: GameSession): Promise<GameSession> {
-    if (this.gameSessions.size >= MAX_ACTIVE_GAME_SESSIONS) {
-      this.cleanupStaleSessions();
-    }
-
-    if (this.gameSessions.size >= MAX_ACTIVE_GAME_SESSIONS) {
-      // Drop the oldest session to keep memory bounded under sustained abuse.
-      const oldest = Array.from(this.gameSessions.values()).sort(
-        (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime()
-      )[0];
-      if (oldest) {
-        this.gameSessions.delete(oldest.id);
-      }
-    }
-
-    this.gameSessions.set(session.id, session);
+  async getCompletedSession(id: string): Promise<CompletedSession | undefined> {
+    const [session] = await this.database
+      .select()
+      .from(completedSessions)
+      .where(eq(completedSessions.id, id))
+      .limit(1);
     return session;
   }
 
-  async updateGameSession(
-    id: string,
-    updates: Partial<GameSession>
-  ): Promise<GameSession | undefined> {
-    const existing = this.gameSessions.get(id);
-    if (!existing) return undefined;
-
-    const updated = { ...existing, ...updates };
-    this.gameSessions.set(id, updated);
-    return updated;
-  }
-
-  async saveCompletedSession(session: InsertCompletedSession): Promise<CompletedSession> {
+  async saveCompletedSession(
+    session: InsertCompletedSession,
+    sourceSessionId?: string
+  ): Promise<CompletedSession> {
     const insertData = {
+      // Reuse the existing primary key for durable deduplication across retries,
+      // process restarts, and cache eviction. No schema migration is required.
+      ...(sourceSessionId ? { id: sourceSessionId } : {}),
       userId: session.userId,
       scenarioId: session.scenarioId,
       difficulty: session.difficulty,
@@ -128,12 +92,25 @@ export class HybridStorage implements IStorage {
       badges: (session.badges ?? []) as string[],
       startedAt: session.startedAt,
     };
-    const [result] = await db.insert(completedSessions).values(insertData).returning();
-    return result;
+    const [result] = await this.database
+      .insert(completedSessions)
+      .values(insertData)
+      .onConflictDoNothing({ target: completedSessions.id })
+      .returning();
+    if (result) return result;
+    if (sourceSessionId) {
+      const [existing] = await this.database
+        .select()
+        .from(completedSessions)
+        .where(eq(completedSessions.id, sourceSessionId))
+        .limit(1);
+      if (existing?.userId === session.userId) return existing;
+    }
+    throw new Error("Completed session could not be persisted");
   }
 
   async getCompletedSessionsByUser(userId: string): Promise<CompletedSession[]> {
-    return await db
+    return await this.database
       .select()
       .from(completedSessions)
       .where(eq(completedSessions.userId, userId))
@@ -203,13 +180,13 @@ export class HybridStorage implements IStorage {
 
   async getEducatorAnalytics(): Promise<EducatorAnalytics> {
     // Limit query results for performance at scale
-    const allSessions = await db
+    const allSessions = await this.database
       .select()
       .from(completedSessions)
       .orderBy(desc(completedSessions.completedAt))
       .limit(MAX_ANALYTICS_SESSIONS);
 
-    const allUsers = await db.select().from(users);
+    const allUsers = await this.database.select().from(users);
 
     if (allSessions.length === 0) {
       return {
@@ -315,7 +292,10 @@ export class HybridStorage implements IStorage {
   }
 
   async setUserEducatorStatus(userId: string, isEducator: boolean): Promise<void> {
-    await db.update(users).set({ isEducator, updatedAt: new Date() }).where(eq(users.id, userId));
+    await this.database
+      .update(users)
+      .set({ isEducator, updatedAt: new Date() })
+      .where(eq(users.id, userId));
   }
 }
 

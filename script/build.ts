@@ -1,6 +1,7 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
+import { execFileSync } from "node:child_process";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -33,6 +34,7 @@ const allowlist = [
 ];
 
 async function buildAll() {
+  const release = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");
@@ -54,6 +56,7 @@ async function buildAll() {
     outfile: "dist/index.cjs",
     define: {
       "process.env.NODE_ENV": '"production"',
+      "process.env.RELEASE_SHA": JSON.stringify(release),
     },
     minify: true,
     external: externals,
