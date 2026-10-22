@@ -4,8 +4,9 @@ Source of truth checklist for a large/intense task.
 
 Current security status (2026-10-22): superseded by
 [the October security audit](security-audit-2026-10-22.md). Earlier sign-off and
-scan results below are historical. Current production verification and build-tool
-risk remain open; do not interpret March's checked gates as current approval.
+scan results below are historical. The October application release is now deployed and validated; authenticated-consent
+and historical/provider scope limitations are listed in that current report.
+Do not interpret March's checked gates as current approval.
 
 ## Metadata
 
