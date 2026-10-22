@@ -10,7 +10,7 @@ Audit date: 2026-10-22, America/New_York. Status: release completion in progress
 
 - [ ] G-001 [status:blocked] Overall sign-off remains blocked by the explicitly listed production and build-tool findings. Safe local remediation is complete.
 - [ ] G-002 [status:blocked] Production runtime, provider, and incident exposure verified. No deployment/log access yet.
-- [x] G-003 [status:verified] Local checks passed after shared storage, Tailwind 4 and runtime bootstrap changes. The final translated recovery-copy build is repeated in CI before merge.
+- [ ] G-003 [status:in_progress] Final host CA-path correction and runtime-wrapper regression require CI and Replit startup revalidation.
 - [ ] G-004 [status:blocked] Remaining production and device actions are documented with owners and exact checks, but residual risks remain unresolved and have not been accepted by the user.
 
 ## Rerun Matrix
@@ -53,6 +53,10 @@ Audit date: 2026-10-22, America/New_York. Status: release completion in progress
   - Evidence: sensitive-marker logging test; immutable action SHAs, read-only permissions, ignore-scripts installs, secret file ignores; no credential pattern candidates.
   - Owner: engineering.
 
+- [ ] F-008 [status:in_progress] [P1] [confidence:1.0] Replit's OpenSSL CA mode inherits an empty certificate directory; the downloaded runtime's default CA-file path differs from the platform Node. OIDC startup failed strict certificate verification, despite curl and platform Node validating the same Google Trust Services chain. The scoped launcher now selects the existing Linux OS CA bundle when no explicit SSL_CERT_FILE is configured. No TLS bypass or new trust root is introduced; Replit startup retest pending.
+  - Evidence: Replit read-only certificate diagnosis, October 22; local official Node 22.23.4 strict OIDC fetch returns HTTP 200.
+  - Owner: engineering / hosting.
+
 ## Fix Log
 
 - [x] P-001 [status:verified] Implemented local runtime pins, compatible dependency fixes, authorization/origin enforcement, session/storage fixes, bounded retries, logging, CI and secret hygiene.
@@ -88,8 +92,15 @@ Audit date: 2026-10-22, America/New_York. Status: release completion in progress
 
 ## Final Local Validation
 
-- [x] V-007 [status:verified] October 22 final local source validation: TypeScript/scenarios, ESLint, formatting, all three 1004-key locales, smoke tests, ten security/route tests, six real PostgreSQL integration tests and production build passed. Full and production npm audits: zero known vulnerabilities. Focused credential/history scan: zero candidates. Build retains the existing large client-chunk warning; this is not a functional test failure.
-- [x] V-008 [status:verified] Browser inspection: desktop baseline/migrated homepage comparison, 390px layout without horizontal overflow, light/dark appearance, English/Latvian/Russian onboarding, session creation and first decision transition. Found/fixed HTML language metadata and zoom restriction; final deployed flow will be rechecked.
+- [x] V-007 [status:verified] Evidence: October 22 local source validation before host CA correction: TypeScript/scenarios, ESLint, formatting, all three 1004-key locales, smoke tests, ten security/route tests, six real PostgreSQL integration tests and production build passed. Full and production npm audits: zero known vulnerabilities. Focused credential/history scan: zero candidates. Build retains the existing large client-chunk warning; this is not a functional test failure.
+- [x] V-008 [status:verified] Evidence: Browser inspection: desktop baseline/migrated homepage comparison, 390px layout without horizontal overflow, light/dark appearance, English/Latvian/Russian onboarding, session creation and first decision transition. Found/fixed HTML language metadata and zoom restriction; final deployed flow will be rechecked.
+
+## Hosting Findings and Merge Evidence
+
+- PR #13 merged as 80abf84; full CI passed. PR #14 fixes both workspace launch paths to use the same patched runtime and merged as 64b8fac after full CI passed.
+- Replit preserved the previous workspace on main and backup/pre-reviewed-release-b9f82e4. The reviewed source was clean on release/reviewed-80abf84; patched-runtime production build and all six isolated PostgreSQL tests passed on Replit.
+- Development gameplay tables were initialized. The inspected publish-time schema plan contains only the two new tables and their two indexes, with no drops, truncations or changes to existing learner tables. Use standard Publish schema application; never copy development data over production.
+- Publication remains pending strict-TLS startup verification with the existing platform CA bundle. The old public service is still unchanged.
 
 ## Release Completion Evidence
 

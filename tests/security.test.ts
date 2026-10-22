@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { test, after, mock } from "node:test";
 import { MemoryGameSessionStore } from "./memoryGameSessionStore";
 import type { Express, RequestHandler } from "express";
@@ -83,6 +85,26 @@ test("runtime gate rejects unpatched and unsupported versions", () => {
   }
   for (const v of ["22.23.4", "22.24.0", "24.22.1", "26.12.1"])
     assert.equal(isSupportedRuntime(v), true, v);
+});
+
+test("runtime wrapper preserves explicit CA configuration and resolves the Linux system bundle", () => {
+  const run = (env: NodeJS.ProcessEnv) =>
+    execFileSync(
+      "sh",
+      ["scripts/with-runtime.sh", "node", "-p", "process.env.SSL_CERT_FILE ?? '<unset>'"],
+      { env, encoding: "utf8" }
+    ).trim();
+  assert.equal(
+    run({ ...process.env, SSL_CERT_FILE: "/explicit/operator-ca.pem" }),
+    "/explicit/operator-ca.pem"
+  );
+  const env = { ...process.env };
+  delete env.SSL_CERT_FILE;
+  const expected =
+    process.platform === "linux" && existsSync("/etc/ssl/certs/ca-certificates.crt")
+      ? "/etc/ssl/certs/ca-certificates.crt"
+      : "<unset>";
+  assert.equal(run(env), expected);
 });
 
 test("auth host policy fails closed and preserves local callback ports", () => {

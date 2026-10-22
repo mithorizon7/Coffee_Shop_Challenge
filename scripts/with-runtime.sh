@@ -2,6 +2,11 @@
 set -eu
 
 ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+# Official Node and the platform's Node can have different OpenSSL CA paths.
+# Reuse the existing OS trust bundle without weakening certificate verification.
+if [ -z "${SSL_CERT_FILE:-}" ] && [ "$(uname -s)" = Linux ] && [ -r /etc/ssl/certs/ca-certificates.crt ]; then
+  export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+fi
 if command -v node >/dev/null 2>&1 && node "$ROOT/scripts/check-runtime.js" >/dev/null 2>&1; then
   exec "$@"
 fi
