@@ -54,10 +54,11 @@ i18n
 function synchronizeDocumentLanguage() {
   document.documentElement.lang = i18n.resolvedLanguage ?? "en";
   document.documentElement.dir = i18n.dir();
-  document.title = i18n.t("nav.appName");
+  document.title = i18n.t("home.appName");
 }
 i18n.on("languageChanged", synchronizeDocumentLanguage);
-synchronizeDocumentLanguage();
+i18n.on("initialized", synchronizeDocumentLanguage);
+if (i18n.isInitialized) synchronizeDocumentLanguage();
 
 // Log missing keys in development
 if (isDev) {
