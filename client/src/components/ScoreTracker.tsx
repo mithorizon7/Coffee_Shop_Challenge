@@ -51,7 +51,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
           <div className="space-y-2 text-sm">
             <p className="font-medium">{t("scoring.howItWorks")}</p>
             <div className="flex items-start gap-2">
-              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <p>
                 <span className="font-medium text-emerald-600 dark:text-emerald-400">
                   {t("game.safetyPoints")}:
@@ -60,7 +60,7 @@ export function ScoreTracker({ score, compact = false }: ScoreTrackerProps) {
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               <p>
                 <span className="font-medium text-rose-600 dark:text-rose-400">
                   {t("game.riskPoints")}:

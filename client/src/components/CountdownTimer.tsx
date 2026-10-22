@@ -17,19 +17,15 @@ export function CountdownTimer({ totalSeconds, isActive, sceneId, onTimeUp }: Co
   const [isPulsing, setIsPulsing] = useState(false);
   const hasTriggeredTimeUp = useRef(false);
   const prevSceneId = useRef(sceneId);
-  const prevIsActive = useRef(isActive);
 
   useEffect(() => {
     const sceneChanged = sceneId !== prevSceneId.current;
-    const becameActive = isActive && !prevIsActive.current;
-
-    if (sceneChanged || becameActive) {
+    if (sceneChanged) {
       setSecondsRemaining(totalSeconds);
       hasTriggeredTimeUp.current = false;
     }
 
     prevSceneId.current = sceneId;
-    prevIsActive.current = isActive;
   }, [sceneId, isActive, totalSeconds]);
 
   useEffect(() => {

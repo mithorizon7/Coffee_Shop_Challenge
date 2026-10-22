@@ -1,4 +1,4 @@
-import type { Express, Request } from "express";
+import type { Express, Request, RequestHandler } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
 import { getAllScenarios, getAvailableBadges } from "../shared/scenarios";
@@ -6,8 +6,18 @@ import { z } from "zod";
 import { randomUUID } from "crypto";
 import { isAuthenticated } from "./replit_integrations/auth";
 import { db } from "./db";
-import { users } from "@shared/schema";
+import { type GameSession, users } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import { isTrustedRequestOrigin } from "./requestSecurity";
+import { logError } from "./errorLogging";
+import { SessionRequestError, type SessionRecord } from "./gameSessionStore";
+import { pool } from "./db";
+import {
+  advanceSession,
+  getCurrentSceneFromScenario,
+  processAction,
+  processNetworkSelection,
+} from "@shared/gameEngine";
 
 const SIMPLE_ID_PATTERN = /^[a-z0-9_-]+$/i;
 const simpleIdSchema = z.string().max(120).regex(SIMPLE_ID_PATTERN, "Invalid identifier format");
@@ -23,13 +33,12 @@ function isValidSessionId(id: string): boolean {
   return SESSION_ID_PATTERN.test(id);
 }
 
-// Simple in-memory rate limiter for session creation
-const sessionCreationLimiter = new Map<string, { count: number; resetAt: number }>();
-const sessionOwnerById = new Map<string, string | null>();
-const completedProgressSessionIds = new Set<string>();
-const processingProgressSessionIds = new Set<string>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 30; // max 30 session starts per minute per user/IP
+const MAX_SESSION_HISTORY = 50;
+
+const authenticateIfSignedIn: RequestHandler = (req, res, next) => {
+  if (req.isAuthenticated()) return isAuthenticated(req, res, next);
+  next();
+};
 
 function getClientIp(req: Request): string {
   return (req.ip || req.socket.remoteAddress || "unknown").toString();
@@ -47,24 +56,6 @@ function getSessionRateLimitKey(req: Request): string {
     return `user:${userId}`;
   }
   return `ip:${getClientIp(req)}`;
-}
-
-function checkRateLimit(key: string): { allowed: boolean; retryAfterSeconds: number } {
-  const now = Date.now();
-  const record = sessionCreationLimiter.get(key);
-
-  if (!record || now > record.resetAt) {
-    sessionCreationLimiter.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return { allowed: true, retryAfterSeconds: 0 };
-  }
-
-  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
-    const retryAfterSeconds = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
-    return { allowed: false, retryAfterSeconds };
-  }
-
-  record.count++;
-  return { allowed: true, retryAfterSeconds: 0 };
 }
 
 const scoreSchema = z
@@ -104,6 +95,7 @@ const completeSessionSchema = z.object({
 });
 
 const updateSessionSchema = z.object({
+  revision: z.number().int().nonnegative(),
   currentSceneId: simpleIdSchema.optional(),
   selectedNetworkId: simpleIdSchema.optional(),
   vpnEnabled: z.boolean().optional(),
@@ -131,40 +123,9 @@ function calculateGradeFromScore(score: z.infer<typeof scoreSchema>): "A" | "B" 
   return "F";
 }
 
-function getSessionOwnerViolation(req: Request, sessionId: string): string | null {
-  const ownerId = sessionOwnerById.get(sessionId);
-  if (!ownerId) return null;
-
-  const requesterId = getRequesterUserId(req);
-  if (requesterId === ownerId) return null;
-
+function getSessionOwnerViolation(req: Request, record: SessionRecord): string | null {
+  if (record.ownerId === null || record.ownerId === getRequesterUserId(req)) return null;
   return "Session belongs to a different authenticated user";
-}
-
-function isTrustedRequestOrigin(req: Request): boolean {
-  const requestHost = req.headers.host;
-  if (!requestHost || typeof requestHost !== "string") return false;
-  const normalizedRequestHost = requestHost.toLowerCase();
-
-  const isSameHost = (value: string): boolean => {
-    try {
-      return new URL(value).host.toLowerCase() === normalizedRequestHost;
-    } catch {
-      return false;
-    }
-  };
-
-  const originHeader = req.headers.origin;
-  if (typeof originHeader === "string" && originHeader.length > 0) {
-    return isSameHost(originHeader);
-  }
-
-  const refererHeader = req.headers.referer;
-  if (typeof refererHeader === "string" && refererHeader.length > 0) {
-    return isSameHost(refererHeader);
-  }
-
-  return false;
 }
 
 function validateUpdateAgainstScenario(
@@ -201,42 +162,171 @@ function validateUpdateAgainstScenario(
   return null;
 }
 
-// Clean up old rate limit entries periodically
-const limiterCleanupInterval = setInterval(
-  () => {
-    const now = Date.now();
-    sessionCreationLimiter.forEach((record, key) => {
-      if (now > record.resetAt) {
-        sessionCreationLimiter.delete(key);
-      }
+function cloneSession(session: GameSession): GameSession {
+  return {
+    ...session,
+    score: { ...session.score },
+    completedSceneIds: [...session.completedSceneIds],
+    badges: session.badges.map((badge) => ({ ...badge })),
+  };
+}
+
+function toSessionUpdatePayload(session: GameSession): z.infer<typeof updateSessionSchema> {
+  const payload: z.infer<typeof updateSessionSchema> = {
+    revision: session.revision ?? 0,
+    currentSceneId: session.currentSceneId,
+    vpnEnabled: session.vpnEnabled,
+    score: { ...session.score },
+    completedSceneIds: [...session.completedSceneIds],
+    badges: session.badges.map((badge) => ({ ...badge })),
+  };
+
+  if (session.selectedNetworkId) {
+    payload.selectedNetworkId = session.selectedNetworkId;
+  }
+  if (session.completedAt) {
+    payload.completedAt = session.completedAt;
+  }
+
+  return payload;
+}
+
+function arraysMatchInOrder(a: string[], b: string[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
+}
+
+function scoresMatch(
+  a: z.infer<typeof scoreSchema> | undefined,
+  b: z.infer<typeof scoreSchema> | undefined
+): boolean {
+  if (!a || !b) return a === b;
+  return (
+    a.safetyPoints === b.safetyPoints &&
+    a.riskPoints === b.riskPoints &&
+    a.decisionsCount === b.decisionsCount &&
+    a.correctDecisions === b.correctDecisions
+  );
+}
+
+function sessionUpdateMatchesState(
+  updates: z.infer<typeof updateSessionSchema>,
+  candidate: GameSession
+): boolean {
+  const candidatePayload = toSessionUpdatePayload(candidate);
+  const updateBadgeIds = (updates.badges ?? []).map((badge) => badge.id);
+  const candidateBadgeIds = candidatePayload.badges?.map((badge) => badge.id) ?? [];
+
+  return (
+    updates.currentSceneId === candidatePayload.currentSceneId &&
+    updates.selectedNetworkId === candidatePayload.selectedNetworkId &&
+    updates.vpnEnabled === candidatePayload.vpnEnabled &&
+    scoresMatch(updates.score, candidatePayload.score) &&
+    arraysMatchInOrder(updates.completedSceneIds ?? [], candidatePayload.completedSceneIds ?? []) &&
+    arraysMatchIgnoringOrder(updateBadgeIds, candidateBadgeIds) &&
+    Boolean(updates.completedAt) === Boolean(candidatePayload.completedAt)
+  );
+}
+
+function getForwardSessionCandidates(
+  session: GameSession,
+  scenario: import("@shared/schema").Scenario
+) {
+  if (session.completedAt) return [];
+  const currentScene = getCurrentSceneFromScenario(scenario, session.currentSceneId);
+  if (!currentScene) {
+    return [];
+  }
+
+  const candidates: GameSession[] = [];
+
+  if (currentScene.networks) {
+    for (const network of currentScene.networks) {
+      candidates.push(processNetworkSelection(session, network, scenario).updatedSession);
+    }
+  }
+
+  if (currentScene.actions) {
+    for (const action of currentScene.actions) {
+      candidates.push(processAction(session, action.id, scenario).updatedSession);
+    }
+  }
+
+  if (["arrival", "briefing", "consequence", "debrief", "completion"].includes(currentScene.type)) {
+    candidates.push(advanceSession(session, scenario));
+  }
+
+  const uniqueCandidates = new Map<string, GameSession>();
+  for (const candidate of candidates) {
+    uniqueCandidates.set(
+      JSON.stringify(toSessionUpdatePayload(candidate)),
+      cloneSession(candidate)
+    );
+  }
+
+  return Array.from(uniqueCandidates.values());
+}
+
+function resolveSessionUpdate(
+  record: SessionRecord,
+  existingSession: GameSession,
+  updates: z.infer<typeof updateSessionSchema>
+): { session: GameSession; nextHistory: GameSession[] } | null {
+  if (sessionUpdateMatchesState(updates, existingSession)) {
+    return {
+      session: cloneSession(existingSession),
+      nextHistory: record.history,
+    };
+  }
+
+  if (existingSession.completedAt) return null;
+
+  const history = record.history;
+  for (let index = history.length - 1; index >= 0; index -= 1) {
+    if (sessionUpdateMatchesState(updates, history[index])) {
+      return {
+        session: cloneSession(history[index]),
+        nextHistory: history.slice(0, index),
+      };
+    }
+  }
+
+  const scenario = getAllScenarios().find((item) => item.id === existingSession.scenarioId);
+  if (!scenario) {
+    return null;
+  }
+
+  const candidates = getForwardSessionCandidates(existingSession, scenario);
+  const clock = record.clock;
+  const scene = getCurrentSceneFromScenario(scenario, existingSession.currentSceneId);
+  if (
+    existingSession.difficulty === "advanced" &&
+    clock &&
+    !clock.timedOut &&
+    clock.sceneId === existingSession.currentSceneId &&
+    ["network_selection", "task_prompt", "captive_portal"].includes(scene?.type ?? "") &&
+    Date.now() - clock.enteredAt >= (scenario.timerSeconds ?? 120) * 1000
+  ) {
+    candidates.push({
+      ...existingSession,
+      score: {
+        ...existingSession.score,
+        riskPoints: existingSession.score.riskPoints + 15,
+      },
     });
-  },
-  5 * 60 * 1000
-); // Every 5 minutes
-limiterCleanupInterval.unref?.();
+  }
+  const matchingCandidate = candidates.find((candidate) =>
+    sessionUpdateMatchesState(updates, candidate)
+  );
+  if (!matchingCandidate) {
+    return null;
+  }
 
-const sessionMetadataCleanupInterval = setInterval(
-  () => {
-    void (async () => {
-      const sessionIds = new Set<string>([
-        ...Array.from(sessionOwnerById.keys()),
-        ...Array.from(completedProgressSessionIds.values()),
-        ...Array.from(processingProgressSessionIds.values()),
-      ]);
-
-      for (const sessionId of Array.from(sessionIds)) {
-        const session = await storage.getGameSession(sessionId);
-        if (!session) {
-          sessionOwnerById.delete(sessionId);
-          completedProgressSessionIds.delete(sessionId);
-          processingProgressSessionIds.delete(sessionId);
-        }
-      }
-    })();
-  },
-  15 * 60 * 1000
-);
-sessionMetadataCleanupInterval.unref?.();
+  return {
+    session: matchingCandidate,
+    nextHistory: [...history, cloneSession(existingSession)].slice(-MAX_SESSION_HISTORY),
+  };
+}
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   app.get("/api/scenarios", (req, res) => {
@@ -265,11 +355,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(getAvailableBadges());
   });
 
-  app.post("/api/sessions", async (req, res) => {
+  app.post("/api/sessions", authenticateIfSignedIn, async (req, res) => {
     try {
+      if (!isTrustedRequestOrigin(req)) {
+        return res.status(403).json({ error: "Untrusted request origin" });
+      }
       // Rate limiting
       const limitKey = getSessionRateLimitKey(req);
-      const rateLimit = checkRateLimit(limitKey);
+      const rateLimit = await storage.gameSessionStore.checkRateLimit(limitKey);
       if (!rateLimit.allowed) {
         res.setHeader("Retry-After", rateLimit.retryAfterSeconds.toString());
         return res.status(429).json({
@@ -317,89 +410,79 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         completedAt: undefined,
       };
 
-      const createdSession = await storage.createGameSession(session);
-      sessionOwnerById.set(createdSession.id, getRequesterUserId(req));
-      completedProgressSessionIds.delete(createdSession.id);
+      const createdSession = await storage.createGameSession(session, getRequesterUserId(req));
       res.status(201).json(createdSession);
     } catch (error) {
-      console.error("Error creating session:", error);
+      logError("Error creating session:", error);
       res.status(500).json({ error: "Failed to create session" });
     }
   });
 
-  app.get("/api/sessions/:id", async (req, res) => {
+  app.get("/api/sessions/:id", authenticateIfSignedIn, async (req, res) => {
     try {
       const sessionId = req.params.id;
       if (!isValidSessionId(sessionId)) {
         return res.status(400).json({ error: "Invalid session ID format" });
       }
 
-      const session = await storage.getGameSession(sessionId);
-      if (!session) {
-        sessionOwnerById.delete(sessionId);
-        completedProgressSessionIds.delete(sessionId);
-        return res.status(404).json({ error: "Session not found" });
-      }
-
-      const ownerViolation = getSessionOwnerViolation(req, sessionId);
-      if (ownerViolation) {
-        return res.status(403).json({ error: ownerViolation });
-      }
-
+      const record = await storage.gameSessionStore.get(sessionId);
+      if (!record) return res.status(404).json({ error: "Session not found" });
+      const ownerViolation = getSessionOwnerViolation(req, record);
+      if (ownerViolation) return res.status(403).json({ error: ownerViolation });
+      const session = record.session;
       res.json(session);
     } catch (error) {
-      console.error("Error fetching session:", error);
+      logError("Error fetching session:", error);
       res.status(500).json({ error: "Failed to fetch session" });
     }
   });
 
-  app.patch("/api/sessions/:id", async (req, res) => {
+  app.patch("/api/sessions/:id", authenticateIfSignedIn, async (req, res) => {
     try {
+      if (!isTrustedRequestOrigin(req))
+        return res.status(403).json({ error: "Untrusted request origin" });
       const sessionId = req.params.id;
-      if (!isValidSessionId(sessionId)) {
+      if (!isValidSessionId(sessionId))
         return res.status(400).json({ error: "Invalid session ID format" });
-      }
-
-      const parseResult = updateSessionSchema.safeParse(req.body);
-
-      if (!parseResult.success) {
-        return res.status(400).json({
-          error: "Invalid update data",
-          details: parseResult.error.flatten(),
-        });
-      }
-
-      const existingSession = await storage.getGameSession(sessionId);
-      if (!existingSession) {
-        sessionOwnerById.delete(sessionId);
-        completedProgressSessionIds.delete(sessionId);
-        return res.status(404).json({ error: "Session not found" });
-      }
-
-      const ownerViolation = getSessionOwnerViolation(req, sessionId);
-      if (ownerViolation) {
-        return res.status(403).json({ error: ownerViolation });
-      }
-
-      const scenarioValidationError = validateUpdateAgainstScenario(
-        existingSession.scenarioId,
-        parseResult.data
-      );
-      if (scenarioValidationError) {
-        return res.status(400).json({ error: scenarioValidationError });
-      }
-
-      const session = await storage.updateGameSession(sessionId, parseResult.data);
-
-      if (!session) {
-        sessionOwnerById.delete(sessionId);
-        completedProgressSessionIds.delete(sessionId);
-        return res.status(404).json({ error: "Session not found" });
-      }
-
+      const parsed = updateSessionSchema.safeParse(req.body);
+      if (!parsed.success)
+        return res
+          .status(400)
+          .json({ error: "Invalid update data", details: parsed.error.flatten() });
+      const session = await storage.gameSessionStore.mutate(sessionId, (record) => {
+        const violation = getSessionOwnerViolation(req, record);
+        if (violation) throw new SessionRequestError(403, violation);
+        const existing = record.session;
+        // A lost response can be retried without applying an action twice.
+        if (sessionUpdateMatchesState(parsed.data, existing)) return record;
+        if (parsed.data.revision !== (existing.revision ?? 0)) {
+          throw new SessionRequestError(409, "Session changed. Reload before trying again.");
+        }
+        const validation = validateUpdateAgainstScenario(existing.scenarioId, parsed.data);
+        if (validation) throw new SessionRequestError(400, validation);
+        const resolved = resolveSessionUpdate(record, existing, parsed.data);
+        if (!resolved) throw new SessionRequestError(400, "Invalid session transition");
+        const updated = { ...resolved.session, revision: (existing.revision ?? 0) + 1 };
+        const sceneChanged = updated.currentSceneId !== existing.currentSceneId;
+        return {
+          session: updated,
+          ownerId: record.ownerId,
+          history: resolved.nextHistory,
+          clock: sceneChanged
+            ? { sceneId: updated.currentSceneId, enteredAt: Date.now(), timedOut: false }
+            : {
+                ...record.clock,
+                timedOut:
+                  record.clock.timedOut ||
+                  updated.score.riskPoints === existing.score.riskPoints + 15,
+              },
+        };
+      });
       res.json(session);
     } catch (error) {
-      console.error("Error updating session:", error);
+      if (error instanceof SessionRequestError)
+        return res.status(error.status).json({ error: error.message });
+      logError("Error updating session:", error);
       res.status(500).json({ error: "Failed to update session" });
     }
   });
@@ -408,8 +491,18 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json([]);
   });
 
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  app.get("/api/health", async (_req, res) => {
+    try {
+      await pool.query("SELECT 1");
+      res.json({
+        status: "ok",
+        release: process.env.RELEASE_SHA ?? "development",
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      logError("Health check failed", error);
+      res.status(503).json({ status: "unavailable" });
+    }
   });
 
   app.post("/api/progress/complete", isAuthenticated, async (req: any, res) => {
@@ -432,69 +525,67 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
       const { sessionId, scenarioId, difficulty, score, badges } = parseResult.data;
 
-      if (
-        completedProgressSessionIds.has(sessionId) ||
-        processingProgressSessionIds.has(sessionId)
-      ) {
-        return res.status(409).json({ error: "Progress for this session was already saved" });
+      const existingCompletedProgress = await storage.getCompletedSession(sessionId);
+      if (existingCompletedProgress) {
+        if (existingCompletedProgress.userId !== userId) {
+          return res
+            .status(403)
+            .json({ error: "Session belongs to a different authenticated user" });
+        }
+        return res.status(200).json(existingCompletedProgress);
       }
 
-      processingProgressSessionIds.add(sessionId);
-      try {
-        const activeSession = await storage.getGameSession(sessionId);
-        if (!activeSession) {
-          sessionOwnerById.delete(sessionId);
-          completedProgressSessionIds.delete(sessionId);
-          return res.status(400).json({
-            error: "Active session not found. Start a new challenge before saving progress.",
-          });
-        }
+      const record = await storage.gameSessionStore.get(sessionId);
+      if (!record)
+        return res.status(400).json({
+          error: "Active session not found. Start a new challenge before saving progress.",
+        });
+      const activeSession = record.session;
+      if (!record.ownerId || record.ownerId !== userId) {
+        return res
+          .status(403)
+          .json({ error: "Only the authenticated session owner can save this progress." });
+      }
 
-        const ownerId = sessionOwnerById.get(sessionId);
-        if (!ownerId || ownerId !== userId) {
-          return res.status(403).json({
-            error: "Only the authenticated session owner can save this progress.",
-          });
-        }
+      if (activeSession.scenarioId !== scenarioId) {
+        return res.status(400).json({ error: "Scenario mismatch for active session" });
+      }
+      if (activeSession.difficulty !== difficulty) {
+        return res.status(400).json({ error: "Difficulty mismatch for active session" });
+      }
+      const scenarioExists = getAllScenarios().some(
+        (scenario) => scenario.id === activeSession.scenarioId
+      );
+      if (!scenarioExists) {
+        return res.status(400).json({ error: "Scenario no longer available" });
+      }
+      if (
+        activeSession.score.safetyPoints !== score.safetyPoints ||
+        activeSession.score.riskPoints !== score.riskPoints ||
+        activeSession.score.decisionsCount !== score.decisionsCount ||
+        activeSession.score.correctDecisions !== score.correctDecisions
+      ) {
+        return res.status(400).json({ error: "Score mismatch for active session" });
+      }
 
-        if (activeSession.scenarioId !== scenarioId) {
-          return res.status(400).json({ error: "Scenario mismatch for active session" });
-        }
-        if (activeSession.difficulty !== difficulty) {
-          return res.status(400).json({ error: "Difficulty mismatch for active session" });
-        }
-        const scenarioExists = getAllScenarios().some(
-          (scenario) => scenario.id === activeSession.scenarioId
-        );
-        if (!scenarioExists) {
-          return res.status(400).json({ error: "Scenario no longer available" });
-        }
-        if (
-          activeSession.score.safetyPoints !== score.safetyPoints ||
-          activeSession.score.riskPoints !== score.riskPoints ||
-          activeSession.score.decisionsCount !== score.decisionsCount ||
-          activeSession.score.correctDecisions !== score.correctDecisions
-        ) {
-          return res.status(400).json({ error: "Score mismatch for active session" });
-        }
+      const payloadBadgeIds = (badges ?? []).map((badge) => badge.id);
+      const sessionBadgeIds = activeSession.badges.map((badge) => badge.id);
+      if (!arraysMatchIgnoringOrder(payloadBadgeIds, sessionBadgeIds)) {
+        return res.status(400).json({ error: "Badge mismatch for active session" });
+      }
 
-        const payloadBadgeIds = (badges ?? []).map((badge) => badge.id);
-        const sessionBadgeIds = activeSession.badges.map((badge) => badge.id);
-        if (!arraysMatchIgnoringOrder(payloadBadgeIds, sessionBadgeIds)) {
-          return res.status(400).json({ error: "Badge mismatch for active session" });
-        }
+      if (!activeSession.completedAt) {
+        return res.status(400).json({
+          error: "Session is not completed yet. Complete the challenge before saving progress.",
+        });
+      }
 
-        if (!activeSession.completedAt) {
-          return res.status(400).json({
-            error: "Session is not completed yet. Complete the challenge before saving progress.",
-          });
-        }
+      const startedAt = new Date(activeSession.startedAt);
+      const safeStartedAt = Number.isNaN(startedAt.getTime()) ? new Date() : startedAt;
+      const grade = calculateGradeFromScore(activeSession.score);
 
-        const startedAt = new Date(activeSession.startedAt);
-        const safeStartedAt = Number.isNaN(startedAt.getTime()) ? new Date() : startedAt;
-        const grade = calculateGradeFromScore(activeSession.score);
-
-        const completedSession = await storage.saveCompletedSession({
+      const completedSession = await storage.saveCompletedSession(
+        {
           userId,
           scenarioId: activeSession.scenarioId,
           difficulty: activeSession.difficulty,
@@ -505,15 +596,13 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
           grade,
           badges: sessionBadgeIds,
           startedAt: safeStartedAt,
-        });
+        },
+        activeSession.id
+      );
 
-        completedProgressSessionIds.add(sessionId);
-        res.status(201).json(completedSession);
-      } finally {
-        processingProgressSessionIds.delete(sessionId);
-      }
+      res.status(201).json(completedSession);
     } catch (error) {
-      console.error("Error saving completed session:", error);
+      logError("Error saving completed session:", error);
       res.status(500).json({ error: "Failed to save completed session" });
     }
   });
@@ -528,7 +617,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const progress = await storage.getUserProgress(userId);
       res.json(progress);
     } catch (error) {
-      console.error("Error fetching progress:", error);
+      logError("Error fetching progress:", error);
       res.status(500).json({ error: "Failed to fetch progress" });
     }
   });
@@ -543,7 +632,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const sessions = await storage.getCompletedSessionsByUser(userId);
       res.json(sessions);
     } catch (error) {
-      console.error("Error fetching sessions:", error);
+      logError("Error fetching sessions:", error);
       res.status(500).json({ error: "Failed to fetch sessions" });
     }
   });
@@ -563,7 +652,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const analytics = await storage.getEducatorAnalytics();
       res.json(analytics);
     } catch (error) {
-      console.error("Error fetching educator analytics:", error);
+      logError("Error fetching educator analytics:", error);
       res.status(500).json({ error: "Failed to fetch analytics" });
     }
   });
@@ -578,7 +667,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
       res.json({ isEducator: user?.isEducator ?? false });
     } catch (error) {
-      console.error("Error checking educator status:", error);
+      logError("Error checking educator status:", error);
       res.status(500).json({ error: "Failed to check educator status" });
     }
   });

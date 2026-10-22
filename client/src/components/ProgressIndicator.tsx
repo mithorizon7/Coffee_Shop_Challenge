@@ -69,7 +69,7 @@ export function ProgressIndicator({
             </div>
 
             {index < displayScenes.length - 1 && (
-              <ChevronRight className="w-4 h-4 text-muted-foreground mx-1 flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground mx-1 shrink-0" />
             )}
           </div>
         );

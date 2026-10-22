@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <div className="app-shell w-full flex items-center justify-center">
       <Card className="app-surface w-full max-w-md mx-4 p-6 md:p-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
         <div className="absolute -top-20 -right-16 h-36 w-36 rounded-full bg-destructive/10 blur-2xl pointer-events-none" />
         <div className="relative space-y-4">
           <div className="flex items-center gap-3">

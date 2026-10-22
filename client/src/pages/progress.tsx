@@ -187,7 +187,7 @@ export default function ProgressPage() {
           className="space-y-8"
         >
           <Card className="p-6 md:p-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/25 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-br from-background/70 via-transparent to-background/25 pointer-events-none" />
             <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
             <div className="absolute -bottom-24 -left-16 h-52 w-52 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
             <div className="relative">
@@ -374,7 +374,7 @@ export default function ProgressPage() {
                           session.scenarioId,
                           session.scenarioId
                             .replace(/_/g, " ")
-                            .replace(/\\b\\w/g, (c) => c.toUpperCase())
+                            .replace(/\b\w/g, (c) => c.toUpperCase())
                         );
                         const scenarioLocation = translateScenarioLocation(
                           t,

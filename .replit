@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web", "postgresql-16"]
+modules = ["nodejs-22", "web", "python-base-3.13", "postgresql-16"]
 run = "npm run dev"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
@@ -14,8 +14,8 @@ PORT = "5000"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["node", "./dist/index.cjs"]
-build = ["npm", "run", "build"]
+run = ["sh", "scripts/with-runtime.sh", "npm", "run", "start"]
+build = ["sh", "scripts/with-runtime.sh", "npm", "run", "release:build"]
 
 [workflows]
 runButton = "Project"

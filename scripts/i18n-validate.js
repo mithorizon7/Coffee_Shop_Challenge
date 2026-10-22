@@ -157,6 +157,18 @@ function main() {
   const baseFlat = flatLocales[BASE_LOCALE];
   const baseKeys = Object.keys(baseFlat).sort();
 
+  // Catch literal UI keys absent from every locale, not just locale parity.
+  const sourceRoot = path.join(LOCALES_DIR, "..");
+  for (const file of fs.readdirSync(sourceRoot, { recursive: true })) {
+    if (!/\.(ts|tsx)$/.test(file)) continue;
+    const source = fs.readFileSync(path.join(sourceRoot, file), "utf8");
+    for (const match of source.matchAll(/\bt\(\s*["']([a-zA-Z][a-zA-Z0-9_.-]*)["']/g)) {
+      if (!Object.hasOwn(baseFlat, match[1])) {
+        errors.push(`${file}: unknown literal translation key ${match[1]}`);
+      }
+    }
+  }
+
   // Validate each locale against base
   for (const locale of ALL_LOCALES) {
     if (locale === BASE_LOCALE) continue;

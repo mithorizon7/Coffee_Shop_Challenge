@@ -64,15 +64,15 @@ export function ScenarioIntro({
               <p className="text-sm text-muted-foreground">{t("onboarding.scenarioGuide.body")}</p>
               <ul className="space-y-2 text-sm text-foreground">
                 <li className="flex items-start gap-2">
-                  <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <Target className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <span>{t("onboarding.scenarioGuide.item1")}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <Target className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <span>{t("onboarding.scenarioGuide.item2")}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Target className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <Target className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <span>{t("onboarding.scenarioGuide.item3")}</span>
                 </li>
               </ul>
@@ -95,7 +95,7 @@ export function ScenarioIntro({
 
       <div className="grid gap-8 lg:grid-cols-[1.35fr_0.65fr] items-start">
         <Card className="p-7 md:p-10 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-br from-background/70 via-transparent to-background/30 pointer-events-none" />
           <div className="absolute -top-24 -right-12 h-44 w-44 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
           <div className="absolute -bottom-28 -left-16 h-52 w-52 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
           <div className="relative space-y-7">
@@ -150,7 +150,7 @@ export function ScenarioIntro({
               <ol className="space-y-3">
                 {[1, 2, 3].map((step) => (
                   <li key={step} className="flex items-start gap-3">
-                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                       {step}
                     </span>
                     <div>
@@ -171,7 +171,7 @@ export function ScenarioIntro({
             <div className="flex items-start gap-4">
               <div
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
+                  "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-[0_14px_30px_-22px_hsl(var(--foreground)/0.4)]",
                   config.bgColor
                 )}
               >
@@ -193,7 +193,7 @@ export function ScenarioIntro({
                 >
                   <span
                     className={cn(
-                      "w-1.5 h-1.5 rounded-full flex-shrink-0",
+                      "w-1.5 h-1.5 rounded-full shrink-0",
                       scenario.difficulty === "beginner" && "bg-emerald-500 dark:bg-emerald-400",
                       scenario.difficulty === "intermediate" && "bg-amber-500 dark:bg-amber-400",
                       scenario.difficulty === "advanced" && "bg-rose-500 dark:bg-rose-400"

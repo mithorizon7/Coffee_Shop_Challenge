@@ -7,7 +7,15 @@ import tseslint from "typescript-eslint";
 
 export default [
   {
-    ignores: ["dist/**", "node_modules/**", "coverage/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "coverage/**",
+      ".security-tools/**",
+      ".runtime/**",
+      "output/**",
+      ".playwright-cli/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
