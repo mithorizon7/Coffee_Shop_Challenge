@@ -26,6 +26,7 @@ import { motion } from "framer-motion";
 import { orderedDifficulties } from "@/lib/difficultyConfig";
 import { translateScenarioTitle } from "@/lib/translateContent";
 import { readLearnerOnboardingState, updateLearnerOnboardingState } from "@/lib/onboardingState";
+import { useToast } from "@/hooks/use-toast";
 
 type ViewState = "landing" | "scenario_intro" | "loading_scenario" | "playing";
 type ExplorationPhase = "explore" | "final";
@@ -44,6 +45,7 @@ export default function Home() {
     readLearnerOnboardingState()
   );
   const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -146,16 +148,20 @@ export default function Home() {
   };
 
   const handleStartFinalRun = async () => {
-    if (!selectedScenario) return;
-
-    setExplorationPhase("final");
-    setExploredNetworkIds([]);
+    if (!selectedScenario || createSessionMutation.isPending) return;
 
     try {
       const session = await startScenarioSession(selectedScenario);
+      setExplorationPhase("final");
+      setExploredNetworkIds([]);
       setCurrentSession(session);
     } catch (error) {
       console.error("Failed to start final run:", error);
+      toast({
+        title: t("errors.loadingFailed"),
+        description: t("errors.finalRunStartBody"),
+        variant: "destructive",
+      });
     }
   };
 
@@ -216,6 +222,7 @@ export default function Home() {
         onRestart={handleRestartGame}
         onAdvance={handleAdvanceScenario}
         isLastScenario={scenarioIndex >= orderedScenarios.length - 1}
+        isStartingRun={createSessionMutation.isPending}
         exploration={{
           phase: explorationPhase,
           rootNetworkSceneId,

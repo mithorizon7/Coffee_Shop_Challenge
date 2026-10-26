@@ -23,6 +23,7 @@ import { translateScenarioTitle } from "@/lib/translateContent";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { Link } from "wouter";
 
 interface CompletionScreenProps {
   session: GameSession;
@@ -31,6 +32,7 @@ interface CompletionScreenProps {
   onSelectNewScenario: () => void;
   isLastScenario?: boolean;
   isBusy?: boolean;
+  saveState?: "guest" | "saving" | "saved";
   saveError?: { title: string; body: string; onRetry: () => void };
 }
 
@@ -41,6 +43,7 @@ export function CompletionScreen({
   onSelectNewScenario,
   isLastScenario = false,
   isBusy = false,
+  saveState,
   saveError,
 }: CompletionScreenProps) {
   const { t } = useTranslation();
@@ -70,6 +73,32 @@ export function CompletionScreen({
           <p className="text-muted-foreground">
             {t("completion.finishedScenario", { title: scenarioTitle })}
           </p>
+        </div>
+
+        <div className="space-y-3 text-center">
+          {saveState && (
+            <p role="status" aria-live="polite" data-testid="completion-save-status">
+              {t(`completion.save.${saveState}`)}
+            </p>
+          )}
+          <div className="flex flex-wrap justify-center gap-3">
+            {saveState === "saved" && (
+              <Button asChild variant="outline" data-testid="button-view-saved-progress">
+                <Link href="/progress">{t("completion.viewProgress")}</Link>
+              </Button>
+            )}
+            <Button asChild variant="ghost">
+              <a
+                href="/"
+                aria-disabled={isBusy}
+                onClick={(event) => {
+                  if (isBusy) event.preventDefault();
+                }}
+              >
+                {t("completion.returnHome")}
+              </a>
+            </Button>
+          </div>
         </div>
 
         {saveError && (

@@ -414,6 +414,12 @@
     "riskPoints": "+{points} Risk Points"
   },
   "completion": {
+    "save": {
+      "saving": "Saving your result...",
+      "saved": "Your result is saved to your account.",
+      "guest": "Guest result: not saved to an account. Sign in before your next run to save future results."
+    },
+    "viewProgress": "View saved progress",
     "title": "Scenario Complete!",
     "finishedScenario": "You've finished \"{title}\"",
     "scenarioComplete": "Scenario Complete",
@@ -530,6 +536,7 @@
   "errors": {
     "scenarioNotFound": "Scenario not found",
     "loadingFailed": "Failed to load. Please try again.",
+    "finalRunStartBody": "Your practice is still here. Select Start final run again when your connection is ready.",
     "networkError": "Network error. Please check your connection.",
     "sessionExpired": "Session expired. Starting a new game.",
     "sessionSyncTitle": "Progress couldn't sync",

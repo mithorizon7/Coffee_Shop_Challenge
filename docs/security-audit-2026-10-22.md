@@ -14,12 +14,19 @@
 - [ ] F-011 [status:in_progress] [P2] [confidence:1.0] Live walkthrough found all three locales replaced the legitimate DailyGrind_Open outcome with obsolete FreePublicWiFi feedback. Corrected the network identity, legitimate/open distinction, HTTPS caveat and named safer alternative; smoke checks now enforce both network names.
   - Evidence: October 26 observed browser outcome compared with canonical scenario content and locale entries.
   - Owner: engineering / localization.
+- [ ] F-012 [status:in_progress] [P2] [confidence:1.0] Completion lacked an explicit successful-save confirmation and progress/home handoff. Added distinct pending/saved/guest messages and saved-progress navigation; four rendered UI regressions pass. Final-run creation now commits phase/exploration reset only after success, preserves practice on failure, reports recovery and locks controls while creating the run.
+  - Evidence: completion component, game container and home state transitions; 2026-10-26 PASS four rendered UI cases plus all 13 route/runtime tests. Final publication pending.
+  - Owner: engineering.
 - [x] V-020 [status:verified] October 26 local checks pass: TypeScript/scenarios, 13 security tests, six real PostgreSQL tests, lint, format, 1007 keys per locale, smoke, focused credential scan, full/production audits with zero vulnerabilities, runtime gate and production build.
   - Evidence: 2026-10-26 PASS local check outputs; insert-schema defaults/Date/integer checks and bounded 20,000-element error regressions included.
 - [x] V-021 [status:verified] October 26 synthetic recovery checks pass: auth 503, progress 503 and browser retry to a loaded progress page; separate local PostgreSQL export/import preserves three synthetic application tables and primary-key integrity.
   - Evidence: 2026-10-26T16:08:10.339Z PASS protected local recovery receipt. This is not a production database recovery drill.
 - [x] V-022 [status:verified] October 26 production UI confirms seven-day PITR on. Enabled daily backups kept seven days and monitoring alerts; enabled pending-publication uptime emails and critical-scan blocking. Auto-fix remains off.
   - Evidence: 2026-10-26 PASS actual settings inspection; daily backup panel says no backups yet. Post-publication verification and first snapshot/delivery checks remain distinct.
+- [x] V-023 [status:verified] October 26 signed-in browser journey passes: consent, four practice networks, graded handoff, staff verification, VPN and postponement decisions, completion, durable progress after reload, learner educator denial and logout.
+  - Evidence: 2026-10-26 PASS actual public service; one completed session, five correct decisions, five badges observed after reload. Help closed/reopened using keyboard. Raw screenshot remains outside Git. Final completion-copy release remains separately pending.
+- [x] V-024 [status:verified] October 26 safeguard publication persists after reload: uptime emails on, monitoring alerts on, critical-scan publishing block on, Auto-fix off. Production alert emails on at account level; active-monitoring delivery level remains its existing critical-only preference.
+  - Evidence: 2026-10-26 PASS actual published settings inspected after refresh. Reviewed tree 4d99e20c4a3431b9a62b4711f3a8b4e35bad09de matched publication checkpoint fcdb7de77f9d48cbd06aedcefed36888c5193f92. Email delivery itself was not triggered or claimed.
 
 The user's October 26 instruction authorizes completing the remaining application work, commit/merge and redeployment. The signed-in test is included; any newly encountered unrelated permissions still require separate approval. Historical/device certification and real human usability evidence must not be fabricated.
 
@@ -57,7 +64,7 @@ These results verify this application release, not the entire provider estate, d
 ## Sign-off Gates
 
 - [ ] G-001 [status:blocked] Broad historical security/forensic certification remains unavailable: R-002 and R-005 lack external evidence. This does not reverse the verified application deployment.
-- [x] G-002 [status:verified] Application deployment, patched runtime, database availability, headers and live guest paths verified against the reviewed release.
+- [ ] G-002 [status:in_progress] October 26 application release publication and final live validation in progress; October 22 receipt is historical.
 - [ ] G-003 [status:in_progress] October 26 source changes passed local checks; CI, merge, publication and final live validation pending. October 22 checks remain historical evidence.
 - [ ] G-004 [status:blocked] Residual risks have owners and next checks but remain unresolved; none is silently accepted on the user's behalf.
 
