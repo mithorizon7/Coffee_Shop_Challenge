@@ -54,6 +54,7 @@ interface GameContainerProps {
   onRestart: () => void;
   onAdvance: () => void;
   isLastScenario?: boolean;
+  isStartingRun?: boolean;
   exploration?: {
     phase: "explore" | "final";
     rootNetworkSceneId: string | null;
@@ -75,6 +76,7 @@ export function GameContainer({
   onRestart,
   onAdvance,
   isLastScenario = false,
+  isStartingRun = false,
   exploration,
 }: GameContainerProps) {
   const { t } = useTranslation();
@@ -90,7 +92,7 @@ export function GameContainer({
   const [guidanceFaded, setGuidanceFaded] = useState(false);
   const [progressSaveFailed, setProgressSaveFailed] = useState(false);
   const [completionSyncFailed, setCompletionSyncFailed] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const progressSavedRef = useRef(false);
   const completionHandledRef = useRef(false);
   const timeoutNotifiedRef = useRef<Record<string, boolean>>({});
@@ -199,7 +201,10 @@ export function GameContainer({
     rootNetworkIds.every((id) => exploredNetworkIds.includes(id));
   const isFinalRun = !isExplorationPhase || explorationTotal === 0;
   const isInteractionLocked =
-    isTransitioning || updateSessionMutation.isPending || saveProgressMutation.isPending;
+    isStartingRun ||
+    isTransitioning ||
+    updateSessionMutation.isPending ||
+    saveProgressMutation.isPending;
   const isRootNetworkScene =
     !!isExplorationPhase && !!rootNetworkSceneId && currentScene?.id === rootNetworkSceneId;
   const rootNetworkBySsid = useMemo(() => {
@@ -839,6 +844,15 @@ export function GameContainer({
         onSelectNewScenario={onAdvance}
         isLastScenario={isLastScenario}
         isBusy={isInteractionLocked || (!session.completedAt && !completionSyncFailed)}
+        saveState={
+          !isFinalRun || authLoading || completionSyncFailed || progressSaveFailed
+            ? undefined
+            : !isAuthenticated
+              ? "guest"
+              : saveProgressMutation.isSuccess
+                ? "saved"
+                : "saving"
+        }
         saveError={
           progressSaveFailed || completionSyncFailed
             ? {

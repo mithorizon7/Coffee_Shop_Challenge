@@ -414,6 +414,12 @@
     "riskPoints": "+{points} Riska Punkti"
   },
   "completion": {
+    "save": {
+      "saving": "Notiek rezultāta saglabāšana...",
+      "saved": "Rezultāts ir saglabāts tavā kontā.",
+      "guest": "Viesa rezultāts nav saglabāts kontā. Pirms nākamā mēģinājuma piesakies, lai turpmāk saglabātu rezultātus."
+    },
+    "viewProgress": "Skatīt saglabāto progresu",
     "title": "Scenārijs Pabeigts!",
     "finishedScenario": "Tu pabeidzi \"{title}\"",
     "scenarioComplete": "Scenārijs Pabeigts",
@@ -530,6 +536,7 @@
   "errors": {
     "scenarioNotFound": "Scenārijs nav atrasts",
     "loadingFailed": "Neizdevās ielādēt. Lūdzu, mēģini vēlreiz.",
+    "finalRunStartBody": "Tavs treniņš ir saglabāts šajā lapā. Kad savienojums darbojas, vēlreiz izvēlies sākt gala mēģinājumu.",
     "networkError": "Tīkla kļūda. Lūdzu, pārbaudi savienojumu.",
     "sessionExpired": "Sesija beigusies. Sāk jaunu spēli.",
     "sessionSyncTitle": "Neizdevās sinhronizēt progresu",

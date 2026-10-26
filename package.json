@@ -13,7 +13,7 @@
     "predev": "npm run check:runtime",
     "start": "npm run check:runtime && NODE_ENV=production node dist/index.cjs",
     "check:runtime": "node scripts/check-runtime.js",
-    "test:security": "node --import tsx --test tests/security.test.ts",
+    "test:security": "node --import tsx --test tests/security.test.ts tests/learner-ui.test.ts",
     "security:secrets": "node scripts/security-secrets.js",
     "check": "tsc && node scripts/validate-scenarios.js",
     "validate:scenarios": "node scripts/validate-scenarios.js",
