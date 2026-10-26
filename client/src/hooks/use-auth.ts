@@ -18,7 +18,13 @@ async function fetchUser(): Promise<User | null> {
 }
 
 export function useAuth() {
-  const { data: user, isLoading } = useQuery<User | null>({
+  const {
+    data: user,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useQuery<User | null>({
     queryKey: ["/api/auth/user"],
     queryFn: fetchUser,
     retry: false,
@@ -29,5 +35,8 @@ export function useAuth() {
     user,
     isLoading,
     isAuthenticated: !!user,
+    isError,
+    refetch,
+    isFetching,
   };
 }

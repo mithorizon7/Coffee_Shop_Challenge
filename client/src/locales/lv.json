@@ -232,6 +232,9 @@
   },
   "progress": {
     "loading": "Notiek progresa ielāde...",
+    "loadErrorTitle": "Neizdevās ielādēt progresu",
+    "loadErrorBody": "Neizdevās pārbaudīt saglabāto progresu. Mēģiniet vēlreiz vai piesakieties no jauna, ja sesija ir beigusies. Tas nenozīmē, ka saglabātais darbs ir zaudēts.",
+    "retryLoad": "Mēģināt ielādēt vēlreiz",
     "signInTitle": "Piesakies, lai sekotu progresam",
     "signInBody": "Izveido kontu, lai saglabātu spēļu sesijas un sekotu uzlabojumiem laika gaitā.",
     "signInCta": "Pieslēgties",

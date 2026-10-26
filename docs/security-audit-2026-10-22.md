@@ -1,6 +1,26 @@
 # Security audit and deployed release, October 22, 2026
 
-**Application release: merged, deployed, and verified.** Broader historical incident/device certification is not claimed. A signed-in learner save/progress test awaits the account-consent approval described below.
+## October 26 Closeout Reopened
+
+- [ ] Q-020 [status:in_progress] Patch the newly flagged Zod production dependency path, add collection/input regressions, rerun validation, merge and redeploy.
+- [ ] Q-021 [status:open] Complete the authorized signed-in learner journey and inspect learner/educator access boundaries, recovery, localization and responsive behavior.
+- [ ] Q-022 [status:open] Verify accessible backup/restore and alerting evidence, provide operational and novice-pilot handoff checks, and record actual closure limits.
+- [ ] F-009 [status:in_progress] [P1] [confidence:1.0] October 26 full and production npm audits report two high affected package entries from GHSA-mrhx-c7xc-m3w5: Zod 3.24.2 and its zod-validation-error dependency path. The October 22 zero-result is historical, not current assurance.
+  - Evidence: fresh npm audit JSON protected outside Git; GitHub reviewed advisory updated October 23, patched Zod 4.6.6+.
+  - Owner: engineering.
+- [ ] F-010 [status:in_progress] [P2] [confidence:1.0] Progress/authentication request failures lacked a clear recovery state. Added translated error, retry, sign-in and home controls; synthetic browser outages and retry recovery pass. Publication verification pending.
+  - Evidence: progress page, auth hook, three locale files; isolated browser fixture tested October 26.
+  - Owner: engineering.
+- [x] V-020 [status:verified] October 26 local checks pass: TypeScript/scenarios, 13 security tests, six real PostgreSQL tests, lint, format, 1007 keys per locale, smoke, focused credential scan, full/production audits with zero vulnerabilities, runtime gate and production build.
+  - Evidence: 2026-10-26 PASS local check outputs; insert-schema defaults/Date/integer checks and bounded 20,000-element error regressions included.
+- [x] V-021 [status:verified] October 26 synthetic recovery checks pass: auth 503, progress 503 and browser retry to a loaded progress page; separate local PostgreSQL export/import preserves three synthetic application tables and primary-key integrity.
+  - Evidence: 2026-10-26T16:08:10.339Z PASS protected local recovery receipt. This is not a production database recovery drill.
+- [x] V-022 [status:verified] October 26 production UI confirms seven-day PITR on. Enabled daily backups kept seven days and monitoring alerts; enabled pending-publication uptime emails and critical-scan blocking. Auto-fix remains off.
+  - Evidence: 2026-10-26 PASS actual settings inspection; daily backup panel says no backups yet. Post-publication verification and first snapshot/delivery checks remain distinct.
+
+The user's October 26 instruction authorizes completing the remaining application work, commit/merge and redeployment. The signed-in test is included; any newly encountered unrelated permissions still require separate approval. Historical/device certification and real human usability evidence must not be fabricated.
+
+The receipt below is the **October 22 baseline**, not the pending October 26 release. October 26 validation is recorded above. Account consent was authorized October 26; the final signed-in release test is in progress. Broader historical incident/device certification is not claimed. Operational and human-pilot procedures are in [operations-and-learner-signoff.md](operations-and-learner-signoff.md).
 
 ## Deployment Receipt
 
@@ -35,7 +55,7 @@ These results verify this application release, not the entire provider estate, d
 
 - [ ] G-001 [status:blocked] Broad historical security/forensic certification remains unavailable: R-002 and R-005 lack external evidence. This does not reverse the verified application deployment.
 - [x] G-002 [status:verified] Application deployment, patched runtime, database availability, headers and live guest paths verified against the reviewed release.
-- [x] G-003 [status:verified] Final application source and hosting corrections passed CI before merge; live checks ran after publication.
+- [ ] G-003 [status:in_progress] October 26 source changes passed local checks; CI, merge, publication and final live validation pending. October 22 checks remain historical evidence.
 - [ ] G-004 [status:blocked] Residual risks have owners and next checks but remain unresolved; none is silently accepted on the user's behalf.
 
 ## Rerun Matrix

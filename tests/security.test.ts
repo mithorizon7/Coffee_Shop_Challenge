@@ -8,6 +8,7 @@ import type { Server } from "node:http";
 import { allowedHosts, authOriginForHost, isTrustedRequestOrigin } from "../server/requestSecurity";
 import { isSupportedRuntime } from "../scripts/check-runtime.js";
 import { advanceSession, processAction, processNetworkSelection } from "../shared/gameEngine";
+import { insertCompletedSessionSchema } from "../shared/schema";
 
 // No real database, OIDC discovery, listener, or external network calls in these tests.
 process.env.DATABASE_URL = "postgresql://test:test@localhost:1/test";
@@ -148,6 +149,61 @@ test("origin policy checks scheme, port, cross-site context and missing headers"
     ),
     false
   );
+});
+
+test("completed-session insert validation preserves database defaults and Date types", () => {
+  const input = {
+    userId: "learner-a",
+    scenarioId: "coffee_shop_beginner",
+    difficulty: "beginner",
+    startedAt: new Date("2026-10-26T12:00:00Z"),
+  };
+  assert.deepEqual(insertCompletedSessionSchema.parse(input), input);
+  assert.equal(
+    insertCompletedSessionSchema.safeParse({ ...input, startedAt: "not-a-date" }).success,
+    false
+  );
+  assert.equal(
+    insertCompletedSessionSchema.safeParse({ ...input, safetyPoints: 1.5 }).success,
+    false
+  );
+});
+
+test("oversized validation collections return bounded errors without mutating sessions", async () => {
+  const scenario = getAllScenarios()[0];
+  const created = await request("post", "/api/sessions", {
+    scenarioId: scenario.id,
+    difficulty: scenario.difficulty,
+  });
+  assert.equal(created.statusCode, 201);
+  const session = created.data;
+  // Invalid elements amplify errors on vulnerable validators, even within the HTTP body limit.
+  for (const updates of [
+    { completedSceneIds: Array(20000).fill(null) },
+    { badges: Array(20000).fill(null) },
+  ]) {
+    const response = await request(
+      "patch",
+      "/api/sessions/:id",
+      { revision: session.revision, ...updates },
+      "learner-a",
+      session.id
+    );
+    assert.equal(response.statusCode, 400);
+    assert.ok(JSON.stringify(response.data).length < 1000);
+  }
+  const response = await request("post", "/api/progress/complete", {
+    sessionId: session.id,
+    scenarioId: session.scenarioId,
+    difficulty: session.difficulty,
+    score: session.score,
+    grade: "A",
+    badges: Array(20000).fill(null),
+  });
+  assert.equal(response.statusCode, 400);
+  assert.ok(JSON.stringify(response.data).length < 1000);
+  const unchanged = await request("get", "/api/sessions/:id", {}, "learner-a", session.id);
+  assert.deepEqual(unchanged.data, session);
 });
 
 test("session routes reject tampering, cross-user access, and cross-origin writes", async () => {
