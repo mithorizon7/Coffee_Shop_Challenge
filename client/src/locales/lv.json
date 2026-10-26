@@ -702,7 +702,7 @@
           "descriptionVerified": "AIZDOMĪGS - Nav oficiālais tīkls!"
         },
         "net_open": {
-          "description": "Vispārīgs atvērts tīkls - var būt jebkurš"
+          "description": "Kafejnīcas viesu tīkls - parole nav nepieciešama"
         },
         "net_neighbor": {
           "description": "Blakus esošā uzņēmuma tīkls"
@@ -776,9 +776,9 @@
         },
         "cons_open": {
           "title": "Neaizsargāts Tīkls",
-          "whatHappened": "Tu pieslēdzies 'FreePublicWiFi' - pilnībā atvērtam tīklam bez šifrēšanas. Jebkurš tuvumā varētu potenciāli redzēt tavu nešifrēto trafiku.",
-          "whyRisky": "Atvērtus tīklus ar vispārīgiem nosaukumiem var uzstādīt jebkurš. Bez šifrēšanas, tava pārlūkošanas aktivitāte, meklēšanas vaicājumi un jebkuri ne-HTTPS dati ir redzami citiem tajā pašā tīklā.",
-          "saferAlternative": "Izvēlies tīklus, kam nepieciešama parole (rāda slēdzenes ikonu). Pārbaudi tīkla nosaukumu ar iestādi. Ja jāizmanto atvērts tīkls, nekavējoties ieslēdz VPN.",
+          "whatHappened": "Tu pieslēdzies 'DailyGrind_Open', kafejnīcas īstajam atvērtajam tīklam, nevis viltus tīklam. Tam nav paroles, tāpēc pats Wi-Fi savienojums nav šifrēts.",
+          "whyRisky": "Arī īsts tīkls var būt atvērts. HTTPS aizsargā drošu vietņu saturu, taču nešifrēta datu plūsma un daļa savienojuma metadatu var būt redzama tuvumā esošiem noklausītājiem.",
+          "saferAlternative": "Lūdz personālam apstiprināt ar paroli aizsargāto tīklu 'DailyGrind_Guest'. Ja jāizmanto atvērtais tīkls, pirms sensitīviem uzdevumiem ieslēdz uzticamu VPN vai atliec šos uzdevumus.",
           "technicalExplanation": "Nešifrētos tīklos uzbrucēji var izmantot pakešu uztveršanas rīkus, lai savāktu tīkla trafiku. Lai gan HTTPS aizsargā drošu vietņu saturu, metadati par to, kuras vietnes tu apmeklē, joprojām ir redzami."
         },
         "cons_neighbor": {

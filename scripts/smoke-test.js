@@ -28,6 +28,22 @@ for (const file of scenarioFiles) {
     if (!scenarioEntry) {
       throw new Error(`Smoke test failed: locale ${locale} missing scenario ${scenario.id}.`);
     }
+    if (scenario.id === "coffee_shop_beginner") {
+      const openNetwork = scenario.scenes
+        .flatMap((scene) => scene.networks ?? [])
+        .find((network) => network.ssid === "DailyGrind_Open");
+      const feedback = scenarioEntry.consequences?.cons_open;
+      if (!openNetwork || !feedback?.whatHappened?.includes(openNetwork.ssid)) {
+        throw new Error(
+          `Smoke test failed: ${locale} open-network feedback names the wrong network.`
+        );
+      }
+      if (!feedback.saferAlternative.includes("DailyGrind_Guest")) {
+        throw new Error(
+          `Smoke test failed: ${locale} open-network feedback omits the safer network.`
+        );
+      }
+    }
   }
 }
 
