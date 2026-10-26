@@ -1,21 +1,21 @@
-# Security audit and deployed release, October 22, 2026
+# Security audit and engineering closeout, October 26, 2026
 
-## October 26 Closeout Reopened
+## October 26 Engineering Closeout
 
-- [ ] Q-020 [status:in_progress] Patch the newly flagged Zod production dependency path, add collection/input regressions, rerun validation, merge and redeploy.
-- [ ] Q-021 [status:open] Complete the authorized signed-in learner journey and inspect learner/educator access boundaries, recovery, localization and responsive behavior.
-- [ ] Q-022 [status:open] Verify accessible backup/restore and alerting evidence, provide operational and novice-pilot handoff checks, and record actual closure limits.
-- [ ] F-009 [status:in_progress] [P1] [confidence:1.0] October 26 full and production npm audits report two high affected package entries from GHSA-mrhx-c7xc-m3w5: Zod 3.24.2 and its zod-validation-error dependency path. The October 22 zero-result is historical, not current assurance.
-  - Evidence: fresh npm audit JSON protected outside Git; GitHub reviewed advisory updated October 23, patched Zod 4.6.6+.
+- [x] Q-020 [status:verified] Patched the newly flagged Zod production dependency path, added collection/input regressions, passed full CI, merged and verified the exact live release.
+- [x] Q-021 [status:verified] Completed the authorized signed-in learner journey, learner/educator boundaries, error recovery, localization checks and desktop inspection. Prior mobile evidence remains dated October 22; human and legacy-browser certification is not implied.
+- [x] Q-022 [status:verified] Verified accessible backup/restore and alerting evidence, enabled missing operational protections, completed a synthetic isolated recovery drill, and recorded owned human/provider follow-ups rather than fabricating them.
+- [x] F-009 [status:verified] [P1] [confidence:1.0] Remediated two high affected package entries from GHSA-mrhx-c7xc-m3w5 by upgrading to Zod 4.6.7, compatible drizzle-zod 0.8.3 and removing unused zod-validation-error. Both fresh full and production audits now report zero known vulnerabilities.
+  - Evidence: protected npm audit JSON; GitHub reviewed advisory updated October 23, patched Zod 4.6.6+; bounded error, insert-schema and live collection regressions pass.
   - Owner: engineering.
-- [ ] F-010 [status:in_progress] [P2] [confidence:1.0] Progress/authentication request failures lacked a clear recovery state. Added translated error, retry, sign-in and home controls; synthetic browser outages and retry recovery pass. Publication verification pending.
+- [x] F-010 [status:verified] [P2] [confidence:1.0] Progress/authentication request failures lacked a clear recovery state. Added translated error, retry, sign-in and home controls; synthetic browser outages and retry recovery pass. Fix is merged and published.
   - Evidence: progress page, auth hook, three locale files; isolated browser fixture tested October 26.
   - Owner: engineering.
-- [ ] F-011 [status:in_progress] [P2] [confidence:1.0] Live walkthrough found all three locales replaced the legitimate DailyGrind_Open outcome with obsolete FreePublicWiFi feedback. Corrected the network identity, legitimate/open distinction, HTTPS caveat and named safer alternative; smoke checks now enforce both network names.
+- [x] F-011 [status:verified] [P2] [confidence:1.0] Live walkthrough found all three locales replaced the legitimate DailyGrind_Open outcome with obsolete FreePublicWiFi feedback. Corrected the network identity, legitimate/open distinction, HTTPS caveat and named safer alternative; smoke checks enforce both network names. Corrected label and outcome observed on the final public release.
   - Evidence: October 26 observed browser outcome compared with canonical scenario content and locale entries.
   - Owner: engineering / localization.
-- [ ] F-012 [status:in_progress] [P2] [confidence:1.0] Completion lacked an explicit successful-save confirmation and progress/home handoff. Added distinct pending/saved/guest messages and saved-progress navigation; four rendered UI regressions pass. Final-run creation now commits phase/exploration reset only after success, preserves practice on failure, reports recovery and locks controls while creating the run.
-  - Evidence: completion component, game container and home state transitions; 2026-10-26 PASS four rendered UI cases plus all 13 route/runtime tests. Final publication pending.
+- [x] F-012 [status:verified] [P2] [confidence:1.0] Completion lacked an explicit successful-save confirmation and progress/home handoff. Added distinct pending/saved/guest messages and saved-progress navigation; four rendered UI regressions pass. Final-run creation now commits phase/exploration reset only after success, preserves practice on failure, reports recovery and locks controls while creating the run. Fix is merged and published.
+  - Evidence: 2026-10-26 PASS rendered UI tests and synthetic browser: failed graded start retains all four explored networks and practice phase; retry succeeds; saving changes to saved; progress link works; guest results explicitly remain unsaved.
   - Owner: engineering.
 - [x] V-020 [status:verified] October 26 local checks pass: TypeScript/scenarios, 13 security tests, six real PostgreSQL tests, lint, format, 1007 keys per locale, smoke, focused credential scan, full/production audits with zero vulnerabilities, runtime gate and production build.
   - Evidence: 2026-10-26 PASS local check outputs; insert-schema defaults/Date/integer checks and bounded 20,000-element error regressions included.
@@ -27,10 +27,16 @@
   - Evidence: 2026-10-26 PASS actual public service; one completed session, five correct decisions, five badges observed after reload. Help closed/reopened using keyboard. Raw screenshot remains outside Git. Final completion-copy release remains separately pending.
 - [x] V-024 [status:verified] October 26 safeguard publication persists after reload: uptime emails on, monitoring alerts on, critical-scan publishing block on, Auto-fix off. Production alert emails on at account level; active-monitoring delivery level remains its existing critical-only preference.
   - Evidence: 2026-10-26 PASS actual published settings inspected after refresh. Reviewed tree 4d99e20c4a3431b9a62b4711f3a8b4e35bad09de matched publication checkpoint fcdb7de77f9d48cbd06aedcefed36888c5193f92. Email delivery itself was not triggered or claimed.
+- [x] V-025 [status:verified] Final reviewed source passes all 23 security/UI/database tests and the complete CI suite; all 1012 keys per English/Latvian/Russian locale pass. Fresh full/production dependency audits report zero vulnerabilities; focused credential scan reports zero candidates in 173 working files and 631 historical text blobs.
+  - Evidence: 2026-10-26 PASS PR #18 CI 40360329471 and merged-main CI 40360663239; local build/check/lint/format/i18n/smoke/rendered tests and final audit/scan outputs.
+- [x] V-026 [status:verified] Final publication and live security/gameplay verification pass at exact release fbdfbe989c2c5c5367c2a3d9a3781b0a997150fc. No schema change or production-data overwrite occurred.
+  - Evidence: 2026-10-26T16:40:20.228Z PASS 87 production requests: exact release identity, database health, headers, private-route denial, origin/score/oversized-input rejection, all three completed scenarios, step readback and completed-state immutability. Replit status success; hosted build/startup and strict OIDC TLS passed on Node 22.23.4.
+- [x] V-027 [status:verified] Final production browser check passes reauthentication and saved progress after reload, corrected open-network learning feedback, and persisted backup/alert settings. Application-domain console error filter is empty; 1280px document has no horizontal overflow.
+  - Evidence: 2026-10-26 PASS public browser; one saved session with 5/5 correct and five badges. Replit's consent page emitted provider-domain hydration errors but completed sign-in; no application error is inferred from those external messages. Daily backups still show no snapshots yet.
 
 The user's October 26 instruction authorizes completing the remaining application work, commit/merge and redeployment. The signed-in test is included; any newly encountered unrelated permissions still require separate approval. Historical/device certification and real human usability evidence must not be fabricated.
 
-The receipt below is the **October 22 baseline**, not the pending October 26 release. October 26 validation is recorded above. Account consent was authorized October 26; the final signed-in release test is in progress. Broader historical incident/device certification is not claimed. Operational and human-pilot procedures are in [operations-and-learner-signoff.md](operations-and-learner-signoff.md).
+**Engineering release closed:** merged PRs #16, #17 and #18, green CI, and verified publication of fbdfbe989c2c5c5367c2a3d9a3781b0a997150fc at https://coffeeshopsecurity.replit.app. Later documentation-only commits do not change that deployed application identity. The receipt below is the **October 22 historical baseline**. Operational acceptance and human-pilot checks remain explicit below and in [operations-and-learner-signoff.md](operations-and-learner-signoff.md); no broad historical incident/device certification is claimed.
 
 ## Deployment Receipt
 
@@ -64,8 +70,8 @@ These results verify this application release, not the entire provider estate, d
 ## Sign-off Gates
 
 - [ ] G-001 [status:blocked] Broad historical security/forensic certification remains unavailable: R-002 and R-005 lack external evidence. This does not reverse the verified application deployment.
-- [ ] G-002 [status:in_progress] October 26 application release publication and final live validation in progress; October 22 receipt is historical.
-- [ ] G-003 [status:in_progress] October 26 source changes passed local checks; CI, merge, publication and final live validation pending. October 22 checks remain historical evidence.
+- [x] G-002 [status:verified] October 26 application publication, patched runtime, database health, headers and all three guest paths verified at the exact reviewed release; signed-in progress and operational settings checked separately.
+- [x] G-003 [status:verified] October 26 final application source passed full CI before merge and main CI after merge; publication, live smoke and browser checks passed. October 22 evidence remains historical.
 - [ ] G-004 [status:blocked] Residual risks have owners and next checks but remain unresolved; none is silently accepted on the user's behalf.
 
 ## Rerun Matrix
@@ -132,18 +138,25 @@ These results verify this application release, not the entire provider estate, d
   - Follow-up: inspect historical artifact digests, installation/build history, provider/agent audit logs and vendor incident windows. Rotate credentials only if exposure or vendor guidance warrants it.
 - [x] R-003 [status:verified] The vulnerable Tailwind 3 glob/watch chain is removed; final full audit is clean at the checked advisory baseline. Future advisory changes still require normal monitoring.
   - Owner: engineering.
-- [ ] R-004 [status:blocked] A real signed-in learner completion/save/progress/logout flow remains unverified. The browser reached a consent screen requesting email, basic profile and staying signed in; explicit user approval was requested before granting that access.
-  - Owner: user / authorized test-account holder and engineering.
-  - Follow-up: approve the specific consent or supply an authorized test account, then verify saved progress and educator-role behavior. Unit/route and real SQL tests do not replace this browser check.
-- [ ] R-005 [status:blocked] Provider kernel/backport state, edge HTTP/3, database grants/TLS/backups/restore drills, historical cloud logs and unrelated device/account/network patching were not independently certified.
+- [x] R-004 [status:verified] Authorized signed-in learner completion/save/progress/logout journey passes; final-release reauthentication and durable progress after reload also pass. Learner account is denied educator access. No educator role was granted for testing.
+  - Owner: engineering.
+  - Evidence: 2026-10-26 PASS actual browser; V-023 and V-027.
+- [ ] R-005 [status:blocked] Provider kernel/backport state, edge HTTP/3, database grants/TLS, historical cloud logs and unrelated device/account/network patching were not independently certified. Current seven-day PITR and scheduled-backup settings are verified; production recovery itself is separate under R-007.
   - Owner: hosting / device / account administrators.
   - Follow-up: use provider administrative evidence and the conditional incident/device checklists in the historical record. No global updates, rotations, unrelated-service mutations, or compromise-response actions were performed.
-- [ ] R-006 [status:open] Non-blocking performance follow-up: production client chunk is about 1004 kB minified / 292 kB gzip, with an existing 1.57 MB captive-portal image loaded when that view is rendered. The build warning remains visible rather than suppressed.
+- [ ] R-006 [status:open] Non-blocking performance follow-up: production client chunk is about 1009 kB minified / 293 kB gzip, with an existing 1.57 MB captive-portal image loaded when that view is rendered. The build warning remains visible rather than suppressed.
   - Owner: engineering.
   - Follow-up: measure real learner network/device performance before separately reviewing route splitting and image optimization. Tailwind 4 targets modern browsers; legacy-browser support has not been certified.
+- [ ] R-007 [status:open] Operational acceptance: first scheduled backup has not completed, notification delivery has not been exercised, and a provider-supported production PITR restore-to-isolated-target drill has not been performed. Enabled settings and a successful synthetic local export/import are not substitutes.
+  - Owner: hosting/account administrator.
+  - Follow-up: after the next daily backup run, verify a successful snapshot; use a supported controlled notification test without causing a production outage; arrange an approved isolated provider recovery drill. No live restore or production export was attempted.
+- [ ] R-008 [status:open] Human acceptance: no real novice cohort or professional Latvian/Russian translation review was available. Automated/browser checks do not prove comprehension, learning transfer or usability on every device.
+  - Owner: facilitator/content owner.
+  - Follow-up: run the two-to-three-learner pilot in the handoff, review native-language wording and repair observed confusion. No participant contact, recordings or analytics collection was initiated.
 
 ## Change Log
 
+- 2026-10-26: Closed the engineering release with the validation advisory migration, input/insert/UI regressions, localized recovery and feedback fixes, atomic graded-run start and save handoff. Merged PRs #16-#18; published exact final release; passed 87 live checks and authenticated browser validation. Enabled/persisted backups and monitoring protections. Retained honest human/provider and first-delivery follow-ups; stopped local QA services and removed disposable recovery databases.
 - 2026-10-22: Published the reviewed application release after green CI, actual Replit runtime/TLS validation, additive schema approval and live functional checks. Moved intermediate evidence to a clearly labeled historical record; no broad historical or authenticated-flow sign-off is implied.
 
 ## Evidence and Provenance
