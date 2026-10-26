@@ -232,6 +232,9 @@
   },
   "progress": {
     "loading": "Loading your progress...",
+    "loadErrorTitle": "Your progress could not be loaded",
+    "loadErrorBody": "We could not check your saved progress. Try again, or sign in again if your session has ended. This does not mean your saved work was lost.",
+    "retryLoad": "Try loading again",
     "signInTitle": "Sign In to Track Progress",
     "signInBody": "Create an account to save your game sessions and track your improvement over time.",
     "signInCta": "Sign In",

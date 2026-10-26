@@ -376,7 +376,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (!parseResult.success) {
         return res.status(400).json({
           error: "Invalid session data",
-          details: parseResult.error.flatten(),
+          details: z.flattenError(parseResult.error),
         });
       }
 
@@ -448,7 +448,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (!parsed.success)
         return res
           .status(400)
-          .json({ error: "Invalid update data", details: parsed.error.flatten() });
+          .json({ error: "Invalid update data", details: z.flattenError(parsed.error) });
       const session = await storage.gameSessionStore.mutate(sessionId, (record) => {
         const violation = getSessionOwnerViolation(req, record);
         if (violation) throw new SessionRequestError(403, violation);
@@ -519,7 +519,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (!parseResult.success) {
         return res.status(400).json({
           error: "Invalid session data",
-          details: parseResult.error.flatten(),
+          details: z.flattenError(parseResult.error),
         });
       }
 

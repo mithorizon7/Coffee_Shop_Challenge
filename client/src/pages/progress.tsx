@@ -48,9 +48,22 @@ const badgeIcons: Record<string, typeof Shield> = {
 
 export default function ProgressPage() {
   const { t, i18n } = useTranslation();
-  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  const {
+    user,
+    isLoading: authLoading,
+    isAuthenticated,
+    isError: authError,
+    refetch: retryAuth,
+    isFetching: authFetching,
+  } = useAuth();
 
-  const { data: progress, isLoading: progressLoading } = useQuery<UserProgress>({
+  const {
+    data: progress,
+    isLoading: progressLoading,
+    isError: progressError,
+    refetch: retryProgress,
+    isFetching: progressFetching,
+  } = useQuery<UserProgress>({
     queryKey: ["/api/progress"],
     enabled: isAuthenticated,
   });
@@ -62,6 +75,37 @@ export default function ProgressPage() {
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">{t("progress.loading")}</p>
         </div>
+      </div>
+    );
+  }
+
+  if (authError || (isAuthenticated && progressError)) {
+    const retrying = authFetching || progressFetching;
+    return (
+      <div className="app-shell flex items-center justify-center">
+        <Card className="app-surface p-8 max-w-md mx-4 text-center">
+          <div role="alert">
+            <h1 className="font-display text-2xl font-bold mb-2">{t("progress.loadErrorTitle")}</h1>
+            <p className="text-muted-foreground mb-6">{t("progress.loadErrorBody")}</p>
+          </div>
+          <Button
+            className="w-full"
+            disabled={retrying}
+            onClick={async () => {
+              const auth = await retryAuth();
+              if (auth.data) await retryProgress();
+            }}
+            data-testid="button-retry-progress"
+          >
+            {t("progress.retryLoad")}
+          </Button>
+          <Button asChild variant="outline" className="w-full mt-2">
+            <a href="/api/login">{t("progress.signInCta")}</a>
+          </Button>
+          <Button asChild variant="ghost" className="w-full mt-2">
+            <Link href="/">{t("progress.backToHome")}</Link>
+          </Button>
+        </Card>
       </div>
     );
   }
