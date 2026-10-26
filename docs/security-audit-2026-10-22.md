@@ -11,6 +11,9 @@
 - [ ] F-010 [status:in_progress] [P2] [confidence:1.0] Progress/authentication request failures lacked a clear recovery state. Added translated error, retry, sign-in and home controls; synthetic browser outages and retry recovery pass. Publication verification pending.
   - Evidence: progress page, auth hook, three locale files; isolated browser fixture tested October 26.
   - Owner: engineering.
+- [ ] F-011 [status:in_progress] [P2] [confidence:1.0] Live walkthrough found all three locales replaced the legitimate DailyGrind_Open outcome with obsolete FreePublicWiFi feedback. Corrected the network identity, legitimate/open distinction, HTTPS caveat and named safer alternative; smoke checks now enforce both network names.
+  - Evidence: October 26 observed browser outcome compared with canonical scenario content and locale entries.
+  - Owner: engineering / localization.
 - [x] V-020 [status:verified] October 26 local checks pass: TypeScript/scenarios, 13 security tests, six real PostgreSQL tests, lint, format, 1007 keys per locale, smoke, focused credential scan, full/production audits with zero vulnerabilities, runtime gate and production build.
   - Evidence: 2026-10-26 PASS local check outputs; insert-schema defaults/Date/integer checks and bounded 20,000-element error regressions included.
 - [x] V-021 [status:verified] October 26 synthetic recovery checks pass: auth 503, progress 503 and browser retry to a loaded progress page; separate local PostgreSQL export/import preserves three synthetic application tables and primary-key integrity.

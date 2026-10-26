@@ -776,9 +776,9 @@
         },
         "cons_open": {
           "title": "Unprotected Network",
-          "whatHappened": "You connected to 'FreePublicWiFi' - a completely open network with no encryption. Anyone nearby could potentially see your unencrypted traffic.",
-          "whyRisky": "Open networks with generic names could be set up by anyone. Without encryption, your browsing activity, search queries, and any non-HTTPS data is visible to others on the same network.",
-          "saferAlternative": "Choose networks that require a password (showing a lock icon). Verify the network name with the establishment. If you must use an open network, enable a VPN immediately.",
+          "whatHappened": "You connected to 'DailyGrind_Open', the coffee shop's legitimate open network, not the fake network. It has no password, so the Wi-Fi connection itself is not encrypted.",
+          "whyRisky": "A legitimate network can still be open. HTTPS protects the contents of secure websites, but unencrypted traffic and some connection metadata may be visible to nearby eavesdroppers.",
+          "saferAlternative": "Ask staff to verify 'DailyGrind_Guest', the password-protected network. If you must use the open network, enable a trusted VPN before sensitive tasks or postpone them.",
           "technicalExplanation": "On unencrypted networks, attackers can use packet sniffing tools to capture network traffic. While HTTPS protects the content of secure websites, metadata like which sites you visit is still visible."
         },
         "cons_neighbor": {
