@@ -702,7 +702,7 @@
           "descriptionVerified": "SUSPICIOUS - Not the official network!"
         },
         "net_open": {
-          "description": "Generic open network - could be anyone"
+          "description": "Coffee shop guest network - no password required"
         },
         "net_neighbor": {
           "description": "Neighboring business network"
